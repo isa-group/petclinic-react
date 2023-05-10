@@ -1,18 +1,27 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { Form, Button, Container, FormGroup, Input, Label, Col, Alert } from "reactstrap";
+import "../../static/css/auth/authButton.css";
+import {
+  Form,
+  Button,
+  Container,
+  FormGroup,
+  Input,
+  Label,
+  Col,
+  Alert,
+} from "reactstrap";
 import tokenService from "../../services/token.service";
+import FormGenerator from "../../components/formGenerator/formGenerator";
+import { loginFormInputs } from "./form/loginFormInputs";
 
 class Login extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
-      password: "",
       navigation: props.navigation ? props.navigation : false,
       children: props.children ? props.children : null,
     };
+    this.loginFormRef = React.createRef();
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -22,69 +31,59 @@ class Login extends Component {
     const value = target.value;
     const name = target.name;
     this.setState({
-      [name]: value
+      [name]: value,
     });
   }
 
-  async handleSubmit(event) {
-    event.preventDefault();
-    const reqBody = {
-      username: this.state.username,
-      password: this.state.password,
-    };
+  async handleSubmit({ values }) {
+    const reqBody = values;
 
-    await (fetch("/api/v1/auth/signin", {
+    await fetch("/api/v1/auth/signin", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(reqBody),
-    }).then(function (response) {
-      if (response.status === 200)
-        return response.json();
-      else
-        return Promise.reject("Invalid login attempt");
     })
+      .then(function (response) {
+        if (response.status === 200) return response.json();
+        else return Promise.reject("Invalid login attempt");
+      })
       .then(function (data) {
         tokenService.setUser(data);
-        tokenService.updateLocalAccessToken(data.token)
-      }).catch((message) => {
+        tokenService.updateLocalAccessToken(data.token);
+      })
+      .catch((message) => {
         alert(message);
-      }));
+      });
     if (this.state.navigation === true) {
       return window.location.reload();
-    }
-    else window.location.href = "/dashboard";
+    } else window.location.href = "/dashboard";
   }
 
   render() {
     return (
-      <div>
-        {this.state.message ? <Alert color="primary">
-          {this.state.message}
-        </Alert> : <></>}
-        <Container style={{ marginTop: "15px" }} className="d-flex justify-content-center">
-          <Form onSubmit={this.handleSubmit}>
-            <Col>
-              <FormGroup>
-                <Label for="username">Username</Label>
-                <Input type="text" required name="username" id="username" value={this.state.username || ''}
-                  onChange={this.handleChange} autoComplete="username" />
-              </FormGroup>
-              <FormGroup>
-                <Label for="password">Password</Label>
-                <Input type="password" required name="password" id="password" value={this.state.password || ''}
-                  onChange={this.handleChange} autoComplete="lastName" />
-              </FormGroup>
-              <br />
-              <FormGroup>
-                <Button color="primary" type="submit">Login</Button>{' '}
-                <Button color="secondary" tag={Link} to="/">Cancel</Button>
-              </FormGroup>
-            </Col>
-          </Form>
-        </Container>
+      <div className="auth-page-container">
+        {this.state.message ? (
+          <Alert color="primary">{this.state.message}</Alert>
+        ) : (
+          <></>
+        )}
+
+        <h1>Login</h1>
+
+        <div className="auth-form-container">
+          <FormGenerator
+            ref={this.loginFormRef}
+            inputs={loginFormInputs}
+            onSubmit={this.handleSubmit}
+            numberOfColumns={1}
+            listenEnterKey
+            buttonText="Login"
+            buttonClassName="auth-button"
+          />
+        </div>
       </div>
     );
-  };
+  }
 }
 
 export default Login;
