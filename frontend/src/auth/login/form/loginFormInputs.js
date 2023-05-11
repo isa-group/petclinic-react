@@ -1,4 +1,4 @@
-import { registerFormValidators } from "../../register/form/registerFormValidators";
+import { formValidators } from "../../../validators/formValidators";
 
 export const loginFormInputs = [
   {
@@ -7,7 +7,7 @@ export const loginFormInputs = [
     type: "text",
     defaultValue: "",
     isRequired: true,
-    validators: [registerFormValidators.notEmptyValidator],
+    validators: [formValidators.notEmptyValidator],
   },
   {
     tag: "Password",
@@ -15,6 +15,6 @@ export const loginFormInputs = [
     type: "password",
     defaultValue: "",
     isRequired: true,
-    validators: [registerFormValidators.notEmptyValidator],
+    validators: [formValidators.notEmptyValidator],
   },
 ];

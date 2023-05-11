@@ -57,7 +57,7 @@ const FormInput = forwardRef(({ tag, name, type, defaultValue, values, isRequire
                         {
                             values && values.map((option, index) => {
                                 return(
-                                    <option key={index}>{option}</option>
+                                    <option key={index} selected={option===defaultValue}>{option}</option>
                                 )
                             })
                         }
