@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'american-typewriter'; /*a name to be used later*/
+    src: url('./static/fonts/American\ Typewriter\ Bold.ttf'); /*URL to font*/
+}
+
+h1 {
+    font-family: 'american-typewriter';
+}
+
+h2 {
+    font-family: 'american-typewriter';
+}

@@ -1,6 +1,5 @@
 import "../../static/css/auth/authButton.css";
 import "../../static/css/auth/authPage.css";
-import { Link } from "react-router-dom";
 import tokenService from "../../services/token.service";
 import FormGenerator from "../../components/formGenerator/formGenerator";
 import { registerFormOwnerInputs } from "./form/registerFormOwnerInputs";
