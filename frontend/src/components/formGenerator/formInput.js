@@ -8,7 +8,7 @@ import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 're
 import { FilePond, registerPlugin } from 'react-filepond';
 
 const FormInput = forwardRef(({ tag, name, type, defaultValue, values, isRequired, 
-                    numberOfColumns, validators, minValue, maxValue}, ref) => {
+                    numberOfColumns, validators, minValue, maxValue, onChange}, ref) => {
                         
     const [inputErrors, setInputErrors] = useState([]);
     let [files, setFiles] = useState([]);
@@ -43,6 +43,9 @@ const FormInput = forwardRef(({ tag, name, type, defaultValue, values, isRequire
                     }
                 });
                 setInputErrors(errors);
+                if(onChange!==null){
+                    onChange({value: inputField.current.value});
+                }
             });
         }
         // eslint-disable-next-line
@@ -163,6 +166,7 @@ FormInput.propTypes = {
     validators: PropTypes.array,
     formValues: PropTypes.object,
     setFormValues: PropTypes.func,
+    onChange: PropTypes.func,
 }
 
 FormInput.defaultProps = {
@@ -178,6 +182,7 @@ FormInput.defaultProps = {
     validators: [],
     formValues: {},
     setFormValues: () => {},
+    onChange: null,
 }
 
 export default FormInput;

@@ -54,6 +54,7 @@ export default function Register() {
             .then(function (data) {
               if (state !== "200") alert(data.message);
               else {
+                tokenService.setUser(data);
                 tokenService.updateLocalAccessToken(data.token);
                 window.location.href = "/dashboard";
               }
