@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import {
   Button,
   Input,
-  Label,
   Modal,
   ModalBody,
   ModalFooter,
@@ -14,10 +13,11 @@ import {
 import FormGenerator from "../../../components/formGenerator/formGenerator";
 import { visitEditFormInputs } from "./form/visitEditFormInputs";
 import moment from "moment";
+import { useState, useRef, useEffect } from "react";
 
-class OwnerVisitEdit extends Component {
-  emptyVisit = {
-    id: "",
+export default function OwnerVisitEdit() {
+  let [visit, setVisit] = useState({
+    id: null,
     datetime: "",
     description: "",
     pet: {},
@@ -25,130 +25,49 @@ class OwnerVisitEdit extends Component {
       id: null,
       city: "",
     },
-  };
+  });
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      visit: this.emptyVisit,
-      pet: { owner: { plan: "BASIC" } },
-      city: null,
-      vets: [],
-      message: null,
-      modalShow: false,
-    };
-    this.visitEditFormRef = React.createRef();
-    this.handleChange = this.handleChange.bind(this);
-    this.handleCityChange = this.handleCityChange.bind(this);
-    this.handleShow = this.handleShow.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
+  let [pet, setPet] = useState({ owner: { plan: "BASIC" } });
+  let [city, setCity] = useState(null);
+  let [vets, setVets] = useState([]);
+  let [message, setMessage] = useState(null);
+  let [modalShow, setModalShow] = useState(false);
+  let [cities, setCities] = useState([]);
 
-    let pathArray = window.location.pathname.split("/");
-    this.petId = pathArray[2];
-    this.visitId = pathArray[4];
-  }
+  let visitEditFormRef = useRef(null);
 
-  async componentDidMount() {
-    const pet = await (
-      await fetch(`/api/v1/pets/${this.petId}`, {
-        headers: {
-          Authorization: `Bearer ${this.jwt}`,
-        },
-      })
-    ).json();
-    if (pet.message) this.setState({ message: pet.message, modalShow: true });
-    else this.setState({ pet: pet });
+  const jwt = JSON.parse(window.localStorage.getItem("jwt"));
+  let pathArray = window.location.pathname.split("/");
+  const petId = pathArray[2];
+  const visitId = pathArray[4];
 
-    if (!this.state.message) {
-      const vets = await (
-        await fetch(`/api/v1/vets`, {
-          headers: {
-            Authorization: `Bearer ${this.jwt}`,
-          },
-        })
-      ).json();
-      if (vets.message)
-        this.setState({ message: vets.message, modalShow: true });
-      else this.setState({ vets: vets });
-
-      if (this.visitId !== "new" && !this.state.message) {
-        const visit = await (
-          await fetch(`/api/v1/pets/${this.petId}/visits/${this.visitId}`, {
-            headers: {
-              Authorization: `Bearer ${this.jwt}`,
-            },
-          })
-        ).json();
-        if (visit.message)
-          this.setState({ message: visit.message, modalShow: true });
-        else
-          this.setState({
-            visit: visit,
-            city: visit.vet.city,
-          });
-      }
-    }
-  }
-
-  handleChange(event) {
+  function handleChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    let visit = { ...this.state.visit };
+    let visitAux = { ...visit };
     if (name === "vet") {
-      visit[name].id = value;
-    } else visit[name] = value;
-    this.setState({ visit });
+      visitAux[name].id = value;
+    } else visitAux[name] = value;
+    setVisit(visitAux);
   }
 
-  handleCityChange({value}) {
-    this.setState({ city: value });
+  function handleCityChange({ value }) {
+    setCity(value);
 
-    let visit = { ...this.state.visit };
-    let vets = [...this.state.vets];
-    const plan = this.state.pet.owner.plan;
+    const plan = pet.owner.plan;
     if (plan === "BASIC") {
       vets = vets.filter((vet) => vet.city === value);
       let randomIndex = Math.floor(Math.random() * vets.length);
       visit.vet = vets[randomIndex];
-      this.setState({ visit });
     }
   }
-  handleShow() {
-    let modalShow = this.state.modalShow;
-    this.setState({ modalShow: !modalShow });
+
+  function handleShow() {
+    setModalShow(!modalShow);
   }
 
-  async handleSubmit({values}) {
-    
-    let visit = { ...this.state.visit,
-      datetime: moment(values.datetime).format("YYYY-MM-DDTHH:mm:ss"),
-      description: values.description,
-    };
-    const pet = { ...this.state.pet };
-    visit["pet"] = pet;
-
-    const submit = await (
-      await fetch(
-        `/api/v1/pets/${this.petId}/visits` + (visit.id ? "/" + visit.id : ""),
-        {
-          method: visit.id ? "PUT" : "POST",
-          headers: {
-            Authorization: `Bearer ${this.jwt}`,
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(visit),
-        }
-      )
-    ).json();
-    if (submit.message)
-      this.setState({ message: submit.message, modalShow: true });
-    else window.location.href = `/myPets`;
-  }
-
-  getVetSelectionInput(visit, datetime, vets, city, plan) {
+  function getVetSelectionInput(visit, datetime, vets, city, plan) {
     if (visit.id && datetime < Date.now()) {
       return (
         <Input
@@ -159,13 +78,13 @@ class OwnerVisitEdit extends Component {
           value={
             visit.vet.id ? visit.vet.firstName + " " + visit.vet.lastName : ""
           }
-          onChange={this.handleChange}
+          onChange={handleChange}
         />
       );
     } else {
       if (plan !== "BASIC") {
         const vetsAux = vets.filter((vet) => vet.city === city);
-        const vetsOptions = this.getVetOptions(vetsAux);
+        const vetsOptions = getVetOptions(vetsAux);
         return (
           <Input
             type="select"
@@ -173,7 +92,7 @@ class OwnerVisitEdit extends Component {
             name="vet"
             id="vet"
             value={visit.vet.id ? visit.vet.id : ""}
-            onChange={this.handleChange}
+            onChange={handleChange}
           >
             <option value="">None</option>
             {vetsOptions}
@@ -189,14 +108,14 @@ class OwnerVisitEdit extends Component {
             value={
               visit.vet.id ? visit.vet.firstName + " " + visit.vet.lastName : ""
             }
-            onChange={this.handleChange}
+            onChange={handleChange}
           />
         );
       }
     }
   }
 
-  getVetOptions(vets) {
+  function getVetOptions(vets) {
     return vets.map((vet) => {
       let spAux = vet.specialties
         .map((s) => s.name)
@@ -211,13 +130,90 @@ class OwnerVisitEdit extends Component {
     });
   }
 
-  render() {
-    const { visit, pet, city, vets } = this.state;
-    const title = (
-      <h2 className="text-center">{visit.id ? "Edit Visit" : "Add Visit"}</h2>
-    );
+  async function handleSubmit({ values }) {
+    if (!visitEditFormRef.current.validate()) return;
 
-    const datetime = new Date(visit.datetime);
+    let visitRequest = {
+      ...visit,
+      datetime: moment(values.datetime).format("YYYY-MM-DDTHH:mm:ss"),
+      description: values.description,
+    };
+
+    visitRequest["pet"] = pet;
+
+    const submit = await (
+      await fetch(
+        `/api/v1/pets/${petId}/visits` +
+          (visitRequest.id ? "/" + visitRequest.id : ""),
+        {
+          method: visitRequest.id ? "PUT" : "POST",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(visitRequest),
+        }
+      )
+    ).json();
+    if (submit.message) {
+      setMessage(submit.message);
+      setModalShow(true);
+    } else {
+      window.location.href = `/myPets`;
+    }
+  }
+
+  async function setUp() {
+    const petResponse = await (
+      await fetch(`/api/v1/pets/${petId}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
+    ).json();
+    if (petResponse.message) {
+      setMessage(petResponse.message);
+      setModalShow(true);
+    } else setPet(petResponse);
+
+    if (!message) {
+      const vetsResponse = await (
+        await fetch(`/api/v1/vets`, {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        })
+      ).json();
+      if (vetsResponse.message) {
+        setMessage(vetsResponse.message);
+        setModalShow(true);
+      } else setVets(vetsResponse);
+
+      if (visitId !== "new" && !message) {
+        const visitResponse = await (
+          await fetch(`/api/v1/pets/${petId}/visits/${visitId}`, {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          })
+        ).json();
+        if (visitResponse.message) {
+          setMessage(visitResponse.message);
+          setModalShow(true);
+        } else {
+          setVisit(visitResponse);
+          setCity(visitResponse.vet.city);
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    setUp();
+  }, []);
+
+  useEffect(() => {
     const datetimeInput = visit.datetime || moment().format("YYYY-MM-DD HH:mm");
 
     if (visitEditFormInputs[0].defaultValue === "") {
@@ -228,118 +224,72 @@ class OwnerVisitEdit extends Component {
     vets.forEach((vet) => {
       if (!cities.includes(vet.city)) cities.push(vet.city);
     });
-    
-    if (visitEditFormInputs[2].values.length === 1){
-      visitEditFormInputs[2].values = [...visitEditFormInputs[2].values, ...cities];
+
+    if (visitEditFormInputs[2].values.length === 1 && cities.length >= 1) {
+      visitEditFormInputs[2].values = [
+        ...visitEditFormInputs[2].values,
+        ...cities,
+      ];
+      setCities(visitEditFormInputs[2].values)
     }
 
-    if(visit.id !== null){
+    if (visit.id !== null) {
       visitEditFormInputs[0].defaultValue = visit.datetime;
       visitEditFormInputs[1].defaultValue = visit.description;
       visitEditFormInputs[2].defaultValue = visit.vet.city;
     }
 
-    visitEditFormInputs[2].onChange = this.handleCityChange;
+    visitEditFormInputs[2].onChange = handleCityChange;
+  }, [visit, city, vets, cities]);
 
-    const plan = pet.owner.plan;
-
-    let vetSelection = this.getVetSelectionInput(
-      visit,
-      datetime,
-      vets,
-      city,
-      plan
-    );
-
-    let modal = <></>;
-    if (this.state.message) {
-      const show = this.state.modalShow;
-      const closeBtn = (
-        <button className="close" onClick={this.handleShow} type="button">
-          &times;
-        </button>
-      );
-      const cond = this.state.message.includes("limit");
-      modal = (
-        <div>
-          <Modal isOpen={show} toggle={this.handleShow} keyboard={false}>
-            {cond ? (
-              <ModalHeader>Warning!</ModalHeader>
-            ) : (
-              <ModalHeader toggle={this.handleShow} close={closeBtn}>
-                Error!
-              </ModalHeader>
-            )}
-            <ModalBody>{this.state.message || ""}</ModalBody>
-            <ModalFooter>
-              <Button color="info" onClick={this.handleShow} type="button">
-                Close
-              </Button>
-              <Button color="primary" tag={Link} to={`/myPets`}>
-                Back
-              </Button>
-            </ModalFooter>
-          </Modal>
-        </div>
-      );
-    }
-
-    return (
-      <div className="auth-page-container">
-        {title}
-        <div className="auth-form-container">
+  return (
+    <div className="auth-page-container">
+      <h2 className="text-center">{visit.id ? "Edit Visit" : "Add Visit"}</h2>
+      <div className="auth-form-container">
+        {visitEditFormInputs[2].values.length !== 1 && (
           <FormGenerator
-            ref={this.visitEditFormRef}
+            ref={visitEditFormRef}
             inputs={visitEditFormInputs}
-            onSubmit={this.handleSubmit}
+            onSubmit={handleSubmit}
             buttonText="Save"
             buttonClassName="auth-button"
             childrenPosition={-1}
           >
-            {vetSelection}
+            {getVetSelectionInput(
+              visit,
+              new Date(visit.datetime),
+              vets,
+              city,
+              pet.owner.plan
+            )}
           </FormGenerator>
-        </div>
-        {modal}
+        )}
       </div>
-    );
-    // <Container style={{ marginTop: "15px" }}>
-    //     {title}
-    //     <Row>
-    //         <Col sm="4"></Col>
-    //         <Col sm="4">
-    //             <Form onSubmit={this.handleSubmit}>
-    //                 <FormGroup>
-    //                     <Label for="date">Date and Time</Label>
-    //                     {datetimeInput}
-    //                 </FormGroup>
-    //                 <FormGroup>
-    //                     <Label for="description">Description</Label>
-    //                     {/* poner required tras reunión */}
-    //                     <Input type="text" name="description" id="description" value={visit.description || ''}
-    //                         onChange={this.handleChange} />
-    //                 </FormGroup>
-    //                 <FormGroup>
-    //                     <Label for="city">Select City for the Visit</Label><br></br>
-    //                     {citiesOptions}
-    //                 </FormGroup>
-    //                 <FormGroup>
-    //                     {plan === "BASIC" ? <Label for="vet">Vet (As you have BASIC Plan, Vet will be selected randomly from the ones in the city)</Label> :
-    //                         <Label for="vet">Vet</Label>}
-    //                     {vetSelection}
-    //                 </FormGroup>
-    //                 <FormGroup>
-    //                     <Label for="pet">Pet</Label>
-    //                     <p>{pet.name || ''}</p>
-    //                 </FormGroup>
-    //                 <FormGroup>
-    //                     <Button color="primary" type="submit">Save</Button>{' '}
-    //                     <Button color="secondary" onClick={() => window.history.back()}>Back</Button>
-    //                 </FormGroup>
-    //             </Form>
-    //         </Col>
-    //         <Col sm="4"></Col>
-    //     </Row>
-    // </Container>
-  }
+      <Modal isOpen={modalShow} toggle={handleShow} keyboard={false}>
+        {message && message.includes("limit") ? (
+          <ModalHeader>Warning!</ModalHeader>
+        ) : (
+          <ModalHeader
+            toggle={handleShow}
+            close={
+              <button className="close" onClick={handleShow} type="button">
+                &times;
+              </button>
+            }
+          >
+            Error!
+          </ModalHeader>
+        )}
+        <ModalBody>{message || ""}</ModalBody>
+        <ModalFooter>
+          <Button color="info" onClick={handleShow} type="button">
+            Close
+          </Button>
+          <Button color="primary" tag={Link} to={`/myPets`}>
+            Back
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </div>
+  );
 }
-export default OwnerVisitEdit;

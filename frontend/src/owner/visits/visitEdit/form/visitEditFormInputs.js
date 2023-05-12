@@ -6,7 +6,7 @@ export const visitEditFormInputs = [
     tag: "Date and Time",
     name: "datetime",
     type: "datetime-local",
-    defaultValue: "",
+    defaultValue: moment().format("YYYY-MM-DDTHH:mm"),
     isRequired: true,
     validators: [formValidators.notEmptyValidator],
   },
@@ -16,7 +16,7 @@ export const visitEditFormInputs = [
     type: "textarea",
     defaultValue: "",
     isRequired: false,
-    validators: [formValidators.notEmptyValidator],
+    validators: [],
   },
   {
     tag: "Select City for the Visit",
