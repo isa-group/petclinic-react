@@ -1,6 +1,5 @@
 import "../../../static/css/auth/authButton.css";
 import "../../../static/css/auth/authPage.css";
-import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import {
   Button,

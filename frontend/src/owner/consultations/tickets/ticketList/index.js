@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, ButtonGroup, Card, CardBody, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import "../../../../static/css/owner/ticketPage.css"
 
 class OwnerConsultationTickets extends Component {
 
@@ -24,6 +25,7 @@ class OwnerConsultationTickets extends Component {
             plan: "",
             message: null,
         };
+        this.conversationRef = React.createRef();
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
@@ -132,7 +134,7 @@ class OwnerConsultationTickets extends Component {
                         <Row className="no-gutters">
                             <Col md="8">
                                 <CardBody>
-                                    <CardTitle>{t.user.username}-&gt; {t.description}</CardTitle>
+                                    <CardTitle>{t.user.username}</CardTitle>
                                     <CardText>{t.description}</CardText>
                                     <CardText><small className="text-muted">{new Date(t.creationDate).toLocaleString()}</small></CardText>
                                     {buttons}
@@ -148,11 +150,9 @@ class OwnerConsultationTickets extends Component {
 
     getTicketInput(newTicket, status, plan) {
         if (status !== "CLOSED" && plan === "PLATINUM")
-            return <Container>
+            return <div className='ticket-input-div'>
                 <Form onSubmit={this.handleSubmit}>
-                    <h4>Add New Ticket</h4>
                     <FormGroup>
-                        <Label for="description">Description</Label>
                         <Input type="textarea" required name="description" id="description" value={newTicket.description || ''}
                             onChange={this.handleChange} />
                     </FormGroup>
@@ -160,7 +160,7 @@ class OwnerConsultationTickets extends Component {
                         <Button color="primary" type="submit">Save</Button>{' '}
                     </FormGroup>
                 </Form>
-            </Container>;
+            </div>;
         else return <></>;
     }
 
@@ -174,15 +174,20 @@ class OwnerConsultationTickets extends Component {
 
         const ticketInput = this.getTicketInput(newTicket, consultation.status, plan);
 
-        return <div>
-            {/* <AppNavbar /> */}
-            <Container style={{ marginTop: "15px" }}>
+        if (this.conversationRef.current){
+            this.conversationRef.current.scrollTop = this.conversationRef.current.scrollHeight;
+        }
+
+        return(
+            <div className='ticket-page'>
                 {title}
                 <h3>{consultation.title}</h3>
-                {ticketList}
-            </Container>
-            {ticketInput}
-        </div>
+                <div className='conversation-container' ref={this.conversationRef}>
+                    {ticketList}
+                </div>
+                {ticketInput}
+            </div>
+        );
     }
 }
 export default OwnerConsultationTickets;

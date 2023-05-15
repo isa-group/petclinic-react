@@ -1,186 +1,204 @@
-import React, { Component } from "react";
-import { Button, ButtonGroup, Col, Container, Input, Row, Table } from "reactstrap";
+import {
+  Button,
+  ButtonGroup,
+  Col,
+  Container,
+  Input,
+  Row,
+  Table,
+} from "reactstrap";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-class OwnerConsultationList extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            consultations: [],
-            filtered: null,
-            filter: "",
-            search: "",
-            plan: "",
-        };
-        // this.remove = this.remove.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.handleFilter = this.handleFilter.bind(this);
-        this.handleClear = this.handleClear.bind(this);
-        this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
-    }
+export default function OwnerConsultationList() {
+  let [consultations, setConsultations] = useState([]);
+  let [filtered, setFiltered] = useState(null);
+  let [filter, setFilter] = useState("");
+  let [search, setSearch] = useState("");
+  let [plan, setPlan] = useState("");
+  let [message, setMessage] = useState(null);
 
-    async componentDidMount() {
-        const consultations = await (await fetch("/api/v1/consultations", {
-            headers: {
-                "Authorization": `Bearer ${this.jwt}`,
-                "Content-Type": "application/json",
-            },
-        })).json();
-        this.setState({ consultations: consultations, filtered: consultations });
+  const jwt = JSON.parse(window.localStorage.getItem("jwt"));
 
-        const owner = await (await fetch(`/api/v1/plan`, {
-            headers: {
-                "Authorization": `Bearer ${this.jwt}`,
-            },
-        })).json();
-        if (owner.message) this.setState({ message: owner.message })
-        else this.setState({ plan: owner.plan });
-    }
+  function handleClear(event) {
+    setFiltered([...consultations]);
+    setFilter("");
+    setSearch("");
+  }
 
-    // async remove(id) {
-    //     await fetch(`/api/v1/consultations/${id}`, {
-    //         method: "DELETE",
-    //         headers: {
-    //             "Authorization": `Bearer ${this.jwt}`,
-    //             Accept: "application/json",
-    //             "Content-Type": "application/json",
-    //         },
-    //     }).then((response) => {
-    //         if (response.status === 200) {
-    //             let updatedConsultations = [...this.state.consultations].filter((i) => i.id !== id);
-    //             let updatedFilteredConsultations = [...this.state.filtered].filter((i) => i.id !== id);
-    //             this.setState({ consultations: updatedConsultations, filtered: updatedFilteredConsultations });
-    //         }
-    //         return response.json();
-    //     }).then(function (data) {
-    //         alert(data.message);
-    //     });
-    // }
+  function handleFilter(event) {
+    const value = event.target.value;
+    let filteredConsultations;
 
-    handleChange(event) {
-        const value = event.target.value;
-        const filter = this.state.filter;
-        let filteredConsultations;
-
-        if (value === "") {
-            if (filter !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.status === filter);
-            else
-                filteredConsultations = [...this.state.consultations];
-        } else {
-            if (filter !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.status === filter && i.pet.name.toLowerCase().includes(value));
-            else
-                filteredConsultations = [...this.state.consultations].filter((i) => i.pet.name.toLowerCase().includes(value));
-        }
-        this.setState({ filtered: filteredConsultations, search: value });
-    }
-
-    handleFilter(event) {
-        const value = event.target.value;
-        const search = this.state.search;
-        let filteredConsultations;
-
-        if (value === "") {
-            if (search !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.pet.name.toLowerCase().includes(search));
-            else
-                filteredConsultations = [...this.state.consultations];
-        } else {
-            if (search !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.status === value && i.pet.name.toLowerCase().includes(search));
-            else
-                filteredConsultations = [...this.state.consultations].filter((i) => i.status === value);
-        }
-        this.setState({ filtered: filteredConsultations, filter: value });
-    }
-
-    handleClear(event) {
-        let filteredConsultations;
-        filteredConsultations = [...this.state.consultations];
-
-        this.setState({ filtered: filteredConsultations, filter: "", search: "" });
-    }
-
-    getConsultationList(consultations, plan) {
-        return consultations.map((c) => {
-            return (
-                <tr key={c.id}>
-                    <td>{c.title}</td>
-                    <td>{c.status}</td>
-                    <td>{c.pet?.name}</td>
-                    <td>{(new Date(c.creationDate)).toLocaleString()}</td>
-                    <td>
-                        <ButtonGroup>
-                            <Button size="sm" color="info" tag={Link}
-                                to={`/consultations/${c.id}/tickets`}>
-                                Details
-                            </Button>
-                            {plan === "PLATINUM" ?
-                                <Button size="sm" color="primary" tag={Link}
-                                    to={"/consultations/" + c.id}>
-                                    Edit
-                                </Button> :
-                                <></>
-                            }
-                            {/* <Button size="sm" color="danger" onClick={() => this.remove(c.id)}>
-                                Delete
-                            </Button> */}
-                        </ButtonGroup>
-                    </td>
-                </tr>
-            );
-        });
-    }
-
-    render() {
-        const { consultations, filtered, search, plan } = this.state;
-
-        let consultationList;
-        if (filtered) consultationList = this.getConsultationList(filtered, plan);
-        else consultationList = this.getConsultationList(consultations, plan);
-
-        return (
-            <div>
-                <Container style={{ marginTop: "15px" }} fluid>
-                    <h1 className="text-center">Consultations</h1>
-                    <Row className="row-cols-auto g-3 align-items-center">
-                        <Col>
-                            {plan === "PLATINUM" ?
-                                <Button color="success" tag={Link} to="/consultations/new">
-                                    Add Consultation
-                                </Button> :
-                                <></>
-                            }
-                            <Button color="link" onClick={this.handleFilter} value="PENDING">Pending</Button>
-                            <Button color="link" onClick={this.handleFilter} value="ANSWERED">Answered</Button>
-                            <Button color="link" onClick={this.handleFilter} value="CLOSED">Closed</Button>
-                            <Button color="link" onClick={this.handleFilter} value="">All</Button>
-                        </Col>
-                        <Col className="col-sm-3">
-                            <Input type="search" placeholder="Introduce a pet name to search by it" value={search || ''}
-                                onChange={this.handleChange} />
-                        </Col>
-                        <Col className="col-sm-3">
-                            <Button color="link" onClick={this.handleClear} >Clear All</Button>
-                        </Col>
-                    </Row>
-                    <Table className="mt-4">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Status</th>
-                                <th>Pet</th>
-                                <th>Creation Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>{consultationList}</tbody>
-                    </Table>
-                </Container>
-            </div>
+    if (value === "") {
+      if (search !== "")
+        filteredConsultations = [...consultations].filter((i) =>
+          i.pet.name.toLowerCase().includes(search)
+        );
+      else filteredConsultations = [...consultations];
+    } else {
+      if (search !== "")
+        filteredConsultations = [...consultations].filter(
+          (i) => i.status === value && i.pet.name.toLowerCase().includes(search)
+        );
+      else
+        filteredConsultations = [...consultations].filter(
+          (i) => i.status === value
         );
     }
-}
+    setFiltered(filteredConsultations);
+    setFilter(value);
+  }
 
-export default OwnerConsultationList;
+  function getConsultationList(consultations, plan) {
+    return consultations.map((c) => {
+      return (
+        <tr key={c.id}>
+          <td>{c.title}</td>
+          <td>{c.status}</td>
+          <td>{c.pet?.name}</td>
+          <td>{new Date(c.creationDate).toLocaleString()}</td>
+          <td>
+            <ButtonGroup>
+              <Button
+                size="sm"
+                color="info"
+                tag={Link}
+                to={`/consultations/${c.id}/tickets`}
+              >
+                Details
+              </Button>
+              {plan === "PLATINUM" ? (
+                <Button
+                  size="sm"
+                  color="primary"
+                  tag={Link}
+                  to={"/consultations/" + c.id}
+                >
+                  Edit
+                </Button>
+              ) : (
+                <></>
+              )}
+            </ButtonGroup>
+          </td>
+        </tr>
+      );
+    });
+  }
+
+  function handleChange(event) {
+    const value = event.target.value;
+    let filteredConsultations;
+
+    if (value === "") {
+      if (filter !== "")
+        filteredConsultations = [...consultations].filter(
+          (i) => i.status === filter
+        );
+      else filteredConsultations = [...consultations];
+    } else {
+      if (filter !== "")
+        filteredConsultations = [...consultations].filter(
+          (i) => i.status === filter && i.pet.name.toLowerCase().includes(value)
+        );
+      else
+        filteredConsultations = [...consultations].filter((i) =>
+          i.pet.name.toLowerCase().includes(value)
+        );
+    }
+
+    setFiltered(filteredConsultations);
+    setSearch(value);
+  }
+
+  async function setUp() {
+    const consultations = await (
+      await fetch("/api/v1/consultations", {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "application/json",
+        },
+      })
+    ).json();
+
+    setConsultations(consultations);
+    setFiltered(consultations);
+
+    const owner = await (
+      await fetch(`/api/v1/plan`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
+    ).json();
+    if (owner.message) setMessage(owner.message);
+    else setPlan(owner.plan);
+  }
+
+  useEffect(() => {
+    setUp();
+  }, []);
+
+  useEffect(() => {}, [filtered]);
+
+  return (
+    <div>
+      <Container style={{ marginTop: "15px" }} fluid>
+        <h1 className="text-center">Consultations</h1>
+        <Row className="row-cols-auto g-3 align-items-center">
+          <Col>
+            {plan === "PLATINUM" ? (
+              <Button color="success" tag={Link} to="/consultations/new">
+                Add Consultation
+              </Button>
+            ) : (
+              <></>
+            )}
+            <Button color="link" onClick={handleFilter} value="PENDING">
+              Pending
+            </Button>
+            <Button color="link" onClick={handleFilter} value="ANSWERED">
+              Answered
+            </Button>
+            <Button color="link" onClick={handleFilter} value="CLOSED">
+              Closed
+            </Button>
+            <Button color="link" onClick={handleFilter} value="">
+              All
+            </Button>
+          </Col>
+          <Col className="col-sm-3">
+            <Input
+              type="search"
+              placeholder="Introduce a pet name to search by it"
+              value={search || ""}
+              onChange={handleChange}
+            />
+          </Col>
+          <Col className="col-sm-3">
+            <Button color="link" onClick={handleClear}>
+              Clear All
+            </Button>
+          </Col>
+        </Row>
+        <Table className="mt-4">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Pet</th>
+              <th>Creation Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered
+              ? getConsultationList(filtered, plan)
+              : getConsultationList(consultations, plan)}
+          </tbody>
+        </Table>
+      </Container>
+    </div>
+  );
+}
