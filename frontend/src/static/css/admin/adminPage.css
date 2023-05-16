@@ -26,3 +26,31 @@
   content: "*";
   color: #cc0033 !important;
 }
+
+.custom-input,
+.custom-textarea{
+    width: 100% !important;
+    font-family: inherit !important;
+    font-size: 1rem !important;
+    color: var(--color-input) !important;
+    padding: 0.6em 0.3em !important;
+    outline: none !important;
+    background-color: transparent !important;
+    margin: 20px 0;
+}
+
+.custom-input{
+  border: none !important;
+  border-bottom: 1px solid var(--main-button-hover-dark-color) !important;
+}
+
+.custom-textarea{
+  border: 1px solid var(--main-button-hover-dark-color) !important;
+}
+
+.custom-button-row{
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}

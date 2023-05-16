@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function useFetchState(initial, url, jwt, setMessage, setVisible, setLoaded = null, id = null) {
+export default function useFetchState(initial, url, jwt, setMessage, setVisible, id = null) {
     const [data, setData] = useState(initial);
     useEffect(() => {
         if (url) {
@@ -20,10 +20,10 @@ export default function useFetchState(initial, url, jwt, setMessage, setVisible,
                             }
                             else {
                                 setData(json);
-                                if(setLoaded!==null) setLoaded(true);
                             }
                         }
                     }).catch((message) => {
+                        console.log(message);
                         setMessage('Failed to fetch data');
                         setVisible(true);
                     });

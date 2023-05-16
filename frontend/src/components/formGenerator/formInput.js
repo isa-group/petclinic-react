@@ -8,7 +8,7 @@ import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 're
 import { FilePond, registerPlugin } from 'react-filepond';
 
 const FormInput = forwardRef(({ tag, name, type, defaultValue, values, isRequired, 
-                    numberOfColumns, validators, minValue, maxValue, onChange}, ref) => {
+                    numberOfColumns, validators, minValue, maxValue, onChange, disabled}, ref) => {
                         
     const [inputErrors, setInputErrors] = useState([]);
     let [files, setFiles] = useState([]);
@@ -56,7 +56,7 @@ const FormInput = forwardRef(({ tag, name, type, defaultValue, values, isRequire
         case "select":
             return(
                 <div className={`class-form-group ${inputErrors.length>0 ? "class-error-form" : ""}`} id={`${name}_form`} style={numberOfColumns>1 ? {paddingTop: `2%`, width: `${100/numberOfColumns-3}%`} : {marginTop: `7.5%`}}>	
-                    <select className="class-form-input" id={`${name}`} name={`${name}`} required={isRequired} defaultValue={defaultValue} ref={inputField}>
+                    <select className="class-form-input" disabled={disabled} id={`${name}`} name={`${name}`} required={isRequired} defaultValue={defaultValue} ref={inputField}>
                         {
                             values && values.map((option, index) => {
                                 return(
@@ -78,7 +78,7 @@ const FormInput = forwardRef(({ tag, name, type, defaultValue, values, isRequire
 
             return(
                 <div className={`class-form-group ${inputErrors.length>0 ? "class-error-form" : ""}`} id={`${name}_form`} style={{width: `100%`}}>	
-                    <textarea className="class-form-input" type={type} id={`${name}`} name={`${name}`} placeholder=" " defaultValue={`${defaultValue ? defaultValue : ""}`} required={isRequired} ref={inputField}/>
+                    <textarea className="class-form-input" disabled={disabled} type={type} id={`${name}`} name={`${name}`} placeholder=" " defaultValue={`${defaultValue ? defaultValue : ""}`} required={isRequired} ref={inputField}/>
                     <label htmlFor={`${name}`} className="class-form-label">{tag}:</label>
                     {
                         inputErrors.length > 0 && inputErrors.map((error, index) => {
@@ -128,7 +128,7 @@ const FormInput = forwardRef(({ tag, name, type, defaultValue, values, isRequire
             
             return(
                 <div className={`class-form-group ${inputErrors.length>0 ? "class-error-form" : ""}`} id={`${name}_form`} style={numberOfColumns>1 ? {paddingTop: `2%`, width: `${100/numberOfColumns-3}%`} : {}}>	
-                    <input className="class-form-input" type="date" id={`${name}`} name={`${name}`} required={isRequired} defaultValue={defaultValue} ref={inputField} />
+                    <input className="class-form-input" disabled={disabled} type="date" id={`${name}`} name={`${name}`} required={isRequired} defaultValue={defaultValue} ref={inputField} />
                     <label htmlFor={`${name}`} className="class-form-label" style={numberOfColumns>1 ? {paddingLeft: `1%`} : {}}>{tag}:</label>
                     {
                         inputErrors.length > 0 && inputErrors.map((error, index) => {
@@ -141,7 +141,7 @@ const FormInput = forwardRef(({ tag, name, type, defaultValue, values, isRequire
         default:
             return(
                 <div className={`class-form-group ${inputErrors.length>0 ? "class-error-form" : ""}`} id={`${name}_form`} style={numberOfColumns>1 ? {width: `${100/numberOfColumns-3}%`} : {}}>	
-                    <input className="class-form-input" type={type} id={`${name}`} name={`${name}`} placeholder=" " defaultValue={`${defaultValue ? defaultValue : ""}`} required={isRequired} ref={inputField}/>
+                    <input className="class-form-input" disabled={disabled} type={type} id={`${name}`} name={`${name}`} placeholder=" " defaultValue={`${defaultValue ? defaultValue : ""}`} required={isRequired} ref={inputField}/>
                     <label htmlFor={`${name}`} className="class-form-label">{tag}:</label>
                     {
                         inputErrors.length > 0 && inputErrors.map((error, index) => {
@@ -167,6 +167,7 @@ FormInput.propTypes = {
     formValues: PropTypes.object,
     setFormValues: PropTypes.func,
     onChange: PropTypes.func,
+    disabled: PropTypes.bool,
 }
 
 FormInput.defaultProps = {
@@ -183,6 +184,7 @@ FormInput.defaultProps = {
     formValues: {},
     setFormValues: () => {},
     onChange: null,
+    disabled: false,
 }
 
 export default FormInput;

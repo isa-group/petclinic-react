@@ -74,7 +74,6 @@ export default function PetListAdmin() {
   const modal = getErrorModal(setVisible, visible, message);
 
   return (
-    <div>
       <div className="admin-page-container">
         <h1 className="text-center">Pets</h1>
         {alerts.map((a) => a.alert)}
@@ -98,6 +97,5 @@ export default function PetListAdmin() {
           </Table>
         </div>
       </div>
-    </div>
   );
 }

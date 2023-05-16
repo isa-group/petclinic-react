@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
 import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchData from "../../util/useFetchData";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
-import FormGenerator from "../../components/formGenerator/formGenerator";
-import { petEditInputs } from "./form/petEditInputs";
-import { Label, Input } from "reactstrap";
+import "../../static/css/admin/adminPage.css";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -21,20 +21,16 @@ export default function PetEditAdmin() {
   const id = getIdFromUrl(2);
   const [message, setMessage] = useState(null);
   const [visible, setVisible] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const [pet, setPet] = useFetchState(
     emptyItem,
     `/api/v1/pets/${id}`,
     jwt,
     setMessage,
     setVisible,
-    setLoaded,
     id
   );
   const types = useFetchData(`/api/v1/pets/types`, jwt);
   const owners = useFetchData(`/api/v1/owners`, jwt);
-
-  const petEditFormRef = useRef(null);
 
   function handleChange(event) {
     const target = event.target;
@@ -49,8 +45,8 @@ export default function PetEditAdmin() {
     } else setPet({ ...pet, [name]: value });
   }
 
-  function handleSubmit({ values }) {
-    if (!petEditFormRef.current.validate()) return;
+  function handleSubmit(event) {
+    event.preventDefault();
 
     fetch("/api/v1/pets" + (pet.id ? "/" + pet.id : ""), {
       method: pet.id ? "PUT" : "POST",
@@ -59,11 +55,7 @@ export default function PetEditAdmin() {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        ...pet,
-        ...values,
-        type: types.filter((t) => t.name === values.type)[0],
-      }),
+      body: JSON.stringify(pet),
     })
       .then((response) => response.json())
       .then((json) => {
@@ -76,62 +68,72 @@ export default function PetEditAdmin() {
   }
 
   const modal = getErrorModal(setVisible, visible, message);
+  const typeOptions = types.map((type) => (
+    <option key={type.id} value={type.id}>
+      {type.name}
+    </option>
+  ));
   const ownerOptions = owners.map((owner) => (
     <option key={owner.id} value={owner.id}>
       {owner.user.username}
     </option>
   ));
 
-  useEffect(() => {
-    if (id !== "new" && loaded) {
-      petEditInputs.forEach((input) => {
-        if (input.name !== "birthDate") {
-          input.defaultValue = pet[input.name];
-          if (input.name === "type" && input.values.length === 1) {
-            input.defaultValue = pet.type.name;
-            input.values = [...input.values, ...types.map((t) => t.name)];
-          } else if (input.name === "type") {
-            input.defaultValue = pet.type.name;
-          }
-
-          if (input.name === "owner" && input.values.length === 1) {
-            input.defaultValue = pet.owner.id;
-            input.values = [...input.values, ...ownerOptions];
-          }
-        }
-      });
-    } else {
-      petEditInputs.forEach((input) => {
-        if (input.name !== "birthDate") {
-          input.defaultValue = "";
-          if (input.name === "type" && input.values.length === 1) {
-            input.values = [...input.values, ...types.map((t) => t.name)];
-          }
-
-          if (input.name === "owner" && input.values.length === 1) {
-            input.values = [...input.values, ...ownerOptions];
-          }
-        }
-      });
-    }
-  }, [loaded]);
-
   return (
     <div className="auth-page-container">
       {<h2>{pet.id ? "Edit Pet" : "Add Pet"}</h2>}
       {modal}
       <div className="auth-form-container">
-        {loaded && (
-          <FormGenerator
-            ref={petEditFormRef}
-            inputs={petEditInputs}
-            onSubmit={handleSubmit}
-            buttonText={id !== "new" ? "Save" : "Add"}
-            buttonClassName="auth-button"
-            childrenPosition={-1}
-          >
-            <div className="custom-form-input">
-              <label className="custom-form-input-label">Owner</label>
+        <Form onSubmit={handleSubmit}>
+          <div className="custom-form-input">
+            <Label for="name" className="custom-form-input-label">
+              Name
+            </Label>
+            <Input
+              type="text"
+              required
+              name="name"
+              id="name"
+              value={pet.name || ""}
+              onChange={handleChange}
+              className="custom-input"
+            />
+          </div>
+          <div className="custom-form-input">
+            <Label for="birthDate" className="custom-form-input-label">
+              Birth Date
+            </Label>
+            <Input
+              type="date"
+              name="birthDate"
+              id="birthDate"
+              value={pet.birthDate || ""}
+              onChange={handleChange}
+              className="custom-input"
+            />
+          </div>
+          <div className="custom-form-input">
+            <Label for="type" className="custom-form-input-label">
+              Type
+            </Label>
+            <Input
+              type="select"
+              required
+              name="type"
+              id="type"
+              value={pet.type?.id}
+              onChange={handleChange}
+              className="custom-input"
+            >
+              <option value="">None</option>
+              {typeOptions}
+            </Input>
+          </div>
+          <div className="custom-form-input">
+            <Label for="owner" className="custom-form-input-label">
+              Owner
+            </Label>
+            {pet.id ? (
               <Input
                 type="select"
                 disabled
@@ -139,24 +141,12 @@ export default function PetEditAdmin() {
                 id="owner"
                 value={pet.owner?.id || ""}
                 onChange={handleChange}
+                className="custom-input"
               >
                 <option value="">None</option>
                 {ownerOptions}
               </Input>
-            </div>
-          </FormGenerator>
-        )}
-        {!loaded && (
-          <FormGenerator
-            ref={petEditFormRef}
-            inputs={petEditInputs}
-            onSubmit={handleSubmit}
-            buttonText={id !== "new" ? "Save" : "Add"}
-            buttonClassName="auth-button"
-            childrenPosition={-1}
-          >
-            <div className="custom-form-input">
-              <label className="custom-form-input-label">Owner</label>
+            ) : (
               <Input
                 type="select"
                 required
@@ -164,40 +154,24 @@ export default function PetEditAdmin() {
                 id="owner"
                 value={pet.owner?.id || ""}
                 onChange={handleChange}
+                className="custom-input"
               >
                 <option value="">None</option>
                 {ownerOptions}
               </Input>
-            </div>
-          </FormGenerator>
-        )}
-        {/*] <Form onSubmit={handleSubmit}>
-                    <FormGroup>
-                        <Label for="name">Name</Label>
-                        <Input type="text" required name="name" id="name" value={pet.name || ''}
-                            onChange={handleChange} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="birthDate">Birth Date</Label>
-                        <Input type="date" name="birthDate" id="birthDate" value={pet.birthDate || ''}
-                            onChange={handleChange} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="type">Type</Label>
-                        <Input type="select" required name="type" id="type" value={pet.type?.id}
-                            onChange={handleChange}>
-                            <option value="">None</option>
-                            {typeOptions}
-                        </Input>
-                    </FormGroup>
-                    <FormGroup>
-                        
-                    </FormGroup>
-                    <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/pets">Cancel</Button>
-                    </FormGroup>
-                </Form> */}
+            )}
+          </div>
+          <div className="custom-button-row">
+            <button className="auth-button">Save</button>
+            <Link
+              to={`/pets`}
+              className="auth-button"
+              style={{ textDecoration: "none" }}
+            >
+              Cancel
+            </Link>
+          </div>
+        </Form>
       </div>
     </div>
   );

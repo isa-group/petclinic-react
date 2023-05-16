@@ -137,6 +137,7 @@ const FormGenerator = forwardRef((props, ref) => {
                   formValues={formValues}
                   setFormValues={setFormValues}
                   onChange={input?.onChange}
+                  disabled={input.disabled}
                   ref={(input) => (formInputs.current[index] = input)}
                 />
               </>
