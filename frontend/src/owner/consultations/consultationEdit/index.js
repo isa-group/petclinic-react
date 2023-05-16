@@ -97,7 +97,7 @@ export default function OwnerConsultationEdit(){
 
     return(
 <div className="auth-page-container">
-<h2 className="text-center">{consultation.id ? 'Edit Consultation' : 'Add Consultation'}</h2>;
+<h2 className="text-center">{consultation.id ? 'Edit Consultation' : 'Add Consultation'}</h2>
                 <div className="auth-form-container">
                 <FormGenerator
                     ref={consultationEditFormRef}

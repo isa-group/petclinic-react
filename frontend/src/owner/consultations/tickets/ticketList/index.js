@@ -7,11 +7,9 @@ import {
   CardText,
   CardTitle,
   Col,
-  Container,
   Form,
   FormGroup,
   Input,
-  Label,
   Row,
 } from "reactstrap";
 import "../../../../static/css/owner/ticketPage.css";
