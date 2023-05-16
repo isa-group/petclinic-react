@@ -1,0 +1,28 @@
+.admin-page-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-form-input {
+  position: relative;
+}
+
+.custom-form-input-label {
+  position: absolute;
+  top: 0;
+  left: 5px;
+  transition: transform 0.5s, color 0.3s;
+  transform: translateY(-15px) scale(0.7);
+  transform-origin: top left;
+  color: #23c483;
+  cursor: pointer;
+}
+
+.custom-form-input-label:after {
+  content: "*";
+  color: #cc0033 !important;
+}
