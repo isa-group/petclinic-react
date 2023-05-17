@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button, ButtonGroup, Card, CardBody, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import deleteFromList from "../util/deleteFromList";
+import "../static/css/owner/ticketPage.css";
 
 class TicketService {
     getTicketList([tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, plan = null) {
@@ -79,11 +80,9 @@ class TicketService {
     getTicketForm(newTicket, status, auth, handleChange, handleSubmit) {
         if (auth === "ADMIN" || status !== "CLOSED")
             return (
-                <Container>
-                    <h4>Add New Ticket</h4>
+                <div className="ticket-input-div">
                     <Form onSubmit={handleSubmit}>
                         <FormGroup>
-                            <Label for="description">Description</Label>
                             <Input type="textarea" required name="description" id="description" value={newTicket.description || ''}
                                 onChange={handleChange} />
                         </FormGroup>
@@ -91,22 +90,22 @@ class TicketService {
                             <Button color="primary" type="submit">Save</Button>
                         </FormGroup>
                     </Form>
-                </Container>
+                </div>
             );
         else return <></>;
     }
 
     getTicketCloseButton(consultation, handleClose) {
         if (consultation.status !== "CLOSED") {
-            return <Row>
-                <Col sm="9">
+            return <Row style={{margin: "30px 0"}}>
+                <Row>
                     <h2 className="text-center">Consultation Number {consultation.id}</h2>
-                </Col>
-                <Col sm="3">
+                </Row>
+                <Row>
                     <Button color="warning" onClick={handleClose} >
                         Close Consultation
                     </Button>
-                </Col>
+                </Row>
             </Row>
         } else
             return <h2 className="text-center">Consultation Number {consultation.id}</h2>

@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { Container } from 'reactstrap';
+import { useState, useRef, useEffect } from 'react';
 import tokenService from '../../services/token.service';
 import ticketService from '../../services/ticket.service';
 import getErrorModal from '../../util/getErrorModal';
@@ -21,6 +20,8 @@ export default function TicketListAdmin() {
     const [tickets, setTickets] = useFetchState([], `/api/v1/consultations/${id}/tickets`, jwt, setMessage, setVisible);
     const [newTicket, setNewTicket] = useState(emptyTicket);
     const [alerts, setAlerts] = useState([]);
+
+    const conversationRef = useRef(null);
 
     function handleChange(event) {
         const target = event.target;
@@ -83,6 +84,12 @@ export default function TicketListAdmin() {
 
     }
 
+    useEffect(() => {
+        if (conversationRef.current) {
+          conversationRef.current.scrollTop = conversationRef.current.scrollHeight;
+        }
+      }, [tickets, newTicket]);
+
     const modal = getErrorModal(setVisible, visible, message);
 
     const ticketList = ticketService.getTicketList([tickets, setTickets], "ADMIN", [alerts, setAlerts], setMessage, setVisible);
@@ -90,15 +97,16 @@ export default function TicketListAdmin() {
     const ticketClose = ticketService.getTicketCloseButton(consultation, handleClose)
 
     return (
-        <div>
-            <Container style={{ marginTop: "15px" }}>
+        <div className="ticket-page">
                 {ticketClose}
                 {alerts.map((a) => a.alert)}
                 {modal}
                 <h3>{consultation.title}</h3>
-                {ticketList}
-            </Container>
-            {ticketForm}
-        </div>
+                <div className="conversation-container" ref={conversationRef} style={{maxHeight: "65vh"}}>
+                    {ticketList}
+                </div>
+                {ticketForm}
+            </div>
+            
     );
 }
