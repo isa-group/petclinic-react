@@ -42,7 +42,7 @@ export default function VetConsultationList() {
     setFilter(value);
   }
 
-  function getConsultationList(consultations, plan) {
+  function getConsultationList(consultations) {
     return consultations.map((c) => {
       return (
         <tr key={c.id}>
@@ -60,18 +60,6 @@ export default function VetConsultationList() {
               >
                 Details
               </Button>
-              {plan === "PLATINUM" ? (
-                <Button
-                  size="sm"
-                  color="primary"
-                  tag={Link}
-                  to={"/consultations/" + c.id}
-                >
-                  Edit
-                </Button>
-              ) : (
-                <></>
-              )}
             </ButtonGroup>
           </td>
         </tr>
@@ -164,8 +152,8 @@ export default function VetConsultationList() {
           </thead>
           <tbody>
             {filtered
-              ? getConsultationList(filtered, plan)
-              : getConsultationList(consultations, plan)}
+              ? getConsultationList(filtered)
+              : getConsultationList(consultations)}
           </tbody>
         </Table>
       </Container>
