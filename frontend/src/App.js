@@ -36,6 +36,7 @@ import ConsultationListAdmin from "./admin/consultations/ConsultationListAdmin";
 import TicketListAdmin from "./admin/consultations/TicketListAdmin";
 import ConsultationEditAdmin from "./admin/consultations/ConsultationEditAdmin";
 import SwaggerDocs from "./public/swagger";
+import ClinicsList from "./clinicOwner/clinicsList"
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -105,6 +106,12 @@ function App() {
           <Route path="/myPets" exact={true} element={<PrivateRoute><OwnerPetList /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><VetConsultationList /></PrivateRoute>} />
           <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><VetConsultationTickets /></PrivateRoute>} />
+        </>)
+    }
+    if (role === "CLINIC_OWNER") {
+      vetRoutes = (
+        <>
+          <Route path="/myClinics" exact={true} element={<PrivateRoute><ClinicsList /></PrivateRoute>} />
         </>)
     }
   })

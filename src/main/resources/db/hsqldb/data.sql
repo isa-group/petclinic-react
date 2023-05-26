@@ -7,8 +7,8 @@ INSERT INTO authorities(id,authority) VALUES (2,'CLINIC_OWNER');
 INSERT INTO users(id,username,password,authority) VALUES (2,'clinicOwner1','$2a$10$t.I/C4cjUdUWzqlFlSddLeh9SbZ6d8wR7mdbeIRghT355/KRKZPAi',2);
 INSERT INTO users(id,username,password,authority) VALUES (3,'clinicOwner2','$2a$10$t.I/C4cjUdUWzqlFlSddLeh9SbZ6d8wR7mdbeIRghT355/KRKZPAi',2);
 
-INSERT INTO clinic_owners VALUES (1, 'John', 'Doe', 1);
-INSERT INTO clinic_owners VALUES (2, 'Jane', 'Doe', 2);
+INSERT INTO clinic_owners VALUES (1, 'John', 'Doe', 2);
+INSERT INTO clinic_owners VALUES (2, 'Jane', 'Doe', 3);
 
 INSERT INTO clinics(id, name, address, telephone, plan, clinic_owner) VALUES (1, 'Clinic 1', 'Av. Palmera, 26', '955684230', 'BASIC', 1);
 INSERT INTO clinics(id, name, address, telephone, plan, clinic_owner) VALUES (2, 'Clinic 2', 'Av. Torneo, 52', '955634232', 'GOLD', 2);

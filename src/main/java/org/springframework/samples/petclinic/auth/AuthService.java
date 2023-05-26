@@ -6,7 +6,8 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.clinic.PricingPlan;
+import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
+import org.springframework.samples.petclinic.clinic_owner.ClinicOwnerService;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.user.Authorities;
@@ -29,15 +30,17 @@ public class AuthService {
 	private final UserService userService;
 	private final OwnerService ownerService;
 	private final VetService vetService;
+	private final ClinicOwnerService clinicOwnerService;
 
 	@Autowired
 	public AuthService(PasswordEncoder encoder, AuthoritiesService authoritiesService, UserService userService,
-			OwnerService ownerService, VetService vetService) {
+			OwnerService ownerService, VetService vetService, ClinicOwnerService clinicOwnerService) {
 		this.encoder = encoder;
 		this.authoritiesService = authoritiesService;
 		this.userService = userService;
 		this.ownerService = ownerService;
 		this.vetService = vetService;
+		this.clinicOwnerService = clinicOwnerService;
 
 	}
 
@@ -66,6 +69,16 @@ public class AuthService {
 			vet.setSpecialties(new ArrayList<Specialty>());
 			vet.setUser(user);
 			vetService.saveVet(vet);
+			break;
+		case "clinic owner":
+			role = authoritiesService.findByAuthority("CLINIC_OWNER");
+			user.setAuthority(role);
+			userService.saveUser(user);
+			ClinicOwner clinicOwner = new ClinicOwner();
+			clinicOwner.setFirstName(request.getFirstName());
+			clinicOwner.setLastName(request.getLastName());
+			clinicOwner.setUser(user);
+			clinicOwnerService.saveClinicOwner(clinicOwner);
 			break;
 		default:
 			role = authoritiesService.findByAuthority("OWNER");

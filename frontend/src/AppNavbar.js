@@ -71,6 +71,16 @@ function AppNavbar() {
                 </>
             )
         }
+
+        if (role === "CLINIC_OWNER") {
+            ownerLinks = (
+                <>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/myClinics">Clinics</NavLink>
+                    </NavItem>
+                </>
+            )
+        }
     })
 
     if (!jwt) {

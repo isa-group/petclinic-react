@@ -113,6 +113,13 @@ export default function Register() {
             >
               Vet
             </button>
+            <button
+              className="auth-button"
+              value="Clinic Owner"
+              onClick={handleButtonClick}
+            >
+              Clinic Owner
+            </button>
           </div>
         </div>
       </div>

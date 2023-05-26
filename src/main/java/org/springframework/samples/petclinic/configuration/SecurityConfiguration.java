@@ -40,6 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	DataSource dataSource;
 
 	private static final String ADMIN = "ADMIN";
+	private static final String CLINIC_OWNER = "CLINIC_OWNER";
 
 	@Bean
 	public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -73,6 +74,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.DELETE, "/api/v1/consultations/{consultationId:[0-9]\\d+}").hasAuthority(ADMIN)
 				.antMatchers("/api/v1/owners/**/pets/**").authenticated().antMatchers("/api/v1/owners/**")
 				.hasAuthority(ADMIN).antMatchers(HttpMethod.GET, "/api/v1/pets/stats").hasAuthority(ADMIN)
+				.antMatchers("/api/v1/clinics/**").hasAnyAuthority(CLINIC_OWNER)
 //				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
 				.antMatchers(HttpMethod.GET, "/api/v1/vets/stats").hasAuthority(ADMIN)
 				.antMatchers(HttpMethod.GET, "/api/v1/vets/**").authenticated().antMatchers("/api/v1/vets/**")
