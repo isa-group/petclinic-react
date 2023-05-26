@@ -6,9 +6,9 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
-import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
@@ -77,7 +77,6 @@ public class AuthService {
 			owner.setAddress(request.getAddress());
 			owner.setCity(request.getCity());
 			owner.setTelephone(request.getTelephone());
-			owner.setPlan(PricingPlan.BASIC);
 			owner.setUser(user);
 			ownerService.saveOwner(owner);
 

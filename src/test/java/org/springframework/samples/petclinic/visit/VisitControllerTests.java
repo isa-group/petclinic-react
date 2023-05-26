@@ -26,6 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
@@ -33,7 +34,6 @@ import org.springframework.samples.petclinic.exceptions.ResourceNotFoundExceptio
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
-import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.samples.petclinic.pet.PetType;
@@ -103,7 +103,6 @@ class VisitControllerTests {
 		george.setAddress("110 W. Liberty St.");
 		george.setCity("Sevilla");
 		george.setTelephone("608555102");
-		george.setPlan(PricingPlan.BASIC);
 
 		Authorities ownerAuth = new Authorities();
 		ownerAuth.setId(1);
@@ -142,9 +141,6 @@ class VisitControllerTests {
 
 		when(this.userService.findCurrentUser()).thenReturn(getUserFromDetails(
 				(UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
-
-//		adminJwt = getToken("admin", "ADMIN");
-//		ownerJwt = getToken("owner", "OWNER");
 
 	}
 
@@ -609,7 +605,7 @@ class VisitControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void shouldReturnOwnerStats() throws Exception {
 		logged.setId(TEST_USER_ID);
-		george.setPlan(PricingPlan.PLATINUM);
+		//george.setPlan(PricingPlan.PLATINUM);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.getVisitsOwnerStats(george.getId())).thenReturn(new HashMap<>());
@@ -621,7 +617,7 @@ class VisitControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void shouldNotReturnOwnerStatsNotPlatinum() throws Exception {
 		logged.setId(TEST_USER_ID);
-		george.setPlan(PricingPlan.BASIC);
+		//george.setPlan(PricingPlan.BASIC);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.getVisitsOwnerStats(george.getId())).thenReturn(new HashMap<>());

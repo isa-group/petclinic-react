@@ -23,6 +23,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.pet.Pet;
 
 /**
@@ -46,17 +47,13 @@ public interface OwnerRepository extends CrudRepository<Owner, Integer> {
 
 	@Query("SELECT p FROM Pet p WHERE p.owner.id = :ownerId")
 	public List<Pet> findPetsByOwner(@Param("ownerId") int ownerId);
-//	
-//	@Modifying
-//	@Query("DELETE FROM Pet p WHERE p.owner.id = :ownerId")
-//	public void deletePetsByOwner(@Param("ownerId") int ownerId);
 
 	@Query("SELECT DISTINCT owner FROM Owner owner WHERE owner.user.id = :userId")
 	public Optional<Owner> findByUser(int userId);
 
 	// STATS
 
-	@Query("SELECT COUNT(o) FROM Owner o WHERE o.plan = :plan")
+	@Query("SELECT COUNT(o) FROM Owner o WHERE o.clinic.plan = :plan")
 	public Integer countByPlan(PricingPlan plan);
 
 	@Query("SELECT COUNT(o) FROM Owner o")

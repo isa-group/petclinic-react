@@ -113,15 +113,6 @@ class OwnerServiceTests {
 
 	@Test
 	@Transactional
-	void shouldUpdatePlan() {
-		Owner owner = this.ownerService.findOwnerById(1);
-		assertEquals(PricingPlan.PLATINUM, owner.getPlan());
-		ownerService.updatePlan(PricingPlan.GOLD, 1);
-		assertEquals(PricingPlan.GOLD, owner.getPlan());
-	}
-
-	@Test
-	@Transactional
 	void shouldUpdateOwner() {
 		Owner owner = this.ownerService.findOwnerById(1);
 		owner.setAddress("Change");
@@ -169,7 +160,6 @@ class OwnerServiceTests {
 		owner.setLastName("Apellido");
 		owner.setAddress("4, Evans Street");
 		owner.setCity("Wollongong");
-		owner.setPlan(PricingPlan.BASIC);
 		owner.setTelephone("444444444");
 		User user = new User();
 		user.setUsername("Sam");

@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,7 +74,7 @@ public class VisitService {
 	public boolean underLimit(Visit visit) {
 		Integer visitCount = this.visitRepository.countVisitsByPetInMonth(visit.getPet().getId(),
 				visit.getDatetime().getMonthValue(), visit.getDatetime().getYear());
-		PricingPlan plan = visit.getPet().getOwner().getPlan();
+		PricingPlan plan = visit.getPet().getOwner().getClinic().getPlan();
 		switch (plan) {
 		case PLATINUM:
 			if (visitCount < PLATINUM_LIMIT)

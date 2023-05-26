@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,11 +50,11 @@ public class OwnerPlanController {
 		return new ResponseEntity<>(userService.findOwnerByUser(user.getId()),HttpStatus.OK);
     }
 
-	@PutMapping
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Owner> updatePlan(@RequestBody @Valid PricingPlan plan ) {
-		 User user = userService.findCurrentUser();
-		 Owner owner = userService.findOwnerByUser(user.getId());
-	     return new ResponseEntity<>(this.ownerService.updatePlan(plan,owner.getId()),HttpStatus.OK);
-	}
+	// @PutMapping
+	// @ResponseStatus(HttpStatus.OK)
+	// public ResponseEntity<Owner> updatePlan(@RequestBody @Valid PricingPlan plan ) {
+	// 	 User user = userService.findCurrentUser();
+	// 	 Owner owner = userService.findOwnerByUser(user.getId());
+	//      return new ResponseEntity<>(this.ownerService.updatePlan(plan,owner.getId()),HttpStatus.OK);
+	// }
 }

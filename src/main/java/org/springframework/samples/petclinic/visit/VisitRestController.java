@@ -24,12 +24,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
-import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.samples.petclinic.user.User;
@@ -107,7 +107,7 @@ public class VisitRestController {
 				if (this.visitService.underLimit(newVisit)) {
 					savedVisit = this.visitService.saveVisit(newVisit);
 				} else
-					throw new LimitReachedException("Visits per month for your Pet " + pet.getName(), owner.getPlan());
+					throw new LimitReachedException("Visits per month for your Pet " + pet.getName(), owner.getClinic().getPlan());
 			} else
 				throw new ResourceNotOwnedException(pet);
 		} else
@@ -198,7 +198,7 @@ public class VisitRestController {
 		User user = this.userService.findCurrentUser();
 		if (user.hasAuthority(OWNER_AUTH).equals(true)) {
 			Owner o = userService.findOwnerByUser(user.getId());
-			if (o.getPlan().equals(PricingPlan.PLATINUM))
+			if (o.getClinic().getPlan().equals(PricingPlan.PLATINUM))
 				return new ResponseEntity<>(this.visitService.getVisitsOwnerStats(o.getId()), HttpStatus.OK);
 		} else if (user.hasAuthority(ADMIN_AUTH).equals(true))
 			return new ResponseEntity<>(this.visitService.getVisitsAdminStats(), HttpStatus.OK);

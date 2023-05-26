@@ -26,13 +26,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.PetType;
 import org.springframework.samples.petclinic.user.Authorities;
@@ -96,7 +96,6 @@ class ConsultationControllerTests {
 		george.setAddress("110 W. Liberty St.");
 		george.setCity("Sevilla");
 		george.setTelephone("608555102");
-		george.setPlan(PricingPlan.PLATINUM);
 
 		Authorities ownerAuth = new Authorities();
 		ownerAuth.setId(1);
@@ -329,7 +328,6 @@ class ConsultationControllerTests {
 		aux.setTitle("Checking Simba's leg.");
 		aux.setPet(simba);
 		aux.setOwner(george);
-		george.setPlan(PricingPlan.BASIC);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 
@@ -398,7 +396,6 @@ class ConsultationControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void ownerShouldNotUpdateIfNotPlatinum() throws Exception {
 		logged.setId(TEST_USER_ID);
-		george.setPlan(PricingPlan.BASIC);
 
 		when(this.consultationService.findConsultationById(TEST_CONSULTATION_ID)).thenReturn(consultation);
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
@@ -598,7 +595,6 @@ class ConsultationControllerTests {
 		logged.setId(TEST_USER_ID);
 		Ticket aux = new Ticket();
 		aux.setDescription("Checking Simba's leg.");
-		george.setPlan(PricingPlan.BASIC);
 
 		when(this.consultationService.findConsultationById(TEST_CONSULTATION_ID)).thenReturn(consultation);
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
@@ -742,7 +738,6 @@ class ConsultationControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void shouldNotReturnOwnerStatsNotPlatinum() throws Exception {
 		logged.setId(TEST_USER_ID);
-		george.setPlan(PricingPlan.BASIC);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.consultationService.getOwnerConsultationsStats(george.getId())).thenReturn(new HashMap<>());
