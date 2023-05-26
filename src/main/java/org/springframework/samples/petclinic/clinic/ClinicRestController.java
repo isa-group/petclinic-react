@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.clinic_owner;
+package org.springframework.samples.petclinic.clinic;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -27,19 +27,18 @@ import org.springframework.web.bind.annotation.RestController;
 import petclinic.payload.response.MessageResponse;
 
 @RestController
-@RequestMapping("/api/v1/clinicOwners")
-public class ClinicOwnerRestController {
-    private final ClinicOwnerService clinicOwnerService;
-	private final UserService userService;
+@RequestMapping("/api/v1/clinics")
+public class ClinicRestController {
+    private final ClinicService clinicService;
 
 	@Autowired
-	public ClinicOwnerRestController(ClinicOwnerService clinicOwnerService, UserService userService) {
-		this.clinicOwnerService = clinicOwnerService;
-		this.userService = userService;
+	public ClinicRestController(ClinicService clinicService) {
+		this.clinicService = clinicService;
 	}
 
-	@GetMapping(value = "/clinics")
-	public ResponseEntity<ClinicOwner> findByUserId(@RequestParam(required = true) int userId) {
-		return new ResponseEntity<>(clinicOwnerService.findByUserId(userId), HttpStatus.OK);
+
+    @GetMapping(value = "{clinicId}")
+	public ResponseEntity<Clinic> findClinicById(@PathVariable("clinicId") int clinicId) {
+		return new ResponseEntity<>(clinicService.findClinicById(clinicId), HttpStatus.OK);
 	}
 }

@@ -15,7 +15,7 @@ export default function ClinicsList(){
   const [visible, setVisible] = useState(false);
   const [clinicOwner, setClinicOwner] = useFetchState(
     null,
-    `/api/v1/clinics?userId=${user.id}`,
+    `/api/v1/clinicOwners/clinics?userId=${user.id}`,
     jwt,
     setMessage,
     setVisible
@@ -78,7 +78,7 @@ export default function ClinicsList(){
         {alerts.map((a) => a.alert)}
         {modal}
         <div className="float-right">
-          <Button color="success" tag={Link} to="/clinicss/new">
+          <Button color="success" tag={Link} to="/clinics/new">
             Add clinic
           </Button>
         </div>

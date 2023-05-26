@@ -83,7 +83,7 @@ const FormGenerator = forwardRef((props, ref) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formValues]);
+  }, [formValues, props.inputs]);
 
   useEffect(() => {
     if (submitForm) {
