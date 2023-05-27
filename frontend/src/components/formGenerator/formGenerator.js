@@ -38,6 +38,11 @@ const FormGenerator = forwardRef((props, ref) => {
 
         return isValid;
       },
+      updateForm: () => {
+        formElement.current.reset();
+        setFormValues({});
+        setSubmitForm(false);
+      }
     };
   });
 

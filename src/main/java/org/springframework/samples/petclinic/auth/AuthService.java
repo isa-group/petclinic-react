@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.clinic.ClinicService;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwnerService;
 import org.springframework.samples.petclinic.owner.Owner;
@@ -31,17 +32,18 @@ public class AuthService {
 	private final OwnerService ownerService;
 	private final VetService vetService;
 	private final ClinicOwnerService clinicOwnerService;
+	private final ClinicService clinicService;
 
 	@Autowired
 	public AuthService(PasswordEncoder encoder, AuthoritiesService authoritiesService, UserService userService,
-			OwnerService ownerService, VetService vetService, ClinicOwnerService clinicOwnerService) {
+			OwnerService ownerService, VetService vetService, ClinicOwnerService clinicOwnerService, ClinicService clinicService) {
 		this.encoder = encoder;
 		this.authoritiesService = authoritiesService;
 		this.userService = userService;
 		this.ownerService = ownerService;
 		this.vetService = vetService;
 		this.clinicOwnerService = clinicOwnerService;
-
+		this.clinicService = clinicService;
 	}
 
 	@Transactional
@@ -90,6 +92,7 @@ public class AuthService {
 			owner.setAddress(request.getAddress());
 			owner.setCity(request.getCity());
 			owner.setTelephone(request.getTelephone());
+			owner.setClinic(clinicService.findClinicById(request.getClinic().getId()));
 			owner.setUser(user);
 			ownerService.saveOwner(owner);
 
