@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.clinic;
 
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,23 @@ public class ClinicService {
 		}
 	}
 
-    // @Transactional
-	// public ClinicOwner saveClinicOwner(ClinicOwner clinicOwner) throws DataAccessException {
-	// 	clinicOwnerRepository.save(clinicOwner);
-	// 	return clinicOwner;
-	// }
+    @Transactional
+	public Clinic save(Clinic clinic) throws DataAccessException {
+		clinicRepository.save(clinic);
+		return clinic;
+	}
+
+	@Transactional
+	public Clinic update(Clinic clinic, int clinicId) throws DataAccessException {
+		
+		Clinic clinicToUpdate = clinicRepository.findById(clinicId).get();
+		BeanUtils.copyProperties(clinic, clinicToUpdate, "id", "clinicOwner", "owners");
+
+		return save(clinicToUpdate);
+	}
+
+	@Transactional
+	public void delete(int clinicId) throws DataAccessException {
+		clinicRepository.deleteById(clinicId);
+	}
 }

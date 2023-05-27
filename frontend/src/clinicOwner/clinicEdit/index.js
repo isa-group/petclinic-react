@@ -7,12 +7,14 @@ import useFetchState from "../../util/useFetchState";
 import { clinicEditInputs } from "./form/clinicEditInputs";
 import FormGenerator from "../../components/formGenerator/formGenerator";
 import { useState, useEffect, useRef } from "react";
+import {useNavigate} from "react-router-dom";
 
 const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
 
 export default function EditClinic() {
   const id = getIdFromUrl(2);
+  const navigator = useNavigate();
 
   const emptyItem = {
     id: "",
@@ -37,7 +39,42 @@ export default function EditClinic() {
 
   function handleSubmit({ values }) {
     if (!editClinicFormRef.current.validate()) return;
-    console.log(values);
+
+    if (id !== "new") {
+      fetch(`/api/v1/clinics/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify(values),
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          navigator("/clinics");
+        }
+      })
+      .catch((err) => {
+        setMessage(err.message);
+      });;
+    } else {
+      fetch(`/api/v1/clinics`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify(values),
+      })
+      .then((res) => {
+        if (res.status === 201) {
+          navigator("/clinics");
+        }
+      })
+      .catch((err) => {
+        setMessage(err.message);
+      });
+    }
   }
 
   useEffect(() => {
