@@ -118,7 +118,7 @@ export default function OwnerConsultationTickets() {
         })
       ).json();
       if (owner.message) setMessage(owner.message);
-      else setPlan(owner.plan);
+      else setPlan(owner.clinic.plan);
     }
   }
 

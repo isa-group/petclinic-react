@@ -7,14 +7,15 @@ import getErrorModal from "../../util/getErrorModal";
 import deleteFromList from "../../util/deleteFromList";
 import "../../static/css/admin/adminPage.css";
 
+const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
 
-export default function OwnerListAdmin() {
-  const [message, setMessage] = useState(null);
+export default function OwnerListClinicOwner(){
+    const [message, setMessage] = useState(null);
   const [visible, setVisible] = useState(false);
   const [owners, setOwners] = useFetchState(
     [],
-    `/api/v1/owners`,
+    `/api/v1/clinics/owners?userId=${user.id}`,
     jwt,
     setMessage,
     setVisible
@@ -22,6 +23,7 @@ export default function OwnerListAdmin() {
   const [alerts, setAlerts] = useState([]);
 
   const ownerList = owners.map((owner) => {
+
     return (
       <tr key={owner.id}>
         <td style={{ whiteSpace: "nowrap" }}>
@@ -32,36 +34,6 @@ export default function OwnerListAdmin() {
         <td>{owner.telephone}</td>
         <td>{owner.user.username}</td>
         <td>{owner.clinic.name}</td>
-        <td>
-          <ButtonGroup>
-            <Button
-              size="sm"
-              color="primary"
-              aria-label={"edit-" + owner.user.username}
-              tag={Link}
-              to={"/owners/" + owner.id}
-            >
-              Edit
-            </Button>
-            <Button
-              size="sm"
-              color="danger"
-              aria-label={"delete-" + owner.user.username}
-              onClick={() =>
-                deleteFromList(
-                  `/api/v1/owners/${owner.id}`,
-                  owner.id,
-                  [owners, setOwners],
-                  [alerts, setAlerts],
-                  setMessage,
-                  setVisible
-                )
-              }
-            >
-              Delete
-            </Button>
-          </ButtonGroup>
-        </td>
       </tr>
     );
   });
@@ -74,22 +46,16 @@ export default function OwnerListAdmin() {
         <h1 className="text-center">Owners</h1>
         {alerts.map((a) => a.alert)}
         {modal}
-        <div className="float-right">
-          <Button color="success" tag={Link} to="/owners/new">
-            Add Owner
-          </Button>
-        </div>
         <div>
           <Table aria-label="owners" className="mt-4">
             <thead>
               <tr>
-                <th width="10%">Name</th>
-                <th width="10%">Address</th>
-                <th width="10%">City</th>
-                <th width="10%">Telephone</th>
-                <th width="10%">User</th>
-                <th width="10%">Clinic</th>
-                <th width="40%">Actions</th>
+                <th width="15%">Name</th>
+                <th width="20%">Address</th>
+                <th width="15%">City</th>
+                <th width="15%">Telephone</th>
+                <th width="15%">User</th>
+                <th width="20%">Clinic</th>
               </tr>
             </thead>
             <tbody>{ownerList}</tbody>

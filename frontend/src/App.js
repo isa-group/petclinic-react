@@ -38,6 +38,7 @@ import ConsultationEditAdmin from "./admin/consultations/ConsultationEditAdmin";
 import SwaggerDocs from "./public/swagger";
 import ClinicsList from "./clinicOwner/clinicsList"
 import EditClinic from "./clinicOwner/clinicEdit"
+import OwnerListClinicOwner from "./clinicOwner/ownersList"
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -112,6 +113,7 @@ function App() {
     if (role === "CLINIC_OWNER") {
       vetRoutes = (
         <>
+          <Route path="/owners" exact={true} element={<PrivateRoute><OwnerListClinicOwner /></PrivateRoute>} />
           <Route path="/clinics" exact={true} element={<PrivateRoute><ClinicsList /></PrivateRoute>} />
           <Route path="/clinics/:id" exact={true} element={<PrivateRoute><EditClinic /></PrivateRoute>} />
         </>)

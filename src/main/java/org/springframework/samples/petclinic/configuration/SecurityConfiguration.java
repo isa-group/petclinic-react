@@ -67,25 +67,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**", "/swagger-resources/**")
-				.permitAll().antMatchers(HttpMethod.GET, "/", "/oups").permitAll().antMatchers("/api/v1/auth/**")
-				.permitAll().antMatchers("/v2/api-docs").permitAll().antMatchers("/swagger-ui.html/**").permitAll()
-				.antMatchers("/api/v1/plan").hasAuthority("OWNER").antMatchers("/api/v1/users/**").hasAuthority(ADMIN)
+				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**", "/swagger-resources/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/", "/oups").permitAll()
+				.antMatchers("/api/v1/auth/**").permitAll()
+				.antMatchers("/v2/api-docs").permitAll()
+				.antMatchers("/swagger-ui.html/**").permitAll()
+				.antMatchers("/api/v1/plan").hasAuthority("OWNER")
+				.antMatchers("/api/v1/users/**").hasAuthority(ADMIN)
 				.antMatchers(HttpMethod.DELETE, "/api/v1/consultations/{consultationId:[0-9]\\d+}").hasAuthority(ADMIN)
-				.antMatchers("/api/v1/owners/**/pets/**").authenticated().antMatchers("/api/v1/owners/**")
-				.hasAuthority(ADMIN).antMatchers(HttpMethod.GET, "/api/v1/pets/stats").hasAuthority(ADMIN)
-				.antMatchers("/api/v1/clinics/**").hasAnyAuthority(CLINIC_OWNER)
-//				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/owners/**/pets/**").authenticated()
+				.antMatchers("/api/v1/owners/**").hasAuthority(ADMIN)
+				.antMatchers(HttpMethod.GET, "/api/v1/pets/stats").hasAuthority(ADMIN)
+				.antMatchers("/api/v1/clinics/**").hasAnyAuthority(CLINIC_OWNER, ADMIN)
 				.antMatchers(HttpMethod.GET, "/api/v1/vets/stats").hasAuthority(ADMIN)
-				.antMatchers(HttpMethod.GET, "/api/v1/vets/**").authenticated().antMatchers("/api/v1/vets/**")
-				.hasAnyAuthority(ADMIN, "VET")
-				// .antMatchers("/api/v1/**").authenticated();
-
+				.antMatchers(HttpMethod.GET, "/api/v1/vets/**").authenticated()
+				.antMatchers("/api/v1/vets/**").hasAnyAuthority(ADMIN, "VET")
 				.anyRequest().authenticated();
 
 		http.headers().frameOptions().sameOrigin();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//			http.addFilterAfter(new SpaWebFilter(), UsernamePasswordAuthenticationFilter.class);
+		// http.addFilterAfter(new SpaWebFilter(),
+		// UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override
@@ -96,10 +98,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/swagger-resources/**");
 	}
 
-//		public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//			registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-//
-//			registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-//		}
+	// public void addResourceHandlers(ResourceHandlerRegistry registry) {
+	// registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+	//
+	// registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+	// }
 
 }

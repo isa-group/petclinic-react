@@ -15,6 +15,7 @@ import org.springframework.samples.petclinic.clinic_owner.ClinicOwnerService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
+import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,21 +32,31 @@ import petclinic.payload.response.MessageResponse;
 @RestController
 @RequestMapping("/api/v1/clinics")
 public class ClinicRestController {
-    private final ClinicService clinicService;
+	private final ClinicService clinicService;
 	private final ClinicOwnerService clinicOwnerService;
 	private final UserService userService;
 
 	@Autowired
-	public ClinicRestController(ClinicService clinicService, ClinicOwnerService clinicOwnerService, UserService userService) {
+	public ClinicRestController(ClinicService clinicService, ClinicOwnerService clinicOwnerService,
+			UserService userService) {
 		this.clinicService = clinicService;
 		this.clinicOwnerService = clinicOwnerService;
 		this.userService = userService;
 	}
 
+	@GetMapping
+	public ResponseEntity<List<Clinic>> findAllClinics() {
+		return new ResponseEntity<>(clinicService.findAll(), HttpStatus.OK);
+	}
 
-    @GetMapping(value = "{clinicId}")
+	@GetMapping(value = "{clinicId}")
 	public ResponseEntity<Clinic> findClinicById(@PathVariable("clinicId") int clinicId) {
 		return new ResponseEntity<>(clinicService.findClinicById(clinicId), HttpStatus.OK);
+	}
+
+	@GetMapping(value = "owners")
+	public ResponseEntity<List<Owner>> findOwnersOfUserClinics(@RequestParam int userId) {
+		return new ResponseEntity<>(clinicService.findOwnersOfUserClinics(userId), HttpStatus.OK);
 	}
 
 	@PostMapping
@@ -61,7 +72,8 @@ public class ClinicRestController {
 	}
 
 	@PutMapping(value = "{clinicId}")
-	public ResponseEntity<Clinic> updateClinic(@PathVariable("clinicId") int clinicId, @RequestBody @Valid Clinic clinic) {
+	public ResponseEntity<Clinic> updateClinic(@PathVariable("clinicId") int clinicId,
+			@RequestBody @Valid Clinic clinic) {
 		RestPreconditions.checkNotNull(clinicService.findClinicById(clinicId), "Clinic", "ID", clinicId);
 
 		return new ResponseEntity<>(clinicService.update(clinic, clinicId), HttpStatus.OK);

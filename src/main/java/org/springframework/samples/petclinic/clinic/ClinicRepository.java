@@ -6,7 +6,10 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.samples.petclinic.owner.Owner;
 
 public interface ClinicRepository extends CrudRepository<Clinic, Integer> {
 
+    @Query("SELECT o FROM Owner o WHERE o.clinic.clinicOwner.user.id = :userId")
+    List<Owner> findOwnersOfUserClinics(int userId);
 }

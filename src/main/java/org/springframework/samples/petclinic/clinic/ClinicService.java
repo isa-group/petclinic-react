@@ -1,10 +1,12 @@
 package org.springframework.samples.petclinic.clinic;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,12 @@ public class ClinicService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<Clinic> findAll() throws DataAccessException {
+		
+		return (List<Clinic>) clinicRepository.findAll();
+	}
+
+	@Transactional(readOnly = true)
 	public Clinic findClinicById(int clinicId) throws DataAccessException {
 		
 		Optional<Clinic> clinic = clinicRepository.findById(clinicId);
@@ -27,6 +35,11 @@ public class ClinicService {
 		}else{
 			return null;
 		}
+	}
+
+	@Transactional(readOnly = true)
+	public List<Owner> findOwnersOfUserClinics(int userId) throws DataAccessException {
+		return clinicRepository.findOwnersOfUserClinics(userId);
 	}
 
     @Transactional

@@ -29,12 +29,24 @@ export default function OwnerEditAdmin() {
     setVisible,
     id
   );
+  const [clinics, setClinics] = useFetchState(
+    [],
+    `/api/v1/clinics`,
+    jwt,
+    setMessage,
+    setVisible,
+    id
+  );
 
   function handleChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    setOwner({ ...owner, [name]: value });
+    if(name === "clinic") {
+      setOwner({ ...owner, clinic: clinics.filter((clinic) => clinic.id === parseInt(value))[0] });
+    }else{
+      setOwner({ ...owner, [name]: value });
+    }
   }
 
   function handleSubmit(event) {
@@ -139,22 +151,24 @@ export default function OwnerEditAdmin() {
             />
           </div>
           <div className="custom-form-input">
-            <Label for="plan" className="custom-form-input-label">
-              Plan
+            <Label for="clinic" className="custom-form-input-label">
+              Clinic
             </Label>
             <Input
-              id="plan"
-              name="plan"
+              id="clinic"
+              name="clinic"
               required
               type="select"
-              value={owner.plan || ""}
+              value={owner.clinic ? owner.clinic.id : ""}
               onChange={handleChange}
               className="custom-input"
             >
               <option value="">None</option>
-              <option value="BASIC">BASIC</option>
-              <option value="GOLD">GOLD</option>
-              <option value="PLATINUM">PLATINUM</option>
+              {
+                clinics && clinics.map((clinic) => {
+                  return <option value={clinic.id}>{clinic.name}</option>
+                })
+              }
             </Input>
           </div>
           <div className="custom-button-row">

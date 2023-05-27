@@ -24,7 +24,7 @@ class PricingPlan extends Component {
       })
     ).json();
     if (owner.message) this.setState({ message: owner.message });
-    else this.setState({ owner: owner, plan: owner.plan });
+    else this.setState({ owner: owner, plan: owner.clinic.plan });
   }
 
   async changePlan(event, plan) {
