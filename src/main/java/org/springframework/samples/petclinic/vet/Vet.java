@@ -24,11 +24,13 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 
+import org.springframework.samples.petclinic.clinic.Clinic;
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.user.User;
 
@@ -53,6 +55,10 @@ public class Vet extends Person {
 	@Column(name = "city")
 	@NotEmpty
 	private String city;
+
+	@ManyToOne
+	@JoinColumn(name = "clinic", referencedColumnName = "id")
+	private Clinic clinic;
 
 	public void removeSpecialty(Specialty s) {
 		specialties.remove(s);

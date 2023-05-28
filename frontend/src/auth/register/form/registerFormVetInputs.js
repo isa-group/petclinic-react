@@ -11,4 +11,13 @@ export const registerFormVetInputs = [
     isRequired: true,
     validators: [formValidators.notEmptyValidator],
   },
+  {
+    tag: "Clinic",
+    name: "clinic",
+    type: "select",
+    values: ["None"],
+    defaultValue: "",
+    isRequired: true,
+    validators: [formValidators.notEmptyValidator, formValidators.notNoneTypeValidator],
+  },
 ];

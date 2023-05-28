@@ -37,12 +37,12 @@ INSERT INTO users(id,username,password,authority) VALUES (17,'vet4','$2a$10$aeyp
 INSERT INTO users(id,username,password,authority) VALUES (18,'vet5','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',4);
 INSERT INTO users(id,username,password,authority) VALUES (19,'vet6','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',4);
 
-INSERT INTO vets(id, first_name,last_name,city,user) VALUES (1, 'James', 'Carter','Sevilla',14);
-INSERT INTO vets(id, first_name,last_name,city,user) VALUES (2, 'Helen', 'Leary','Sevilla',15);
-INSERT INTO vets(id, first_name,last_name,city,user) VALUES (3, 'Linda', 'Douglas','Sevilla',16);
-INSERT INTO vets(id, first_name,last_name,city,user) VALUES (4, 'Rafael', 'Ortega','Badajoz',17);
-INSERT INTO vets(id, first_name,last_name,city,user) VALUES (5, 'Henry', 'Stevens','Badajoz',18);
-INSERT INTO vets(id, first_name,last_name,city,user) VALUES (6, 'Sharon', 'Jenkins','Cádiz',19);
+INSERT INTO vets(id, first_name,last_name,city, clinic, user) VALUES (1, 'James', 'Carter','Sevilla', 1, 14);
+INSERT INTO vets(id, first_name,last_name,city, clinic, user) VALUES (2, 'Helen', 'Leary','Sevilla', 1, 15);
+INSERT INTO vets(id, first_name,last_name,city, clinic, user) VALUES (3, 'Linda', 'Douglas','Sevilla', 2, 16);
+INSERT INTO vets(id, first_name,last_name,city, clinic, user) VALUES (4, 'Rafael', 'Ortega','Badajoz', 2, 17);
+INSERT INTO vets(id, first_name,last_name,city, clinic, user) VALUES (5, 'Henry', 'Stevens','Badajoz', 3, 18);
+INSERT INTO vets(id, first_name,last_name,city, clinic, user) VALUES (6, 'Sharon', 'Jenkins','Cádiz', 3, 19);
 
 INSERT INTO specialties VALUES (1, 'radiology');
 INSERT INTO specialties VALUES (2, 'surgery');

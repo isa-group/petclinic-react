@@ -52,4 +52,7 @@ public interface ConsultationRepository extends CrudRepository<Consultation, Int
 	@Query("SELECT c FROM Consultation c WHERE c.owner.clinic.clinicOwner.user.id = :userId")
 	public List<Consultation> findAllByClinicOwnerUserId(int userId);
 
+	@Query("SELECT c FROM Consultation c WHERE c.owner.clinic.id = :clinicId")
+	public List<Consultation> findAllByClinicId(int clinicId);
+
 }

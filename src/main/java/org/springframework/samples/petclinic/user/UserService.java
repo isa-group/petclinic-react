@@ -71,6 +71,12 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
+	public Vet findVetByUser(int userId) {
+		return userRepository.findVetByUser(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("Vet", "id", userId));
+	}
+
+	@Transactional(readOnly = true)
 	public Owner findOwnerByUser(int id) {
 		return userRepository.findOwnerByUser(id).orElseThrow(() -> new ResourceNotFoundException("Owner", "ID", id));
 	}

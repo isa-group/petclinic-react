@@ -16,6 +16,7 @@ import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureExceptio
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
+import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,9 +64,9 @@ public class ConsultationController {
 			res = (List<Consultation>) consultationService.findAll();
 		} else if (user.hasAnyAuthority(CLINIC_OWNER_AUTH).equals(true) && userId != null) {
 			res = (List<Consultation>) consultationService.findAllByClinicOwnerUserId(userId);
-		} else if (user.hasAnyAuthority(VET_AUTH).equals(true)) {
-			// TODO: Implementar
-			res = null;
+		} else if (user.hasAnyAuthority(VET_AUTH).equals(true) && userId != null) {
+			Vet vet = userService.findVetByUser(userId);
+			res = consultationService.findAllByClinicId(vet.getClinic().getId());
 		} else {
 			if (userId == null) {
 				Owner owner = userService.findOwnerByUser(user.getId());

@@ -69,6 +69,7 @@ public class AuthService {
 			vet.setLastName(request.getLastName());
 			vet.setCity(request.getCity());
 			vet.setSpecialties(new ArrayList<Specialty>());
+			vet.setClinic(clinicService.findClinicById(request.getClinic().getId()));
 			vet.setUser(user);
 			vetService.saveVet(vet);
 			break;

@@ -19,13 +19,4 @@ export const registerFormOwnerInputs = [
     isRequired: true,
     validators: [formValidators.notEmptyValidator, formValidators.telephoneValidator],
   },
-  {
-    tag: "Clinic",
-    name: "clinic",
-    type: "select",
-    values: ["None"],
-    defaultValue: "",
-    isRequired: true,
-    validators: [formValidators.notEmptyValidator, formValidators.notNoneTypeValidator],
-  },
 ];

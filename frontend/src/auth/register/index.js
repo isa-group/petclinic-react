@@ -23,6 +23,9 @@ export default function Register() {
   }
 
   function handleSubmit({ values }) {
+
+    if(!registerFormRef.current.validate()) return;
+
     const request = values;
     request.clinic = clinics.filter((clinic) => clinic.name === request.clinic)[0];
     request["authority"] = authority;
@@ -73,8 +76,8 @@ export default function Register() {
   }
 
   useEffect(() => {
-    if (type === "Owner") {
-      if (registerFormOwnerInputs[7].values.length === 1){
+    if (type === "Owner" || type === "Vet") {
+      if (registerFormOwnerInputs[5].values.length === 1){
         fetch("/api/v1/clinics")
         .then(function (response) {
           if (response.status === 200) {
@@ -90,7 +93,7 @@ export default function Register() {
               return clinic.name;
             });
 
-            registerFormOwnerInputs[7].values = ["None", ...clinicNames];
+            registerFormOwnerInputs[5].values = ["None", ...clinicNames];
           }
         })
         .catch((message) => {

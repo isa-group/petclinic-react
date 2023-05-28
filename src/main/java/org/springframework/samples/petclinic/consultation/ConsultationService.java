@@ -52,6 +52,13 @@ public class ConsultationService {
 		return this.consultationRepository.findAllByClinicOwnerUserId(userId);
 	}
 
+	@Transactional(readOnly = true)
+	public List<Consultation> findAllByClinicId(int clinicId) throws DataAccessException {
+		System.out.println("LLEGA AL SERVICE");
+		System.out.println(clinicId);
+		return this.consultationRepository.findAllByClinicId(clinicId);
+	}
+
 	@Transactional
 	public Consultation saveConsultation(Consultation consultation) throws DataAccessException {
 		consultationRepository.save(consultation);
