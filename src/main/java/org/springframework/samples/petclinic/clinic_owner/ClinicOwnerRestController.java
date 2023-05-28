@@ -38,8 +38,45 @@ public class ClinicOwnerRestController {
 		this.userService = userService;
 	}
 
+	@GetMapping(value = "/all")
+	public ResponseEntity<List<ClinicOwner>> getAll() {
+		return new ResponseEntity<>((List<ClinicOwner>) clinicOwnerService.findAll(), HttpStatus.OK);
+	}
+
 	@GetMapping(value = "/clinics")
 	public ResponseEntity<ClinicOwner> findByUserId(@RequestParam(required = true) int userId) {
 		return new ResponseEntity<>(clinicOwnerService.findByUserId(userId), HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/{clinicOwnerId}")
+	public ResponseEntity<ClinicOwner> getClinicOwnerById(@PathVariable("clinicOwnerId") int clinicOwnerId) {
+		return new ResponseEntity<>(clinicOwnerService.findById(clinicOwnerId), HttpStatus.OK);
+	}
+
+	@PostMapping
+	public ResponseEntity<ClinicOwner> create(@Valid @RequestBody ClinicOwner clinicOwner, @RequestParam(required = false) int userId) {
+		
+		System.out.println("ID: " + userId);
+
+		User user = userService.findUser(userId);
+		clinicOwner.setUser(user);
+		
+		clinicOwnerService.saveClinicOwner(clinicOwner);
+		return new ResponseEntity<>(clinicOwner, HttpStatus.CREATED);
+	}
+
+	@PutMapping(value = "/{clinicOwnerId}")
+	public ResponseEntity<ClinicOwner> create(@PathVariable("clinicOwnerId") int clinicOwnerId, @Valid @RequestBody ClinicOwner clinicOwner) {
+		
+		ClinicOwner clinicOwnerToUpdate= clinicOwnerService.findById(clinicOwnerId);
+		BeanUtils.copyProperties(clinicOwner, clinicOwnerToUpdate, "id", "user", "clinics");
+	
+		return new ResponseEntity<>(clinicOwnerService.saveClinicOwner(clinicOwnerToUpdate), HttpStatus.CREATED);
+	}
+
+	@DeleteMapping(value = "/{clinicOwnerId}")
+	public ResponseEntity<MessageResponse> delete(@PathVariable("clinicOwnerId") int clinicOwnerId) {
+		clinicOwnerService.deleteById(clinicOwnerId);
+		return new ResponseEntity<>(new MessageResponse("Clinic Owner deleted successfully!"), HttpStatus.OK);
 	}
 }

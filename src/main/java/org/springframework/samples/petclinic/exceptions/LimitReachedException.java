@@ -14,7 +14,7 @@ public class LimitReachedException extends RuntimeException {
 
 	public LimitReachedException(String resourceName, PricingPlan plan) {
 		super(String.format(
-				"You have reached the limit for %s with the %s plan. Please, upgrade your plan or contact an administrator.",
+				"You have reached the limit for %s with the %s plan. Please, contact with the clinic owner to ask for a plan upgrade.",
 				resourceName, plan));
 	}
 

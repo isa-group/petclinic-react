@@ -39,6 +39,8 @@ import SwaggerDocs from "./public/swagger";
 import ClinicsList from "./clinicOwner/clinicsList"
 import EditClinic from "./clinicOwner/clinicEdit"
 import OwnerListClinicOwner from "./clinicOwner/ownersList"
+import ClinicOwnerListAdmin from "./admin/clinicOwners/ClinicOwnerListAdmin";
+import ClinicOwnerEditAdmin from "./admin/clinicOwners/ClinicOwnerEditAdmin";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -75,6 +77,8 @@ function App() {
           <Route path="/users/:username" exact={true} element={<PrivateRoute><UserEditAdmin /></PrivateRoute>} />
           <Route path="/owners" exact={true} element={<PrivateRoute><OwnerListAdmin /></PrivateRoute>} />
           <Route path="/owners/:id" exact={true} element={<PrivateRoute><OwnerEditAdmin /></PrivateRoute>} />
+          <Route path="/clinicOwners" exact={true} element={<PrivateRoute><ClinicOwnerListAdmin /></PrivateRoute>} />
+          <Route path="/clinicOwners/:id" exact={true} element={<PrivateRoute><ClinicOwnerEditAdmin /></PrivateRoute>} />
           <Route path="/pets" exact={true} element={<PrivateRoute><PetListAdmin /></PrivateRoute>} />
           <Route path="/pets/:id" exact={true} element={<PrivateRoute><PetEditAdmin /></PrivateRoute>} />
           <Route path="/pets/:petId/visits" exact={true} element={<PrivateRoute><VisitListAdmin /></PrivateRoute>} />

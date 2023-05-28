@@ -158,13 +158,6 @@ class OwnerPetEdit extends Component {
             )}
             <ModalBody>{this.state.message || ""}</ModalBody>
             <ModalFooter>
-              {cond ? (
-                <Button color="info" tag={Link} to={`/plan`}>
-                  Check Plan
-                </Button>
-              ) : (
-                <></>
-              )}
               <Button color="primary" tag={Link} to={`/myPets`}>
                 Back
               </Button>

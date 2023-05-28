@@ -372,7 +372,7 @@ class PetRestControllerTests {
 				.content(objectMapper.writeValueAsString(pet))).andExpect(status().isForbidden())
 				.andExpect(result -> assertTrue(result.getResolvedException() instanceof LimitReachedException))
 				.andExpect(result -> assertEquals(
-						"You have reached the limit for Pets with the BASIC plan. Please, upgrade your plan or contact an administrator.",
+						"You have reached the limit for Pets with the BASIC plan. Please, contact with the clinic owner to ask for a plan upgrade.",
 						result.getResolvedException().getMessage()));
 	}
 

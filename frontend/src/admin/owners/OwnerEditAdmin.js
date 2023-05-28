@@ -34,8 +34,7 @@ export default function OwnerEditAdmin() {
     `/api/v1/clinics`,
     jwt,
     setMessage,
-    setVisible,
-    id
+    setVisible
   );
 
   function handleChange(event) {
@@ -166,6 +165,7 @@ export default function OwnerEditAdmin() {
               <option value="">None</option>
               {
                 clinics && clinics.map((clinic) => {
+                  console.log(clinic);
                   return <option value={clinic.id}>{clinic.name}</option>
                 })
               }
