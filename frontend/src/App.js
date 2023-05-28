@@ -41,6 +41,8 @@ import EditClinic from "./clinicOwner/clinicEdit"
 import OwnerListClinicOwner from "./clinicOwner/ownersList"
 import ClinicOwnerListAdmin from "./admin/clinicOwners/ClinicOwnerListAdmin";
 import ClinicOwnerEditAdmin from "./admin/clinicOwners/ClinicOwnerEditAdmin";
+import ClinicListAdmin from "./admin/clinics/ClinicListAdmin";
+import ClinicEditAdmin from "./admin/clinics/ClinicEditAdmin";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -77,6 +79,8 @@ function App() {
           <Route path="/users/:username" exact={true} element={<PrivateRoute><UserEditAdmin /></PrivateRoute>} />
           <Route path="/owners" exact={true} element={<PrivateRoute><OwnerListAdmin /></PrivateRoute>} />
           <Route path="/owners/:id" exact={true} element={<PrivateRoute><OwnerEditAdmin /></PrivateRoute>} />
+          <Route path="/clinics" exact={true} element={<PrivateRoute><ClinicListAdmin /></PrivateRoute>} />
+          <Route path="/clinics/:id" exact={true} element={<PrivateRoute><ClinicEditAdmin /></PrivateRoute>} />
           <Route path="/clinicOwners" exact={true} element={<PrivateRoute><ClinicOwnerListAdmin /></PrivateRoute>} />
           <Route path="/clinicOwners/:id" exact={true} element={<PrivateRoute><ClinicOwnerEditAdmin /></PrivateRoute>} />
           <Route path="/pets" exact={true} element={<PrivateRoute><PetListAdmin /></PrivateRoute>} />

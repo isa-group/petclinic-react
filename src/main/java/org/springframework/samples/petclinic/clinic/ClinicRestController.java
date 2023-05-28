@@ -45,7 +45,12 @@ public class ClinicRestController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Clinic>> findAllClinics() {
+	public ResponseEntity<List<Clinic>> findAllClinics(@RequestParam(required = false) Integer userId) {
+		
+		if (userId != null) {
+			return new ResponseEntity<>(clinicService.findClinicsByUserId(userId), HttpStatus.OK);
+		}
+
 		return new ResponseEntity<>(clinicService.findAll(), HttpStatus.OK);
 	}
 
@@ -64,9 +69,11 @@ public class ClinicRestController {
 
 		Clinic newClinic = new Clinic();
 		BeanUtils.copyProperties(clinic, newClinic, "id");
-		ClinicOwner owner = clinicOwnerService.findByUserId(userService.findCurrentUser().getId());
+		if(clinic.getClinicOwner() == null){
+			ClinicOwner owner = clinicOwnerService.findByUserId(userService.findCurrentUser().getId());
+			newClinic.setClinicOwner(owner);
+		}
 
-		newClinic.setClinicOwner(owner);
 
 		return new ResponseEntity<>(clinicService.save(newClinic), HttpStatus.CREATED);
 	}

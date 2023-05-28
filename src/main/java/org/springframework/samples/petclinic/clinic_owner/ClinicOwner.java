@@ -13,6 +13,8 @@ import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.clinic.Clinic;
 import org.springframework.samples.petclinic.user.User;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,5 +33,6 @@ public class ClinicOwner extends Person{
 
     @OneToMany(mappedBy = "clinicOwner", orphanRemoval = true)
 	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JsonIgnore
 	private Set<Clinic> clinics;
 }

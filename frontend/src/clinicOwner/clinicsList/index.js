@@ -13,9 +13,9 @@ const jwt = tokenService.getLocalAccessToken();
 export default function ClinicsList() {
   const [message, setMessage] = useState(null);
   const [visible, setVisible] = useState(false);
-  const [clinicOwner, setClinicOwner] = useFetchState(
-    null,
-    `/api/v1/clinicOwners/clinics?userId=${user.id}`,
+  const [clinics, setClinics] = useFetchState(
+    [],
+    `/api/v1/clinics?userId=${user.id}`,
     jwt,
     setMessage,
     setVisible
@@ -25,8 +25,7 @@ export default function ClinicsList() {
   const navigator = useNavigate();
 
   const clinicsList =
-    clinicOwner !== null ? (
-      clinicOwner.clinics.map((clinic) => {
+    clinics.map((clinic) => {
         return (
           <tr key={clinic.id}>
             <td className="text-center">{clinic.name}</td>
@@ -79,10 +78,9 @@ export default function ClinicsList() {
             </td>
           </tr>
         );
-      })
-    ) : (
-      <></>
-    );
+      });
+
+      
   const modal = getErrorModal(setVisible, visible, message);
 
   return (

@@ -12,4 +12,7 @@ public interface ClinicRepository extends CrudRepository<Clinic, Integer> {
 
     @Query("SELECT o FROM Owner o WHERE o.clinic.clinicOwner.user.id = :userId")
     List<Owner> findOwnersOfUserClinics(int userId);
+
+    @Query("SELECT c FROM Clinic c WHERE c.clinicOwner.user.id = :userId")
+    List<Clinic> findClinicsByUserId(int userId);
 }

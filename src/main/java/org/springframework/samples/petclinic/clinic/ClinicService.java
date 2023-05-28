@@ -26,6 +26,11 @@ public class ClinicService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<Clinic> findClinicsByUserId(int userId) throws DataAccessException {
+		return clinicRepository.findClinicsByUserId(userId);
+	}
+
+	@Transactional(readOnly = true)
 	public Clinic findClinicById(int clinicId) throws DataAccessException {
 		
 		Optional<Clinic> clinic = clinicRepository.findById(clinicId);
@@ -52,7 +57,11 @@ public class ClinicService {
 	public Clinic update(Clinic clinic, int clinicId) throws DataAccessException {
 		
 		Clinic clinicToUpdate = clinicRepository.findById(clinicId).get();
-		BeanUtils.copyProperties(clinic, clinicToUpdate, "id", "clinicOwner", "owners");
+		if (clinic.getClinicOwner() != null){
+			BeanUtils.copyProperties(clinic, clinicToUpdate, "id", "owners");
+		}else{
+			BeanUtils.copyProperties(clinic, clinicToUpdate, "id", "clinicOwner", "owners");
+		}
 
 		return save(clinicToUpdate);
 	}

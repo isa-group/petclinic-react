@@ -44,7 +44,7 @@ public class ClinicOwnerRestController {
 	}
 
 	@GetMapping(value = "/clinics")
-	public ResponseEntity<ClinicOwner> findByUserId(@RequestParam(required = true) int userId) {
+	public ResponseEntity<ClinicOwner> findByUserId(@RequestParam(required = true) Integer userId) {
 		return new ResponseEntity<>(clinicOwnerService.findByUserId(userId), HttpStatus.OK);
 	}
 

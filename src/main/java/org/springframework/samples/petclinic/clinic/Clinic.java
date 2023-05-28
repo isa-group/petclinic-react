@@ -51,7 +51,6 @@ public class Clinic extends BaseEntity{
 
     @ManyToOne
 	@JoinColumn(name = "clinic_owner", referencedColumnName = "id")
-	@JsonIgnore
 	private ClinicOwner clinicOwner;
 
     @OneToMany(mappedBy = "clinic", orphanRemoval = true)
