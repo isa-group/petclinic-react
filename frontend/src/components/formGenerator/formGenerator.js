@@ -39,9 +39,20 @@ const FormGenerator = forwardRef((props, ref) => {
         return isValid;
       },
       updateForm: () => {
-        formElement.current.reset();
-        setFormValues({});
-        setSubmitForm(false);
+        if (Object.keys(formValues).length === 0) {
+          let newFormValues = {};
+          for (let input of props.inputs) {
+            if (input.type === "interval") {
+              newFormValues[`min_${input.name}`] = input.min;
+              newFormValues[`max_${input.name}`] = input.max;
+            } else {
+              newFormValues[input.name] = input.defaultValue
+                ? input.defaultValue
+                : "";
+            }
+          }
+          setFormValues(newFormValues);
+        }
       }
     };
   });

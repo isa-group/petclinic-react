@@ -30,6 +30,10 @@ public class Consultation extends BaseEntity {
 	@NotEmpty
 	private String title;
 
+	@Column(name = "is_clinic_comment")
+	@NotNull
+	private Boolean isClinicComment = false;
+	
 	@NotNull
 	private ConsultationStatus status;
 
