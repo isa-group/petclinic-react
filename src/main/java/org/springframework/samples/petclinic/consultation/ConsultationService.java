@@ -47,6 +47,11 @@ public class ConsultationService {
 				.orElseThrow(() -> new ResourceNotFoundException("Consultation", "ID", id));
 	}
 
+	@Transactional(readOnly = true)
+	public List<Consultation> findAllByClinicOwnerUserId(int userId) throws DataAccessException {
+		return this.consultationRepository.findAllByClinicOwnerUserId(userId);
+	}
+
 	@Transactional
 	public Consultation saveConsultation(Consultation consultation) throws DataAccessException {
 		consultationRepository.save(consultation);

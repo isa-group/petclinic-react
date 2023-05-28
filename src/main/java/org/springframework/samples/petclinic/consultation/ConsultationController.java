@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +38,9 @@ public class ConsultationController {
 	private final ConsultationService consultationService;
 	private final UserService userService;
 	private static final String OWNER_AUTH = "OWNER";
+	private static final String VET_AUTH = "VET";
 	private static final String ADMIN_AUTH = "ADMIN";
+	private static final String CLINIC_OWNER_AUTH = "CLINIC_OWNER";
 
 	@Autowired
 	public ConsultationController(ConsultationService consultationService, UserService userService) {
@@ -51,14 +54,23 @@ public class ConsultationController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Consultation>> findAllConsultations() {
+	public ResponseEntity<List<Consultation>> findAllConsultations(@RequestParam(required = false) Integer userId) {
+
 		User user = userService.findCurrentUser();
-		List<Consultation> res;
-		if (user.hasAnyAuthority("VET", ADMIN_AUTH).equals(true)) {
+
+		List<Consultation> res = null;
+		if (user.hasAnyAuthority(ADMIN_AUTH).equals(true)) {
 			res = (List<Consultation>) consultationService.findAll();
+		} else if (user.hasAnyAuthority(CLINIC_OWNER_AUTH).equals(true) && userId != null) {
+			res = (List<Consultation>) consultationService.findAllByClinicOwnerUserId(userId);
+		} else if (user.hasAnyAuthority(VET_AUTH).equals(true)) {
+			// TODO: Implementar
+			res = null;
 		} else {
-			Owner owner = userService.findOwnerByUser(user.getId());
-			res = (List<Consultation>) consultationService.findAllConsultationsByOwner(owner.getId());
+			if (userId == null) {
+				Owner owner = userService.findOwnerByUser(user.getId());
+				res = (List<Consultation>) consultationService.findAllConsultationsByOwner(owner.getId());
+			}
 		}
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
@@ -67,7 +79,7 @@ public class ConsultationController {
 	public ResponseEntity<Consultation> findConsultationById(@PathVariable("consultationId") int id) {
 		User user = userService.findCurrentUser();
 		Consultation cons = this.consultationService.findConsultationById(id);
-		if (user.hasAnyAuthority(ADMIN_AUTH, "VET").equals(true))
+		if (user.hasAnyAuthority(ADMIN_AUTH, CLINIC_OWNER_AUTH, VET_AUTH).equals(true))
 			return new ResponseEntity<>(cons, HttpStatus.OK);
 		else {
 			Owner owner = userService.findOwnerByUser(user.getId());

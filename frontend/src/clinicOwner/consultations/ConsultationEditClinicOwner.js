@@ -9,9 +9,10 @@ import getIdFromUrl from "../../util/getIdFromUrl";
 import "../../static/css/admin/adminPage.css";
 import "../../static/css/owner/consultations.css";
 
+const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
 
-export default function ConsultationEditAdmin() {
+export default function ConsultationEditClinicOwner() {
   const emptyItem = {
     id: null,
     title: "",
@@ -30,7 +31,13 @@ export default function ConsultationEditAdmin() {
     setVisible,
     id
   );
-  const owners = useFetchData("/api/v1/owners", jwt);
+  const [owners, setOwners] = useFetchState(
+    [],
+    `/api/v1/clinics/owners?userId=${user.id}`,
+    jwt,
+    setMessage,
+    setVisible
+  );
   const pets = useFetchData(`/api/v1/pets`, jwt);
   const [petsOwned, setPetsOwned] = useState([]);
 
