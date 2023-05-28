@@ -26,7 +26,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.samples.petclinic.clinic.Clinic;
 import org.springframework.samples.petclinic.clinic.PricingPlan;
+import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
@@ -58,6 +60,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 class ConsultationControllerTests {
 	private static final Integer TEST_OWNER_ID = 1;
 	private static final int TEST_USER_ID = 1;
+	private static final int TEST_CLINIC_ID = 1;
+	private static final int TEST_CLINIC_OWNER_ID = 1;
+	private static final int TEST_CLINIC_OWNER_USER_ID = 1;
 	private static final int TEST_CONSULTATION_ID = 1;
 	private static final int TEST_TICKET_ID = 1;
 	private static final String BASE_URL = "/api/v1/consultations";
@@ -86,9 +91,34 @@ class ConsultationControllerTests {
 	private User logged;
 	private Consultation consultation;
 	private Ticket ticket;
+	private Clinic clinic;
+	private ClinicOwner clinicOwner;
+	private User clinicOwnerUser;
 
 	@BeforeEach
 	void setup() {
+		Authorities clinicOwnerAuth = new Authorities();
+		clinicOwnerAuth.setId(1);
+		clinicOwnerAuth.setAuthority("CLINIC_OWNER");
+
+		clinicOwnerUser = new User();
+		clinicOwnerUser.setId(TEST_CLINIC_OWNER_USER_ID);
+		clinicOwnerUser.setUsername("clinicOwnerTest");
+		clinicOwnerUser.setPassword("clinicOwnerTest");
+		clinicOwnerUser.setAuthority(clinicOwnerAuth);
+		clinicOwner = new ClinicOwner();
+		clinic = new Clinic();
+		clinicOwner.setId(TEST_CLINIC_OWNER_ID);
+		clinicOwner.setFirstName("Test Name");
+		clinicOwner.setLastName("Test Surname");
+		clinicOwner.setUser(clinicOwnerUser);
+		clinic.setId(TEST_CLINIC_ID);
+		clinic.setName("Clinic Test");
+		clinic.setAddress("Test Address");
+		clinic.setPlan(PricingPlan.BASIC);
+		clinic.setTelephone("123456789");
+		clinic.setClinicOwner(clinicOwner);
+
 		george = new Owner();
 		george.setId(TEST_OWNER_ID);
 		george.setFirstName("George");
@@ -96,9 +126,10 @@ class ConsultationControllerTests {
 		george.setAddress("110 W. Liberty St.");
 		george.setCity("Sevilla");
 		george.setTelephone("608555102");
+		george.setClinic(clinic);
 
 		Authorities ownerAuth = new Authorities();
-		ownerAuth.setId(1);
+		ownerAuth.setId(2);
 		ownerAuth.setAuthority("OWNER");
 
 		user = new User();
@@ -124,6 +155,7 @@ class ConsultationControllerTests {
 		vet.setId(1);
 		vet.setFirstName("Super");
 		vet.setLastName("Vet");
+		vet.setClinic(clinic);
 
 		consultation = new Consultation();
 		consultation.setId(TEST_CONSULTATION_ID);
@@ -132,6 +164,7 @@ class ConsultationControllerTests {
 		consultation.setPet(simba);
 		consultation.setOwner(george);
 		consultation.setStatus(ConsultationStatus.PENDING);
+		consultation.setIsClinicComment(false);
 
 		ticket = new Ticket();
 		ticket.setConsultation(consultation);
@@ -187,7 +220,6 @@ class ConsultationControllerTests {
 	@WithMockUser(value = "owner", authorities = { "OWNER" })
 	void ownerShouldFindAllOwned() throws Exception {
 		logged.setId(TEST_USER_ID);
-
 		Consultation stomach = new Consultation();
 		stomach.setId(2);
 		stomach.setCreationDate(LocalDateTime.of(2010, 1, 1, 12, 0));
@@ -307,6 +339,7 @@ class ConsultationControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void ownerShouldCreateConsultation() throws Exception {
 		logged.setId(TEST_USER_ID);
+		clinic.setPlan(PricingPlan.PLATINUM);
 		Consultation aux = new Consultation();
 		aux.setId(2);
 		aux.setTitle("Checking Simba's leg.");
@@ -359,7 +392,7 @@ class ConsultationControllerTests {
 	void ownerShouldUpdateVisit() throws Exception {
 		logged.setId(TEST_USER_ID);
 		consultation.setTitle("UPDATED");
-
+		clinic.setPlan(PricingPlan.PLATINUM);
 		when(this.consultationService.findConsultationById(TEST_CONSULTATION_ID)).thenReturn(consultation);
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.consultationService.updateConsultation(any(Consultation.class), any(Integer.class)))
@@ -563,7 +596,7 @@ class ConsultationControllerTests {
 		logged.setId(TEST_USER_ID);
 		Ticket aux = new Ticket();
 		aux.setDescription("Checking Simba's leg.");
-
+		clinic.setPlan(PricingPlan.PLATINUM);
 		when(this.consultationService.findConsultationById(TEST_CONSULTATION_ID)).thenReturn(consultation);
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 
@@ -727,7 +760,7 @@ class ConsultationControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void shouldReturnOwnerStats() throws Exception {
 		logged.setId(TEST_USER_ID);
-
+		clinic.setPlan(PricingPlan.PLATINUM);
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.consultationService.getOwnerConsultationsStats(george.getId())).thenReturn(new HashMap<>());
 

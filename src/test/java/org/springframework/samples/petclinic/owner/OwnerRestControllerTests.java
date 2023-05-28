@@ -158,7 +158,7 @@ class OwnerRestControllerTests {
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
 				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
-				.andExpect(jsonPath("$.plan").value(george.getClinic().getPlan().toString()));
+				.andExpect(jsonPath("$.clinic.plan").value(george.getClinic().getPlan().toString()));
 	}
 
 	@Test
@@ -232,7 +232,7 @@ class OwnerRestControllerTests {
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
 				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
-				.andExpect(jsonPath("$.plan").value(george.getClinic().getPlan().toString()));
+				.andExpect(jsonPath("$.clinic.plan").value(george.getClinic().getPlan().toString()));
 	}
 
 	@Test

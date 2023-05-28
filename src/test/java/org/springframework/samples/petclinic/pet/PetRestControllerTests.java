@@ -25,7 +25,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.samples.petclinic.clinic.Clinic;
 import org.springframework.samples.petclinic.clinic.PricingPlan;
+import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
@@ -55,6 +57,9 @@ class PetRestControllerTests {
 
 	private static final int TEST_PET_ID = 1;
 	private static final int TEST_OWNER_ID = 1;
+	private static final int TEST_CLINIC_ID = 1;
+	private static final int TEST_CLINIC_OWNER_ID = 1;
+	private static final int TEST_CLINIC_OWNER_USER_ID = 1;
 	private static final int TEST_TYPE_ID = 1;
 	private static final Integer TEST_USER_ID = 1;
 	private static final String BASE_URL = "/api/v1/pets";
@@ -79,9 +84,35 @@ class PetRestControllerTests {
 	private Pet simba;
 	private User user, logged;
 	private PetType lion;
+	private Clinic clinic;
+	private ClinicOwner clinicOwner;
+	private User clinicOwnerUser;
 
 	@BeforeEach
 	void setup() {
+
+		Authorities clinicOwnerAuth = new Authorities();
+		clinicOwnerAuth.setId(1);
+		clinicOwnerAuth.setAuthority("CLINIC_OWNER");
+
+		clinicOwnerUser = new User();
+		clinicOwnerUser.setId(TEST_CLINIC_OWNER_USER_ID);
+		clinicOwnerUser.setUsername("clinicOwnerTest");
+		clinicOwnerUser.setPassword("clinicOwnerTest");
+		clinicOwnerUser.setAuthority(clinicOwnerAuth);
+		clinicOwner = new ClinicOwner();
+		clinic = new Clinic();
+		clinicOwner.setId(TEST_CLINIC_OWNER_ID);
+		clinicOwner.setFirstName("Test Name");
+		clinicOwner.setLastName("Test Surname");
+		clinicOwner.setUser(clinicOwnerUser);
+		clinic.setId(TEST_CLINIC_ID);
+		clinic.setName("Clinic Test");
+		clinic.setAddress("Test Address");
+		clinic.setPlan(PricingPlan.BASIC);
+		clinic.setTelephone("123456789");
+		clinic.setClinicOwner(clinicOwner);
+
 		george = new Owner();
 		george.setId(TEST_OWNER_ID);
 		george.setFirstName("George");
@@ -89,9 +120,10 @@ class PetRestControllerTests {
 		george.setAddress("110 W. Liberty St.");
 		george.setCity("Sevilla");
 		george.setTelephone("608555102");
+		george.setClinic(clinic);
 
 		Authorities ownerAuth = new Authorities();
-		ownerAuth.setId(1);
+		ownerAuth.setId(2);
 		ownerAuth.setAuthority("OWNER");
 
 		user = new User();

@@ -102,7 +102,7 @@ class OwnerServiceTests {
 
 	@Test
 	void shouldFindOptOwnerByUser() {
-		Optional<Owner> owner = this.ownerService.optFindOwnerByUser(2);
+		Optional<Owner> owner = this.ownerService.optFindOwnerByUser(4);
 		assertEquals("Franklin", owner.get().getLastName());
 	}
 
@@ -176,11 +176,11 @@ class OwnerServiceTests {
 		assertTrue(stats.containsKey("totalOwners"));
 		assertEquals(((Collection<Owner>) ownerService.findAll()).size(), stats.get("totalOwners"));
 		assertTrue(stats.containsKey("basicOwners"));
-		assertEquals(4, stats.get("basicOwners"));
+		assertEquals(3, stats.get("basicOwners"));
 		assertTrue(stats.containsKey("goldOwners"));
 		assertEquals(3, stats.get("goldOwners"));
 		assertTrue(stats.containsKey("platinumOwners"));
-		assertEquals(3, stats.get("platinumOwners"));
+		assertEquals(4, stats.get("platinumOwners"));
 		assertTrue(stats.containsKey("ownersVisits"));
 	}
 

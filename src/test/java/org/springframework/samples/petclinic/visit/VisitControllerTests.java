@@ -26,7 +26,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.samples.petclinic.clinic.Clinic;
 import org.springframework.samples.petclinic.clinic.PricingPlan;
+import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
@@ -62,6 +64,9 @@ class VisitControllerTests {
 	private static final int TEST_TYPE_ID = 1;
 	private static final int TEST_USER_ID = 1;
 	private static final int TEST_VISIT_ID = 1;
+	private static final int TEST_CLINIC_ID = 1;
+	private static final int TEST_CLINIC_OWNER_ID = 1;
+	private static final int TEST_CLINIC_OWNER_USER_ID = 1;
 	private static final String BASE_URL = "/api/v1/pets/" + TEST_PET_ID + "/visits";
 	private static final String VISITS_URL = "/api/v1/visits";
 
@@ -93,9 +98,35 @@ class VisitControllerTests {
 	private User user, logged;
 	private PetType lion;
 	private Visit visit;
+	private Clinic clinic;
+	private ClinicOwner clinicOwner;
+	private User clinicOwnerUser;
 
 	@BeforeEach
 	void setup() {
+
+		Authorities clinicOwnerAuth = new Authorities();
+		clinicOwnerAuth.setId(1);
+		clinicOwnerAuth.setAuthority("CLINIC_OWNER");
+
+		clinicOwnerUser = new User();
+		clinicOwnerUser.setId(TEST_CLINIC_OWNER_USER_ID);
+		clinicOwnerUser.setUsername("clinicOwnerTest");
+		clinicOwnerUser.setPassword("clinicOwnerTest");
+		clinicOwnerUser.setAuthority(clinicOwnerAuth);
+		clinicOwner = new ClinicOwner();
+		clinic = new Clinic();
+		clinicOwner.setId(TEST_CLINIC_OWNER_ID);
+		clinicOwner.setFirstName("Test Name");
+		clinicOwner.setLastName("Test Surname");
+		clinicOwner.setUser(clinicOwnerUser);
+		clinic.setId(TEST_CLINIC_ID);
+		clinic.setName("Clinic Test");
+		clinic.setAddress("Test Address");
+		clinic.setPlan(PricingPlan.BASIC);
+		clinic.setTelephone("123456789");
+		clinic.setClinicOwner(clinicOwner);
+
 		george = new Owner();
 		george.setId(TEST_OWNER_ID);
 		george.setFirstName("George");
@@ -103,9 +134,10 @@ class VisitControllerTests {
 		george.setAddress("110 W. Liberty St.");
 		george.setCity("Sevilla");
 		george.setTelephone("608555102");
+		george.setClinic(clinic);
 
 		Authorities ownerAuth = new Authorities();
-		ownerAuth.setId(1);
+		ownerAuth.setId(2);
 		ownerAuth.setAuthority("OWNER");
 
 		user = new User();
@@ -605,7 +637,7 @@ class VisitControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void shouldReturnOwnerStats() throws Exception {
 		logged.setId(TEST_USER_ID);
-		//george.setPlan(PricingPlan.PLATINUM);
+		clinic.setPlan(PricingPlan.PLATINUM);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.getVisitsOwnerStats(george.getId())).thenReturn(new HashMap<>());
@@ -630,7 +662,6 @@ class VisitControllerTests {
 	@WithMockUser(username = "admin", authorities = "ADMIN")
 	void shouldReturnAdminStats() throws Exception {
 		logged.setId(TEST_USER_ID);
-
 		when(this.visitService.getVisitsAdminStats()).thenReturn(new HashMap<>());
 
 		mockMvc.perform(get(VISITS_URL + "/stats")).andExpect(status().isOk());
