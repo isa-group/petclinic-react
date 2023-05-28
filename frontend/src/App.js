@@ -45,6 +45,8 @@ import ClinicListAdmin from "./admin/clinics/ClinicListAdmin";
 import ClinicEditAdmin from "./admin/clinics/ClinicEditAdmin";
 import ConsultationListClinicOwner from "./clinicOwner/consultations/ConsultationListClinicOwner";
 import ConsultationEditClinicOwner from "./clinicOwner/consultations/ConsultationEditClinicOwner";
+import VetListClinicOwner from "./clinicOwner/vets/VetListClinicOwner";
+import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -129,6 +131,8 @@ function App() {
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListClinicOwner /></PrivateRoute>} />
           <Route path="/consultations/:id" exact={true} element={<PrivateRoute><ConsultationEditClinicOwner /></PrivateRoute>} />
           <Route path="/consultations/:id/tickets" exact={true} element={<PrivateRoute><VetConsultationTickets /></PrivateRoute>} />
+          <Route path="/vets" exact={true} element={<PrivateRoute><VetListClinicOwner /></PrivateRoute>} />
+          <Route path="/vets/:id" exact={true} element={<PrivateRoute><VetEditClinicOwner /></PrivateRoute>} />
         </>)
     }
   })

@@ -6,14 +6,15 @@ import useFetchState from "../../util/useFetchState";
 import getErrorModal from "../../util/getErrorModal";
 import deleteFromList from "../../util/deleteFromList";
 
+const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
 
-export default function VetListAdmin() {
+export default function VetListClinicOwner() {
   const [message, setMessage] = useState(null);
   const [visible, setVisible] = useState(false);
   const [vets, setVets] = useFetchState(
     [],
-    `/api/v1/vets`,
+    `/api/v1/clinics/vets?userId=${user.id}`,
     jwt,
     setMessage,
     setVisible

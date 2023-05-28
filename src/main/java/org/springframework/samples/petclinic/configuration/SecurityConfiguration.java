@@ -84,7 +84,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/v1/clinics/**").hasAnyAuthority(CLINIC_OWNER, ADMIN)
 				.antMatchers(HttpMethod.GET, "/api/v1/vets/stats").hasAuthority(ADMIN)
 				.antMatchers(HttpMethod.GET, "/api/v1/vets/**").authenticated()
-				.antMatchers("/api/v1/vets/**").hasAnyAuthority(ADMIN, "VET")
+				.antMatchers("/api/v1/vets/**").hasAnyAuthority(ADMIN, "VET", CLINIC_OWNER)
 				.anyRequest().authenticated();
 
 		http.headers().frameOptions().sameOrigin();
