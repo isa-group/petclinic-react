@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.samples.petclinic.clinic.Clinic;
 import org.springframework.samples.petclinic.clinic.ClinicService;
-import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwnerService;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
+import org.springframework.samples.petclinic.plan.Plan;
+import org.springframework.samples.petclinic.plan.PlanService;
+import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
@@ -40,6 +42,8 @@ public class AuthServiceTests {
 	protected ClinicOwnerService clinicOwnerService;
 	@Autowired
 	protected AuthoritiesService authoritiesService;
+	@Autowired
+	protected PlanService planService;
 
 	@Test
 	@Transactional
@@ -89,6 +93,7 @@ public class AuthServiceTests {
 		request.setUsername(username);
 
 		if(auth == "OWNER" || auth == "VET") {
+
 			User clinicOwnerUser = new User();
 			clinicOwnerUser.setUsername("clinicOwnerTest");
 			clinicOwnerUser.setPassword("clinicOwnerTest");
@@ -102,7 +107,7 @@ public class AuthServiceTests {
 			clinicOwnerService.saveClinicOwner(clinicOwner);
 			clinic.setName("Clinic Test");
 			clinic.setAddress("Test Address");
-			clinic.setPlan(PricingPlan.PLATINUM);
+			clinic.setPlan(planService.findById(3));
 			clinic.setTelephone("123456789");
 			clinic.setClinicOwner(clinicOwner);
 			clinicService.save(clinic);

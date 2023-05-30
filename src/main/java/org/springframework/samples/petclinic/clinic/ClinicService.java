@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,11 @@ public class ClinicService {
 	@Transactional(readOnly = true)
 	public List<Vet> findVetsOfUserClinics(int userId) throws DataAccessException {
 		return clinicRepository.findVetsOfUserClinics(userId);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Clinic> findClinicsOfPlan(PricingPlan plan) throws DataAccessException {
+		return clinicRepository.findClinicsOfPlan(plan);
 	}
 
     @Transactional

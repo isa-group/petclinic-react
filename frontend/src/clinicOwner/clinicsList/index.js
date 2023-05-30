@@ -31,7 +31,7 @@ export default function ClinicsList() {
             <td className="text-center">{clinic.name}</td>
             <td className="text-center">{clinic.address}</td>
             <td className="text-center">{clinic.telephone}</td>
-            <td className="text-center">{clinic.plan}</td>
+            <td className="text-center">{clinic.plan.name}</td>
             <td className="text-center">
               <ButtonGroup>
                 <Button

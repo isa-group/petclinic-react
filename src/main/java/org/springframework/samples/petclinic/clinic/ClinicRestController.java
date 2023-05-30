@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwnerService;
+import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
@@ -36,6 +37,9 @@ public class ClinicRestController {
 	private final ClinicService clinicService;
 	private final ClinicOwnerService clinicOwnerService;
 	private final UserService userService;
+
+	final String ADMIN_AUTH = "ADMIN";
+	final String CLINIC_OWNER_AUTH = "CLINIC_OWNER";
 
 	@Autowired
 	public ClinicRestController(ClinicService clinicService, ClinicOwnerService clinicOwnerService,
@@ -87,9 +91,21 @@ public class ClinicRestController {
 	@PutMapping(value = "{clinicId}")
 	public ResponseEntity<Clinic> updateClinic(@PathVariable("clinicId") int clinicId,
 			@RequestBody @Valid Clinic clinic) {
+
+		User user = userService.findCurrentUser();
+
 		RestPreconditions.checkNotNull(clinicService.findClinicById(clinicId), "Clinic", "ID", clinicId);
 
-		return new ResponseEntity<>(clinicService.update(clinic, clinicId), HttpStatus.OK);
+		if(user.hasAuthority(ADMIN_AUTH).equals(true)){
+			return new ResponseEntity<>(clinicService.update(clinic, clinicId), HttpStatus.OK);
+		}else if (user.hasAuthority(CLINIC_OWNER_AUTH).equals(true)){
+			if(clinicService.findClinicById(clinicId).getClinicOwner().getUser().getId().equals(user.getId())){
+				return new ResponseEntity<>(clinicService.update(clinic, clinicId), HttpStatus.OK);
+			}
+		}
+		
+		throw new AccessDeniedException();
+		
 	}
 
 	@DeleteMapping(value = "{clinicId}")

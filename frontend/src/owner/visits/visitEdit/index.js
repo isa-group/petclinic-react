@@ -55,7 +55,7 @@ export default function OwnerVisitEdit() {
     setCity(value);
 
     const plan = pet.owner.clinic.plan;
-    if (plan === "BASIC") {
+    if (!plan.haveVetSelection) {
       vets = vets.filter((vet) => vet.city === value);
       let randomIndex = Math.floor(Math.random() * vets.length);
       visit.vet = vets[randomIndex];
@@ -81,7 +81,7 @@ export default function OwnerVisitEdit() {
         />
       );
     } else {
-      if (plan !== "BASIC") {
+      if (plan.haveVetSelection) {
         const vetsAux = vets.filter((vet) => vet.city === city);
         const vetsOptions = getVetOptions(vetsAux);
         return (

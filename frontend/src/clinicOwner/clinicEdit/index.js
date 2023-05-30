@@ -4,9 +4,9 @@ import tokenService from "../../services/token.service";
 import getIdFromUrl from "../../util/getIdFromUrl";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
-import { clinicEditInputs } from "./form/clinicEditInputs";
-import FormGenerator from "../../components/formGenerator/formGenerator";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
+import { Form, Label, Input } from "reactstrap";
+import { Link } from "react-router-dom";
 import {useNavigate} from "react-router-dom";
 
 const user = tokenService.getUser();
@@ -33,62 +33,52 @@ export default function EditClinic() {
     setVisible,
     id
   );
-  const [dataLoaded, setDataLoaded] = useState(false);
 
-  const editClinicFormRef = useRef(null);
+  const [plans, setPlans] = useFetchState(
+    [],
+    `/api/v1/plans`,
+    jwt,
+    setMessage,
+    setVisible
+  );
 
-  function handleSubmit({ values }) {
-    if (!editClinicFormRef.current.validate()) return;
+  function handleChange(event){
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    if (name === "plan"){
+      setClinic({ ...clinic, [name]: {
+        name: value
+      } });
+    }else{
+      setClinic({ ...clinic, [name]: value });
+    }
+  }
+
+  function handleSubmit(event) {
+    
+    event.preventDefault();
+
+    clinic.plan = plans.find((plan) => plan.name === clinic.plan.name);
 
     if (id !== "new") {
-      fetch(`/api/v1/clinics/${id}`, {
-        method: "PUT",
+      fetch(`/api/v1/clinics${id !== "new" ? `/${id}` : ""}`, {
+        method: id !== "new" ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwt}`,
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(clinic),
       })
       .then((res) => {
-        if (res.status === 200) {
-          navigator("/clinics");
-        }
+        navigator("/clinics");
       })
       .catch((err) => {
         setMessage(err.message);
       });;
-    } else {
-      fetch(`/api/v1/clinics`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: JSON.stringify(values),
-      })
-      .then((res) => {
-        if (res.status === 201) {
-          navigator("/clinics");
-        }
-      })
-      .catch((err) => {
-        setMessage(err.message);
-      });
     }
   }
-
-  useEffect(() => {
-    if (clinic.id !== "") {
-      clinicEditInputs.forEach((input) => {
-        input.defaultValue = clinic[input.name];
-        setDataLoaded(true);
-      });
-    } else {
-      clinicEditInputs.forEach((input) => {
-        input.defaultValue = "";
-      });
-    }
-  }, [clinic]);
 
   const modal = getErrorModal(setVisible, visible, message);
 
@@ -97,23 +87,82 @@ export default function EditClinic() {
       {<h2>{id !== "new" ? "Edit Clinic" : "Add Clinic"}</h2>}
       {modal}
       <div className="auth-form-container">
-        {dataLoaded ? (
-          <FormGenerator
-            ref={editClinicFormRef}
-            inputs={clinicEditInputs}
-            onSubmit={handleSubmit}
-            buttonText="Edit"
-            buttonClassName="auth-button"
-          />
-        ) : (
-          <FormGenerator
-            ref={editClinicFormRef}
-            inputs={clinicEditInputs}
-            onSubmit={handleSubmit}
-            buttonText="Add"
-            buttonClassName="auth-button"
-          />
-        )}
+        <Form onSubmit={handleSubmit}>
+          <div className="custom-form-input">
+            <Label for="name" className="custom-form-input-label">
+              Name
+            </Label>
+            <Input
+              type="text"
+              required
+              name="name"
+              id="name"
+              value={clinic.name || ""}
+              onChange={handleChange}
+              className="custom-input"
+            />
+          </div>
+          <div className="custom-form-input">
+            <Label for="address" className="custom-form-input-label">
+              Address
+            </Label>
+            <Input
+              type="text"
+              required
+              name="address"
+              id="address"
+              value={clinic.address || ""}
+              onChange={handleChange}
+              className="custom-input"
+            />
+          </div>
+          <div className="custom-form-input">
+            <Label for="telephone" className="custom-form-input-label">
+                Telephone
+            </Label>
+            <Input
+              type="text"
+              required
+              name="telephone"
+              id="telephone"
+              value={clinic.telephone || ""}
+              onChange={handleChange}
+              className="custom-input"
+            />
+          </div>
+          <div className="custom-form-input">
+            <Label for="plan" className="custom-form-input-label">
+              Plan
+            </Label>
+            <Input
+              id="plan"
+              name="plan"
+              required
+              type="select"
+              value={clinic.plan?.name || ""}
+              onChange={handleChange}
+              className="custom-input"
+            >
+              <option value="">None</option>
+              {plans.map((plan) => {
+                return(
+                    <option value={plan.name}>{plan.name}</option>
+                );
+              })}
+              
+            </Input>
+          </div>
+          <div className="custom-button-row">
+            <button className="auth-button">Save</button>
+            <Link
+              to={`/clinicOwners`}
+              className="auth-button"
+              style={{ textDecoration: "none" }}
+            >
+              Cancel
+            </Link>
+          </div>
+        </Form>
       </div>
     </div>
   );

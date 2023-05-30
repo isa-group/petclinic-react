@@ -23,10 +23,10 @@ import java.util.Map;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
+import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,22 +113,7 @@ public class PetService {
 
 	public boolean underLimit(Owner owner) {
 		Integer petCount = this.petRepository.countPetsByOwner(owner.getId());
-		PricingPlan plan = owner.getClinic().getPlan();
-		switch (plan) {
-		case PLATINUM:
-			if (petCount < PLATINUM_LIMIT)
-				return true;
-			break;
-		case GOLD:
-			if (petCount < GOLD_LIMIT)
-				return true;
-			break;
-		default:
-			if (petCount < BASIC_LIMIT)
-				return true;
-			break;
-		}
-		return false;
+		return petCount < owner.getClinic().getPlan().getMaxPets();
 	}
 
 	public Map<String, Object> getPetsStats() {

@@ -15,7 +15,7 @@ import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.clinic.PricingPlan;
+import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,18 +119,18 @@ public class ConsultationService {
 
 	@Transactional
 	public Ticket updateOwnerTicket(Ticket ticket, Integer targetId, Owner owner) {
-		if (owner.getClinic().getPlan().equals(PricingPlan.PLATINUM)) {
+		if (owner.getClinic().getPlan().getHaveOnlineConsultations()) {
 			return updateTicket(ticket, targetId);
 		} else
-			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getClinic().getPlan());
+			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getClinic().getPlan().getName());
 	}
 
 	@Transactional
 	public void deleteOwnerTicket(Ticket ticket, Owner owner) {
-		if (owner.getClinic().getPlan().equals(PricingPlan.PLATINUM)) {
+		if (owner.getClinic().getPlan().getHaveOnlineConsultations()) {
 			deleteTicket(ticket.getId());
 		} else
-			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getClinic().getPlan());
+			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getClinic().getPlan().getName());
 	}
 
 	@Transactional
