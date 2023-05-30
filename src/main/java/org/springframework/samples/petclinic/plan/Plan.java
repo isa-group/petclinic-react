@@ -21,7 +21,7 @@ public class Plan extends BaseEntity{
     
     @Column(name = "name")
     @Enumerated(EnumType.STRING)
-	@NotEmpty
+	@NotNull
 	private PricingPlan name;
 
     @Column(name = "price")

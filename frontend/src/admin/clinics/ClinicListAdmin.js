@@ -68,12 +68,12 @@ export default function ClinicListAdmin() {
   return (
     <div>
       <div className="admin-page-container">
-        <h1 className="text-center">Clinic Owners</h1>
+        <h1 className="text-center">Clinics</h1>
         {alerts.map((a) => a.alert)}
         {modal}
         <div className="float-right">
           <Button color="success" tag={Link} to="/clinics/new">
-            Add Clinic Owner
+            Add Clinic
           </Button>
         </div>
         <div>
