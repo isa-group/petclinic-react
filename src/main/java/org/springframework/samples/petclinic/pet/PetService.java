@@ -113,22 +113,7 @@ public class PetService {
 
 	public boolean underLimit(Owner owner) {
 		Integer petCount = this.petRepository.countPetsByOwner(owner.getId());
-		PricingPlan plan = owner.getClinic().getPlan();
-		switch (plan) {
-		case PLATINUM:
-			if (petCount < PLATINUM_LIMIT)
-				return true;
-			break;
-		case GOLD:
-			if (petCount < GOLD_LIMIT)
-				return true;
-			break;
-		default:
-			if (petCount < BASIC_LIMIT)
-				return true;
-			break;
-		}
-		return false;
+		return petCount < owner.getClinic().getPlan().getMaxPets();
 	}
 
 	public Map<String, Object> getPetsStats() {

@@ -131,7 +131,7 @@ export default function OwnerConsultationTickets() {
     return tickets.map((t, index) => {
       const buttons =
         index === length - 1 &&
-        plan === "PLATINUM" &&
+        plan.haveOnlineConsultations &&
         t.user.authority.authority === "OWNER" ? (
           <ButtonGroup>
             <Button
@@ -182,7 +182,7 @@ export default function OwnerConsultationTickets() {
   }
 
   function getTicketInput(newTicket, status, plan) {
-    if (status !== "CLOSED" && plan === "PLATINUM")
+    if (status !== "CLOSED" && plan.haveOnlineConsultations)
       return (
         <div className="ticket-input-div">
           <Form onSubmit={handleSubmit}>

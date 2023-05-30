@@ -15,7 +15,7 @@ export default function OwnerConsultationList() {
   let [filtered, setFiltered] = useState(null);
   let [filter, setFilter] = useState("");
   let [search, setSearch] = useState("");
-  let [plan, setPlan] = useState("");
+  let [plan, setPlan] = useState(null);
   let [message, setMessage] = useState(null);
 
   const jwt = JSON.parse(window.localStorage.getItem("jwt"));
@@ -69,7 +69,7 @@ export default function OwnerConsultationList() {
               >
                 Details
               </Button>
-              {plan === "PLATINUM" ? (
+              {plan.haveOnlineConsultations ? (
                 <Button
                   size="sm"
                   color="primary"
@@ -134,7 +134,7 @@ export default function OwnerConsultationList() {
       })
     ).json();
     if (owner.message) setMessage(owner.message);
-    else setPlan(owner.clinic.plan);
+    else setPlan(owner.clinic.name);
   }
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export default function OwnerConsultationList() {
         <h1 className="text-center">Consultations</h1>
         <Row className="row-cols-auto g-3 align-items-center">
           <Col>
-            {plan === "PLATINUM" ? (
+            {plan.haveOnlineConsultations ? (
               <Button color="success" tag={Link} to="/consultations/new">
                 Add Consultation
               </Button>

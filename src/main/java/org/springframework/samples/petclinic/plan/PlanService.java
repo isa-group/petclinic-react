@@ -18,4 +18,8 @@ public class PlanService {
     public List<Plan> findAll() {
         return (List<Plan>) planRepository.findAll();
     }
+
+    public Plan findById(int id) {
+        return planRepository.findById(id).get();
+    }
 }

@@ -103,7 +103,7 @@ public class PetRestController {
 				newPet.setOwner(owner);
 				savedPet = this.petService.savePet(newPet);
 			} else
-				throw new LimitReachedException("Pets", owner.getClinic().getPlan());
+				throw new LimitReachedException("Pets", owner.getClinic().getPlan().getName());
 		} else {
 			savedPet = this.petService.savePet(newPet);
 		}

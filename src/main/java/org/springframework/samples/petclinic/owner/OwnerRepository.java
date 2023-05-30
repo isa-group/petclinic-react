@@ -53,7 +53,7 @@ public interface OwnerRepository extends CrudRepository<Owner, Integer> {
 
 	// STATS
 
-	@Query("SELECT COUNT(o) FROM Owner o WHERE o.clinic.plan = :plan")
+	@Query("SELECT COUNT(o) FROM Owner o WHERE o.clinic.plan.name = :plan")
 	public Integer countByPlan(PricingPlan plan);
 
 	@Query("SELECT COUNT(o) FROM Owner o")

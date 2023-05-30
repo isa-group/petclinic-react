@@ -34,7 +34,6 @@ export default function PlanList() {
       <div className="section-pricing">
         <div className="pricing-container">
           {plans?.map((plan) => {
-            console.log(plan);
 
             let icon;
 

@@ -28,7 +28,7 @@ export default function ClinicListAdmin() {
         <td>{clinic.address}</td>
         <td>{clinic.telephone}</td>
         <td>{clinic.clinicOwner.firstName} {clinic.clinicOwner.lastName}</td>
-        <td>{clinic.plan}</td>
+        <td>{clinic.plan.name}</td>
         <td>
           <ButtonGroup>
             <Button

@@ -38,6 +38,7 @@ import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.samples.petclinic.pet.PetType;
+import org.springframework.samples.petclinic.plan.Plan;
 import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.User;
@@ -101,9 +102,31 @@ class VisitControllerTests {
 	private Clinic clinic;
 	private ClinicOwner clinicOwner;
 	private User clinicOwnerUser;
+	private Plan planBasic;
+	private Plan planPlatinum;
 
 	@BeforeEach
 	void setup() {
+
+		planBasic = new Plan();
+		planBasic.setName(PricingPlan.BASIC);
+		planBasic.setPrice(0.0);
+		planBasic.setMaxPets(2);
+		planBasic.setMaxVisitsPerMonthAndPet(1);
+		planBasic.setHaveVetSelection(false);
+		planBasic.setHaveCalendar(false);
+		planBasic.setHavePetsDashboard(false);
+		planBasic.setHaveOnlineConsultations(false);
+
+		planPlatinum = new Plan();
+		planPlatinum.setName(PricingPlan.PLATINUM);
+		planPlatinum.setPrice(12.0);
+		planPlatinum.setMaxPets(7);
+		planPlatinum.setMaxVisitsPerMonthAndPet(6);
+		planPlatinum.setHaveVetSelection(true);
+		planPlatinum.setHaveCalendar(true);
+		planPlatinum.setHavePetsDashboard(true);
+		planPlatinum.setHaveOnlineConsultations(true);
 
 		Authorities clinicOwnerAuth = new Authorities();
 		clinicOwnerAuth.setId(1);
@@ -123,7 +146,7 @@ class VisitControllerTests {
 		clinic.setId(TEST_CLINIC_ID);
 		clinic.setName("Clinic Test");
 		clinic.setAddress("Test Address");
-		clinic.setPlan(PricingPlan.BASIC);
+		clinic.setPlan(planBasic);
 		clinic.setTelephone("123456789");
 		clinic.setClinicOwner(clinicOwner);
 
@@ -637,7 +660,7 @@ class VisitControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void shouldReturnOwnerStats() throws Exception {
 		logged.setId(TEST_USER_ID);
-		clinic.setPlan(PricingPlan.PLATINUM);
+		clinic.setPlan(planPlatinum);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.getVisitsOwnerStats(george.getId())).thenReturn(new HashMap<>());

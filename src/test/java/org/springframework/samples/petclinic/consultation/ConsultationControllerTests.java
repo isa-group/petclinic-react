@@ -36,6 +36,7 @@ import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureExceptio
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.PetType;
+import org.springframework.samples.petclinic.plan.Plan;
 import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.User;
@@ -94,9 +95,32 @@ class ConsultationControllerTests {
 	private Clinic clinic;
 	private ClinicOwner clinicOwner;
 	private User clinicOwnerUser;
+	private Plan planBasic;
+	private Plan planPlatinum;
 
 	@BeforeEach
 	void setup() {
+
+		planBasic = new Plan();
+		planBasic.setName(PricingPlan.BASIC);
+		planBasic.setPrice(0.0);
+		planBasic.setMaxPets(2);
+		planBasic.setMaxVisitsPerMonthAndPet(1);
+		planBasic.setHaveVetSelection(false);
+		planBasic.setHaveCalendar(false);
+		planBasic.setHavePetsDashboard(false);
+		planBasic.setHaveOnlineConsultations(false);
+
+		planPlatinum = new Plan();
+		planPlatinum.setName(PricingPlan.PLATINUM);
+		planPlatinum.setPrice(12.0);
+		planPlatinum.setMaxPets(7);
+		planPlatinum.setMaxVisitsPerMonthAndPet(6);
+		planPlatinum.setHaveVetSelection(true);
+		planPlatinum.setHaveCalendar(true);
+		planPlatinum.setHavePetsDashboard(true);
+		planPlatinum.setHaveOnlineConsultations(true);
+
 		Authorities clinicOwnerAuth = new Authorities();
 		clinicOwnerAuth.setId(1);
 		clinicOwnerAuth.setAuthority("CLINIC_OWNER");
@@ -115,7 +139,7 @@ class ConsultationControllerTests {
 		clinic.setId(TEST_CLINIC_ID);
 		clinic.setName("Clinic Test");
 		clinic.setAddress("Test Address");
-		clinic.setPlan(PricingPlan.BASIC);
+		clinic.setPlan(planBasic);
 		clinic.setTelephone("123456789");
 		clinic.setClinicOwner(clinicOwner);
 
@@ -339,7 +363,7 @@ class ConsultationControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void ownerShouldCreateConsultation() throws Exception {
 		logged.setId(TEST_USER_ID);
-		clinic.setPlan(PricingPlan.PLATINUM);
+		clinic.setPlan(planPlatinum);
 		Consultation aux = new Consultation();
 		aux.setId(2);
 		aux.setTitle("Checking Simba's leg.");
@@ -392,7 +416,7 @@ class ConsultationControllerTests {
 	void ownerShouldUpdateVisit() throws Exception {
 		logged.setId(TEST_USER_ID);
 		consultation.setTitle("UPDATED");
-		clinic.setPlan(PricingPlan.PLATINUM);
+		clinic.setPlan(planPlatinum);
 		when(this.consultationService.findConsultationById(TEST_CONSULTATION_ID)).thenReturn(consultation);
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.consultationService.updateConsultation(any(Consultation.class), any(Integer.class)))
@@ -596,7 +620,7 @@ class ConsultationControllerTests {
 		logged.setId(TEST_USER_ID);
 		Ticket aux = new Ticket();
 		aux.setDescription("Checking Simba's leg.");
-		clinic.setPlan(PricingPlan.PLATINUM);
+		clinic.setPlan(planPlatinum);
 		when(this.consultationService.findConsultationById(TEST_CONSULTATION_ID)).thenReturn(consultation);
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 
@@ -760,7 +784,7 @@ class ConsultationControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void shouldReturnOwnerStats() throws Exception {
 		logged.setId(TEST_USER_ID);
-		clinic.setPlan(PricingPlan.PLATINUM);
+		clinic.setPlan(planPlatinum);
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.consultationService.getOwnerConsultationsStats(george.getId())).thenReturn(new HashMap<>());
 

@@ -107,7 +107,7 @@ public class VisitRestController {
 				if (this.visitService.underLimit(newVisit)) {
 					savedVisit = this.visitService.saveVisit(newVisit);
 				} else
-					throw new LimitReachedException("Visits per month for your Pet " + pet.getName(), owner.getClinic().getPlan());
+					throw new LimitReachedException("Visits per month for your Pet " + pet.getName(), owner.getClinic().getPlan().getName());
 			} else
 				throw new ResourceNotOwnedException(pet);
 		} else
@@ -198,7 +198,7 @@ public class VisitRestController {
 		User user = this.userService.findCurrentUser();
 		if (user.hasAuthority(OWNER_AUTH).equals(true)) {
 			Owner o = userService.findOwnerByUser(user.getId());
-			if (o.getClinic().getPlan().equals(PricingPlan.PLATINUM))
+			if (o.getClinic().getPlan().getHavePetsDashboard())
 				return new ResponseEntity<>(this.visitService.getVisitsOwnerStats(o.getId()), HttpStatus.OK);
 		} else if (user.hasAuthority(ADMIN_AUTH).equals(true))
 			return new ResponseEntity<>(this.visitService.getVisitsAdminStats(), HttpStatus.OK);

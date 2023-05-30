@@ -14,6 +14,10 @@ export default function ClinicEditAdmin() {
     name: "",
     address: "",
     telephone: "",
+    plan: {
+      id: "",
+      name: "",
+    }
   };
   const id = getIdFromUrl(2);
   const [message, setMessage] = useState(null);
@@ -35,19 +39,32 @@ export default function ClinicEditAdmin() {
     setVisible
   );
 
+  const [plans, setPlans] = useFetchState(
+    [],
+    `/api/v1/plans`,
+    jwt,
+    setMessage,
+    setVisible
+  );
+
   function handleChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    setClinic({ ...clinic, [name]: value });
+    if (name === "plan"){
+      setClinic({ ...clinic, [name]: {
+        name: value
+      } });
+    }else{
+      setClinic({ ...clinic, [name]: value });
+    }
   }
 
   function handleSubmit(event) {
     event.preventDefault();
 
     clinic.clinicOwner = clinicOwners.filter((clinicOwner) => clinicOwner.id === parseInt(clinic.clinicOwner))[0];
-
-    console.log(clinic);
+    clinic.plan = plans.filter((plan) => plan.name === clinic.plan.name)[0];
 
     fetch("/api/v1/clinics" + (clinic.id ? "/" + clinic.id : ""), {
       method: clinic.id ? "PUT" : "POST",
@@ -127,14 +144,16 @@ export default function ClinicEditAdmin() {
               name="plan"
               required
               type="select"
-              value={clinic.plan || ""}
+              value={clinic.plan.name || ""}
               onChange={handleChange}
               className="custom-input"
             >
               <option value="">None</option>
-              <option value="BASIC">BASIC</option>
-              <option value="GOLD">GOLD</option>
-              <option value="PLATINUM">PLATINUM</option>
+              {plans.map((plan) => {
+                return(
+                    <option value={plan.name}>{plan.name}</option>
+                );
+              })}
               
             </Input>
           </div>

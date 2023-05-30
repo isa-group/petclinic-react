@@ -58,7 +58,7 @@ export default function OwnerDashboard() {
     ).json();
     if (owner.message) setMessage(owner.message);
     else {
-      setPlan(owner.clinic.plan);
+      setPlan(owner.clinic.name);
     }
   }
 
@@ -70,8 +70,7 @@ export default function OwnerDashboard() {
     <>
       <div className="owner-dashboard-page-container">
         <h1 className="text-center dashboard-title">Dashboard</h1>
-        {plan === "GOLD" ||
-          (plan === "PLATINUM" && (
+        {plan.haveCalendar && (
             <div style={{ height: `${600}px` }} className="calendar-container">
               <Calendar
                 localizer={localizer}
@@ -89,7 +88,7 @@ export default function OwnerDashboard() {
                 }
               />
             </div>
-          ))}
+          )}
       </div>
       <Modal
         isOpen={modalShow}
