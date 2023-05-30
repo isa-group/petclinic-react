@@ -18,6 +18,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.plan.PricingPlan;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

@@ -23,9 +23,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.clinic.Clinic;
-import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
@@ -40,8 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 
-@WebMvcTest(value = { OwnerRestController.class,
-		OwnerPlanController.class }, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class))
+@WebMvcTest(value = { OwnerRestController.class}, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class))
 class OwnerRestControllerTests {
 
 	private static final int TEST_OWNER_ID = 1;
@@ -50,10 +49,6 @@ class OwnerRestControllerTests {
 	@SuppressWarnings("unused")
 	@Autowired
 	private OwnerRestController ownerController;
-
-	@SuppressWarnings("unused")
-	@Autowired
-	private OwnerPlanController ownerPlanController;
 
 	@MockBean
 	private OwnerService ownerService;

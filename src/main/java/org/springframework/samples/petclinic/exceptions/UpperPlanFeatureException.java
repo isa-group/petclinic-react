@@ -1,7 +1,7 @@
 package org.springframework.samples.petclinic.exceptions;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.samples.petclinic.clinic.PricingPlan;
+import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import lombok.Getter;

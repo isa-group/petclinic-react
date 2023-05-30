@@ -1,3 +1,9 @@
+-- Petclinic plans
+
+INSERT INTO plans(id, name, price, max_pets, max_visits_per_month_and_pet, support_priority, have_vet_selection, have_calendar, have_pets_dashboard, have_online_consultations) VALUES (1, 'BASIC', 0.0, 2, 1, 'LOW', 0, 0, 0, 0);
+INSERT INTO plans(id, name, price, max_pets, max_visits_per_month_and_pet, support_priority, have_vet_selection, have_calendar, have_pets_dashboard, have_online_consultations) VALUES (2, 'GOLD', 5.0, 4, 3, 'MEDIUM', 1, 1, 0, 0);
+INSERT INTO plans(id, name, price, max_pets, max_visits_per_month_and_pet, support_priority, have_vet_selection, have_calendar, have_pets_dashboard, have_online_consultations) VALUES (3, 'PLATINUM', 12.0, 7, 6, 'HIGH', 1, 1, 1, 1);
+
 -- One admin user, named admin1 with passwor 4dm1n and authority admin
 INSERT INTO authorities(id,authority) VALUES (1,'ADMIN');
 INSERT INTO users(id,username,password,authority) VALUES (1,'admin1','$2a$10$nMmTWAhPTqXqLDJTag3prumFrAJpsYtroxf0ojesFYq0k4PmcbWUS',1);
