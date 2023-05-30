@@ -39,6 +39,8 @@ import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.util.EntityUtils;
+import org.springframework.samples.petclinic.vet.Vet;
+import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.samples.petclinic.visit.Visit;
 import org.springframework.samples.petclinic.visit.VisitService;
 
@@ -54,6 +56,9 @@ class PetServiceTests {
 
 	@Autowired
 	protected VisitService visitService;
+
+	@Autowired
+	protected VetService vetService;
 
 	@Test
 	void shouldFindPetWithCorrectId() {
@@ -174,6 +179,7 @@ class PetServiceTests {
 		Integer firstCount = petService.findAll().size();
 
 		Owner owner6 = this.ownerService.findOwnerById(7);
+		Vet vet = this.vetService.findVetById(3);
 		Pet pet = new Pet();
 		pet.setName("wario22");
 		Collection<PetType> types = this.petService.findPetTypes();
@@ -185,6 +191,7 @@ class PetServiceTests {
 		visit.setDatetime(LocalDateTime.now());
 		visit.setDescription("prueba");
 		visit.setPet(pet);
+		visit.setVet(vet);
 		visitService.saveVisit(visit);
 
 		Integer secondCount = petService.findAll().size();
