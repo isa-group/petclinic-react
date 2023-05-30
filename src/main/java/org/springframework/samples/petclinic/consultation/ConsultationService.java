@@ -15,7 +15,7 @@ import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.owner.PricingPlan;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,15 +41,22 @@ public class ConsultationService {
 		return consultationRepository.findConsultationsByOwner(ownerId);
 	}
 
-//	@Transactional(readOnly = true)
-//	public Iterable<Consultation> findAllConsultationsByUser(int userId) throws DataAccessException {
-//		return consultationRepository.findConsultationsByUser(userId);
-//	}
-
 	@Transactional(readOnly = true)
 	public Consultation findConsultationById(int id) throws DataAccessException {
 		return this.consultationRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Consultation", "ID", id));
+	}
+
+	@Transactional(readOnly = true)
+	public List<Consultation> findAllByClinicOwnerUserId(int userId) throws DataAccessException {
+		return this.consultationRepository.findAllByClinicOwnerUserId(userId);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Consultation> findAllByClinicId(int clinicId) throws DataAccessException {
+		System.out.println("LLEGA AL SERVICE");
+		System.out.println(clinicId);
+		return this.consultationRepository.findAllByClinicId(clinicId);
 	}
 
 	@Transactional
@@ -68,8 +75,6 @@ public class ConsultationService {
 	@Transactional
 	public void deleteConsultation(int id) throws DataAccessException {
 		Consultation toDelete = findConsultationById(id);
-//		for (Ticket ticket : findAllTicketsByConsultation(id))
-//			deleteTicket(ticket.getId());
 		this.consultationRepository.delete(toDelete);
 	}
 
@@ -114,18 +119,18 @@ public class ConsultationService {
 
 	@Transactional
 	public Ticket updateOwnerTicket(Ticket ticket, Integer targetId, Owner owner) {
-		if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
+		if (owner.getClinic().getPlan().equals(PricingPlan.PLATINUM)) {
 			return updateTicket(ticket, targetId);
 		} else
-			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
+			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getClinic().getPlan());
 	}
 
 	@Transactional
 	public void deleteOwnerTicket(Ticket ticket, Owner owner) {
-		if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
+		if (owner.getClinic().getPlan().equals(PricingPlan.PLATINUM)) {
 			deleteTicket(ticket.getId());
 		} else
-			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
+			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getClinic().getPlan());
 	}
 
 	@Transactional
@@ -224,3 +229,4 @@ public class ConsultationService {
 		return unsortedConsultationsByPet;
 	}
 }
+

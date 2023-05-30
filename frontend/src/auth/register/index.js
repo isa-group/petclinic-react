@@ -4,11 +4,13 @@ import tokenService from "../../services/token.service";
 import FormGenerator from "../../components/formGenerator/formGenerator";
 import { registerFormOwnerInputs } from "./form/registerFormOwnerInputs";
 import { registerFormVetInputs } from "./form/registerFormVetInputs";
+import { registerFormClinicOwnerInputs } from "./form/registerFormClinicOwnerInputs";
 import { useEffect, useRef, useState } from "react";
 
 export default function Register() {
   let [type, setType] = useState(null);
   let [authority, setAuthority] = useState(null);
+  let [clinics, setClinics] = useState([]);
 
   const registerFormRef = useRef();
 
@@ -21,7 +23,11 @@ export default function Register() {
   }
 
   function handleSubmit({ values }) {
+
+    if(!registerFormRef.current.validate()) return;
+
     const request = values;
+    request.clinic = clinics.filter((clinic) => clinic.name === request.clinic)[0];
     request["authority"] = authority;
     let state = "";
 
@@ -69,7 +75,33 @@ export default function Register() {
       });
   }
 
-  useEffect(() => {}, [type]);
+  useEffect(() => {
+    if (type === "Owner" || type === "Vet") {
+      if (registerFormOwnerInputs[5].values.length === 1){
+        fetch("/api/v1/clinics")
+        .then(function (response) {
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            return response.json();
+          }
+        })
+        .then(function (data) {
+          setClinics(data);
+          if (data.length !== 0) {
+            let clinicNames = data.map((clinic) => {
+              return clinic.name;
+            });
+
+            registerFormOwnerInputs[5].values = ["None", ...clinicNames];
+          }
+        })
+        .catch((message) => {
+          alert(message);
+        });
+      }
+    }
+  }, [type]);
 
   if (type) {
     return (
@@ -79,7 +111,9 @@ export default function Register() {
           <FormGenerator
             ref={registerFormRef}
             inputs={
-              type === "Owner" ? registerFormOwnerInputs : registerFormVetInputs
+              type === "Owner" ? registerFormOwnerInputs 
+              : type === "Vet" ? registerFormVetInputs
+              : registerFormClinicOwnerInputs
             }
             onSubmit={handleSubmit}
             numberOfColumns={1}
@@ -112,6 +146,13 @@ export default function Register() {
               onClick={handleButtonClick}
             >
               Vet
+            </button>
+            <button
+              className="auth-button"
+              value="Clinic Owner"
+              onClick={handleButtonClick}
+            >
+              Clinic Owner
             </button>
           </div>
         </div>

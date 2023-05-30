@@ -38,6 +38,22 @@ const FormGenerator = forwardRef((props, ref) => {
 
         return isValid;
       },
+      updateForm: () => {
+        if (Object.keys(formValues).length === 0) {
+          let newFormValues = {};
+          for (let input of props.inputs) {
+            if (input.type === "interval") {
+              newFormValues[`min_${input.name}`] = input.min;
+              newFormValues[`max_${input.name}`] = input.max;
+            } else {
+              newFormValues[input.name] = input.defaultValue
+                ? input.defaultValue
+                : "";
+            }
+          }
+          setFormValues(newFormValues);
+        }
+      }
     };
   });
 
@@ -83,7 +99,7 @@ const FormGenerator = forwardRef((props, ref) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formValues]);
+  }, [formValues, props.inputs]);
 
   useEffect(() => {
     if (submitForm) {

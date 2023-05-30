@@ -7,6 +7,7 @@ import useFetchData from "../../util/useFetchData";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
 import "../../static/css/admin/adminPage.css";
+import "../../static/css/owner/consultations.css";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -16,6 +17,7 @@ export default function ConsultationEditAdmin() {
     title: "",
     status: null,
     owner: null,
+    isClinicComment: false,
   };
   const id = getIdFromUrl(2);
   const [message, setMessage] = useState(null);
@@ -43,7 +45,11 @@ export default function ConsultationEditAdmin() {
     } else if (name === "pet") {
       const pet = pets.find((pet) => pet.id === Number(value));
       setConsultation({ ...consultation, pet: pet });
-    } else setConsultation({ ...consultation, [name]: value });
+    } else if (name === "isClinicComment"){
+      setConsultation({...consultation, isClinicComment: target.checked ? true : false});
+    } else {
+      setConsultation({ ...consultation, [name]: value });
+    }
   }
 
   function handleSubmit(event) {
@@ -197,6 +203,27 @@ export default function ConsultationEditAdmin() {
                 {petOptions}
               </Input>
             )}
+          </div>
+          <div className="consultation-checkbox-container">
+            <label htmlFor="isClinicComment">
+              ¿Is the consultation a comment for the clinic?
+            </label>
+            <div className="checkbox-wrapper-10">
+              <Input
+                type="checkbox"
+                id="isClinicComment"
+                className="tgl tgl-flip"
+                onChange={handleChange}
+                name="isClinicComment"
+                checked={consultation.isClinicComment}
+              />
+              <label
+                htmlFor="isClinicComment"
+                data-tg-on="Yes"
+                data-tg-off="No"
+                className="tgl-btn"
+              ></label>
+            </div>
           </div>
           <div className="custom-button-row">
             <button className="auth-button">Save</button>

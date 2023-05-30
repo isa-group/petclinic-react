@@ -29,6 +29,7 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -39,6 +40,7 @@ import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.util.EntityUtils;
+import org.springframework.samples.petclinic.vet.VetRestController;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.samples.petclinic.visit.Visit;
@@ -84,7 +86,7 @@ class PetServiceTests {
 
 	@Test
 	void shouldFindAllPetsByUserId() {
-		Collection<Pet> pets = this.petService.findAllPetsByUserId(2);
+		Collection<Pet> pets = this.petService.findAllPetsByUserId(4);
 
 		Pet pet1 = EntityUtils.getById(pets, Pet.class, 1);
 		assertEquals("Leo", pet1.getName());
@@ -179,7 +181,6 @@ class PetServiceTests {
 		Integer firstCount = petService.findAll().size();
 
 		Owner owner6 = this.ownerService.findOwnerById(7);
-		Vet vet = this.vetService.findVetById(3);
 		Pet pet = new Pet();
 		pet.setName("wario22");
 		Collection<PetType> types = this.petService.findPetTypes();
@@ -191,9 +192,8 @@ class PetServiceTests {
 		visit.setDatetime(LocalDateTime.now());
 		visit.setDescription("prueba");
 		visit.setPet(pet);
-		visit.setVet(vet);
+		visit.setVet(vetService.findVetById(1));
 		visitService.saveVisit(visit);
-
 		Integer secondCount = petService.findAll().size();
 		assertEquals(firstCount + 1, secondCount);
 		petService.deletePet(pet.getId());
@@ -204,7 +204,7 @@ class PetServiceTests {
 	@Test
 	@Transactional
 	void shouldCheckLimitForBasic() {
-		Owner owner = this.ownerService.findOwnerById(4);
+		Owner owner = this.ownerService.findOwnerById(8);
 		assertEquals(true, this.petService.underLimit(owner));
 		createPet("wario", owner);
 		assertEquals(false, this.petService.underLimit(owner));
@@ -213,7 +213,7 @@ class PetServiceTests {
 	@Test
 	@Transactional
 	void shouldCheckLimitForGold() {
-		Owner owner = this.ownerService.findOwnerById(7);
+		Owner owner = this.ownerService.findOwnerById(4);
 		assertEquals(true, this.petService.underLimit(owner));
 		createPet("wario", owner);
 		createPet("wario2", owner);
@@ -224,13 +224,18 @@ class PetServiceTests {
 	@Test
 	@Transactional
 	void shouldCheckLimitForPlatinum() {
-		Owner owner = this.ownerService.findOwnerById(10);
+		Owner owner = this.ownerService.findOwnerById(1);
 		assertEquals(true, this.petService.underLimit(owner));
 		createPet("wario", owner);
 		createPet("wario2", owner);
 		createPet("wario3", owner);
 		createPet("wario4", owner);
 		createPet("wario5", owner);
+		createPet("wario6", owner);
+		createPet("wario7", owner);
+		createPet("wario8", owner);
+		createPet("wario9", owner);
+		createPet("wario10", owner);
 		assertEquals(false, this.petService.underLimit(owner));
 	}
 

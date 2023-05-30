@@ -77,7 +77,7 @@ class VetServiceTests {
 
 	@Test
 	void shouldFindVetByUser() {
-		Vet vet = this.vetService.findVetByUser(12);
+		Vet vet = this.vetService.findVetByUser(14);
 		assertThat(vet.getLastName()).startsWith("Carter");
 	}
 
@@ -88,7 +88,7 @@ class VetServiceTests {
 
 	@Test
 	void shouldFindOptVetByUser() {
-		Optional<Vet> vet = this.vetService.optFindVetByUser(12);
+		Optional<Vet> vet = this.vetService.optFindVetByUser(14);
 		assertThat(vet.get().getLastName()).startsWith("Carter");
 	}
 

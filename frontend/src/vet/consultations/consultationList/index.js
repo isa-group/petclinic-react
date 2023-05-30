@@ -9,6 +9,7 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import tokenService from "../../../services/token.service";
 
 export default function VetConsultationList() {
   let [consultations, setConsultations] = useState([]);
@@ -16,7 +17,8 @@ export default function VetConsultationList() {
   let [filter, setFilter] = useState("");
   let [search, setSearch] = useState("");
 
-  const jwt = JSON.parse(window.localStorage.getItem("jwt"));
+  const user = tokenService.getUser();
+  const jwt = tokenService.getLocalAccessToken();
 
   function handleFilter(event) {
     const value = event.target.value;
@@ -94,7 +96,7 @@ export default function VetConsultationList() {
 
   async function setUp() {
     const consultations = await (
-      await fetch("/api/v1/consultations", {
+      await fetch(`/api/v1/consultations?userId=${user.id}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",

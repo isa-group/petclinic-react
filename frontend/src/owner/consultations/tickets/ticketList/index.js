@@ -118,7 +118,7 @@ export default function OwnerConsultationTickets() {
         })
       ).json();
       if (owner.message) setMessage(owner.message);
-      else setPlan(owner.plan);
+      else setPlan(owner.clinic.plan);
     }
   }
 
@@ -220,7 +220,7 @@ export default function OwnerConsultationTickets() {
       <h2 className="text-center">
         Consultation Number {consultation.id} - Pet {consultation.pet?.name}
       </h2>
-      ;<h3>{consultation.title}</h3>
+      <h3>{consultation.title}</h3>
       <div className="conversation-container" ref={conversationRef}>
         {getTicketList(tickets, plan)}
       </div>

@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.stereotype.Service;
@@ -59,11 +60,6 @@ public class OwnerService {
 		return this.ownerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Owner", "ID", id));
 	}
 
-//	@Transactional(readOnly = true)
-//	public Owner findOwnerByUser(int userId) throws DataAccessException {
-//		return this.ownerRepository.findByUser(userId).orElseThrow(()->new ResourceNotFoundException("Owner","User ID",userId));
-//	}
-
 	@Transactional(readOnly = true)
 	public Optional<Owner> optFindOwnerByUser(int userId) throws DataAccessException {
 		return this.ownerRepository.findByUser(userId);
@@ -83,18 +79,8 @@ public class OwnerService {
 	}
 
 	@Transactional
-	public Owner updatePlan(PricingPlan plan, int id) throws DataAccessException {
-		Owner toUpdate = findOwnerById(id);
-		toUpdate.setPlan(plan);
-		ownerRepository.save(toUpdate);
-
-		return toUpdate;
-	}
-
-	@Transactional
 	public void deleteOwner(int id) throws DataAccessException {
 		Owner toDelete = findOwnerById(id);
-//		for(Pet pet: petService.findAllPetsByOwnerId(id)) petService.deletePet(pet.getId());
 		ownerRepository.delete(toDelete);
 	}
 

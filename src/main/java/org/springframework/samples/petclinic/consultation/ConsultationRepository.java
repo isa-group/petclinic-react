@@ -25,7 +25,7 @@ public interface ConsultationRepository extends CrudRepository<Consultation, Int
 	@Query("SELECT COUNT(c) FROM Consultation c")
 	public Integer countAll();
 
-	@Query("SELECT COUNT(o) FROM Owner o WHERE o.plan = 'PLATINUM'")
+	@Query("SELECT COUNT(o) FROM Owner o WHERE o.clinic.plan = 'PLATINUM'")
 	public Integer countAllPlatinums();
 
 	@Query("SELECT COUNT(o) FROM Owner o")
@@ -48,5 +48,11 @@ public interface ConsultationRepository extends CrudRepository<Consultation, Int
 	@Query("SELECT NEW MAP(YEAR(c.creationDate) as year, cast(COUNT(c) as integer) as consultations)"
 			+ " FROM  Consultation c WHERE c.owner.id = :ownerId GROUP BY YEAR(c.creationDate)")
 	public List<Map<String, Integer>> countConsultationsGroupedByYear(int ownerId);
+
+	@Query("SELECT c FROM Consultation c WHERE c.owner.clinic.clinicOwner.user.id = :userId")
+	public List<Consultation> findAllByClinicOwnerUserId(int userId);
+
+	@Query("SELECT c FROM Consultation c WHERE c.owner.clinic.id = :clinicId")
+	public List<Consultation> findAllByClinicId(int clinicId);
 
 }
