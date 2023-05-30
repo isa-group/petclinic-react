@@ -1,6 +1,5 @@
 import "../../static/css/auth/authButton.css";
 import "../../static/css/auth/authPage.css";
-import { Link } from "react-router-dom";
 import tokenService from "../../services/token.service";
 import FormGenerator from "../../components/formGenerator/formGenerator";
 import { registerFormOwnerInputs } from "./form/registerFormOwnerInputs";
@@ -55,6 +54,7 @@ export default function Register() {
             .then(function (data) {
               if (state !== "200") alert(data.message);
               else {
+                tokenService.setUser(data);
                 tokenService.updateLocalAccessToken(data.token);
                 window.location.href = "/dashboard";
               }

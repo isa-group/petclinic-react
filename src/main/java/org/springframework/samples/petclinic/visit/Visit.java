@@ -42,7 +42,7 @@ public class Visit extends BaseEntity {
 	@Column(name = "visit_date_time")
 	@DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")
 //	@NotNull
-	private LocalDateTime datetime;
+	private LocalDateTime datetime = LocalDateTime.now();
 
 //	@NotEmpty
 	@Column(name = "description")
@@ -53,13 +53,9 @@ public class Visit extends BaseEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Pet pet;
 
-	@ManyToOne()
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "vet_id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Vet vet;
-
-	public Visit() {
-		this.datetime = LocalDateTime.now();
-	}
 
 }

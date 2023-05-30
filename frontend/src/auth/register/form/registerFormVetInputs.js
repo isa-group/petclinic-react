@@ -1,4 +1,4 @@
-import { registerFormValidators } from "./registerFormValidators";
+import { formValidators } from "../../../validators/formValidators";
 
 export const registerFormVetInputs = [
   {
@@ -7,7 +7,7 @@ export const registerFormVetInputs = [
     type: "text",
     defaultValue: "",
     isRequired: true,
-    validators: [registerFormValidators.notEmptyValidator],
+    validators: [formValidators.notEmptyValidator],
   },
   {
     tag: "Password",
@@ -15,7 +15,7 @@ export const registerFormVetInputs = [
     type: "password",
     defaultValue: "",
     isRequired: true,
-    validators: [registerFormValidators.notEmptyValidator],
+    validators: [formValidators.notEmptyValidator],
   },
   {
     tag: "First Name",
@@ -23,7 +23,7 @@ export const registerFormVetInputs = [
     type: "text",
     defaultValue: "",
     isRequired: true,
-    validators: [registerFormValidators.notEmptyValidator],
+    validators: [formValidators.notEmptyValidator],
   },
   {
     tag: "Last Name",
@@ -31,7 +31,7 @@ export const registerFormVetInputs = [
     type: "text",
     defaultValue: "",
     isRequired: true,
-    validators: [registerFormValidators.notEmptyValidator],
+    validators: [formValidators.notEmptyValidator],
   },
   {
     tag: "City",
@@ -39,6 +39,6 @@ export const registerFormVetInputs = [
     type: "text",
     defaultValue: "",
     isRequired: true,
-    validators: [registerFormValidators.notEmptyValidator],
+    validators: [formValidators.notEmptyValidator],
   },
 ];

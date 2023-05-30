@@ -29,6 +29,7 @@ const FormGenerator = forwardRef((props, ref) => {
           for (let validator of input.validators) {
             if (!validator.validate(formValues[input.name])) {
               console.log(input);
+              console.log(formValues[input.name])
               formInputs.current[i].setErrors([validator.message]);
               isValid = false;
             }
@@ -135,6 +136,8 @@ const FormGenerator = forwardRef((props, ref) => {
                   validators={input.validators}
                   formValues={formValues}
                   setFormValues={setFormValues}
+                  onChange={input?.onChange}
+                  disabled={input.disabled}
                   ref={(input) => (formInputs.current[index] = input)}
                 />
               </>

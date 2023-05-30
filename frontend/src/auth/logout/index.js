@@ -1,37 +1,37 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Form, Button, Container, FormGroup, Col } from "reactstrap";
+import "../../static/css/auth/authButton.css";
+import "../../static/css/auth/authPage.css";
 import tokenService from "../../services/token.service";
 
 const Logout = () => {
-
-    function sendLogoutRequest() {
-        const jwt = window.localStorage.getItem("jwt");
-        if (jwt || typeof jwt === 'undefined') {
-            tokenService.removeUser();
-            window.location.href = '/';
-        } else {
-            alert("There is no user logged in")
-        }
+  function sendLogoutRequest() {
+    const jwt = window.localStorage.getItem("jwt");
+    if (jwt || typeof jwt === "undefined") {
+      tokenService.removeUser();
+      window.location.href = "/";
+    } else {
+      alert("There is no user logged in");
     }
+  }
 
-    return (
-
-        <>
-            <Container style={{ marginTop: "15px" }} className="d-flex justify-content-center">
-                <Form>
-                    <Col>
-                        <h2>Are you sure you want to log out?</h2>
-                        <br />
-                        <FormGroup>
-                            <Button color="primary" onClick={() => sendLogoutRequest()}>Yes</Button>{' '}
-                            <Button color="secondary" tag={Link} to="/">No</Button>
-                        </FormGroup>
-                    </Col>
-                </Form>
-            </Container>
-        </>
-    );
+  return (
+    <div className="auth-page-container">
+      <div className="auth-form-container">
+        <h2 className="text-center text-md">
+          Are you sure you want to log out?
+        </h2>
+        <div className="options-row">
+          <Link className="auth-button" to="/" style={{textDecoration: "none"}}>
+            No
+          </Link>
+          <button className="auth-button" onClick={() => sendLogoutRequest()}>
+            Yes
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Logout;

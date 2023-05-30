@@ -1,123 +1,123 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
+import "../../../static/css/auth/authButton.css"
+import "../../../static/css/auth/authPage.css"
+import {Input } from 'reactstrap';
+import {consultationEditFormInputs} from "./form/consultationEditFormInputs";
+import { useEffect, useState, useRef } from 'react';
 import tokenService from '../../../services/token.service';
+import FormGenerator from "../../../components/formGenerator/formGenerator";
 
-class OwnerConsultationEdit extends Component {
+export default function OwnerConsultationEdit(){
 
-    emptyItem = {
+    let [consultation, setConsultation] = useState({
         id: null,
         title: '',
         status: 'PENDING'
-    };
+    });
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            consultation: this.emptyItem,
-            pets: [],
-            owner: {},
-            message: null,
-        };
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
-        let pathArray = window.location.pathname.split('/');
-        this.id = pathArray[2];
-        this.userId = tokenService.getUser().id;
-    }
+    let [pets, setPets] = useState([]);
+    let [owner, setOwner] = useState({});
+    let [message, setMessage] = useState(null);
 
-    async componentDidMount() {
-        if (this.id !== "new") {
-            const consultation = await (await fetch(`/api/v1/consultations/${this.id}`, {
-                headers: {
-                    "Authorization": `Bearer ${this.jwt}`,
-                },
-            })).json();
-            if (consultation.message) this.setState({ message: consultation.message });
-            else
-                this.setState({ consultation: consultation });
+    const consultationEditFormRef = useRef();
 
-        }
-        if (!this.state.message) {
-            const pets = await (await fetch(`/api/v1/pets?userId=${this.userId}`, {
-                headers: {
-                    "Authorization": `Bearer ${this.jwt}`,
-                },
-            })).json();
-            if (pets.message) this.setState({ message: pets.message })
-            else this.setState({ pets: pets, owner: pets[0].owner });
-        }
-    }
+    const jwt = JSON.parse(window.localStorage.getItem("jwt"));
 
-    handleChange(event) {
+    let pathArray = window.location.pathname.split('/');
+    const id = pathArray[2];
+    const userId = tokenService.getUser().id;
+
+    function handleChange(event) {
         const target = event.target;
         const value = target.value;
         const name = target.name;
-        let consultation = { ...this.state.consultation };
+        let consultationAux = { ...consultation };
         if (name === "pet")
-            consultation.pet = this.state.pets.filter((pet) => pet.id === Number(value))[0];
+            consultationAux.pet = pets.filter((pet) => pet.id === Number(value))[0];
         else
-            consultation[name] = value;
-        this.setState({ consultation });
+            consultationAux[name] = value;
+        setConsultation(consultationAux);
     }
 
-    async handleSubmit(event) {
-        event.preventDefault();
-        let { consultation, } = this.state;
-        consultation["owner"] = this.state.owner;
+    async function handleSubmit({values}) {
+        
+        if(!consultationEditFormRef.current.validate()) return;
 
-        const response = await (await fetch('/api/v1/consultations' + (consultation.id ? '/' + this.id : ''), {
-            method: consultation.id ? 'PUT' : 'POST',
+        let consultationRequest = {
+            ...consultation,
+            title: values.title,
+        };
+        consultationRequest["owner"] = owner;
+
+        const response = await (await fetch('/api/v1/consultations' + (consultationRequest.id ? '/' + id : ''), {
+            method: consultationRequest.id ? 'PUT' : 'POST',
             headers: {
-                "Authorization": `Bearer ${this.jwt}`,
+                "Authorization": `Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(consultation),
+            body: JSON.stringify(consultationRequest),
         })).json();
-        if (response.message) this.setState({ message: response.message })
+        if (response.message) setMessage(response.message);
         else window.location.href = '/consultations';
     }
 
-    render() {
-        const { consultation, pets } = this.state;
-        const title = <h2 className="text-center">{consultation.id ? 'Edit Consultation' : 'Add Consultation'}</h2>;
+    async function setUp() {
+        if (id !== "new") {
+            const consultation = await (await fetch(`/api/v1/consultations/${id}`, {
+                headers: {
+                    "Authorization": `Bearer ${jwt}`,
+                },
+            })).json();
+            if (consultation.message) setMessage(consultation.message);
+            else
+                setConsultation(consultation);
 
-        if (this.state.message) return <h2 className="text-center">{this.state.message}</h2>
-        const petOptions = pets.map(pet => <option key={pet.id} value={pet.id}>{pet.name}</option>);
-
-        return <div>
-            {/* <AppNavbar /> */}
-            <Container style={{ marginTop: "15px" }}>
-                {title}
-                <Form onSubmit={this.handleSubmit}>
-                    <FormGroup>
-                        <Label for="title">Title</Label>
-                        <Input type="text" required name="title" id="title" value={consultation.title || ''}
-                            onChange={this.handleChange} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="pet">Pet</Label>
-                        {consultation.id ?
-                            <Input type="select" disabled name="pet" id="pet" value={consultation.pet?.id || ""}
-                                onChange={this.handleChange} >
-                                <option value="">None</option>
-                                {petOptions}
-                            </Input> :
-                            <Input type="select" required name="pet" id="pet" value={consultation.pet?.id || ""}
-                                onChange={this.handleChange} >
-                                <option value="">None</option>
-                                {petOptions}
-                            </Input>}
-                    </FormGroup>
-                    <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/consultations">Cancel</Button>
-                    </FormGroup>
-                </Form>
-            </Container>
-        </div>
+        }
+        if (!message) {
+            const pets = await (await fetch(`/api/v1/pets?userId=${userId}`, {
+                headers: {
+                    "Authorization": `Bearer ${jwt}`,
+                },
+            })).json();
+            if (pets.message) setMessage(pets.message);
+            else {
+                setPets(pets);
+                setOwner(pets[0].owner);
+            }
+        }
     }
+
+    useEffect(() => {
+        setUp();
+        if(consultation.id && consultation.pet) consultationEditFormInputs[0].defaultValue = consultation.title;
+        else consultationEditFormInputs[0].defaultValue = "";
+    }, []);
+
+    if (message) return <h2 className="text-center">{message}</h2>
+
+    return(
+<div className="auth-page-container">
+<h2 className="text-center">{consultation.id ? 'Edit Consultation' : 'Add Consultation'}</h2>
+                <div className="auth-form-container">
+                <FormGenerator
+                    ref={consultationEditFormRef}
+                    inputs={consultationEditFormInputs}
+                    onSubmit={handleSubmit}
+                    childrenPosition={-1}
+                    buttonText="Save"
+                    buttonClassName="auth-button"
+                >
+                    
+                    <Input type="select" disabled={consultation.id!==null} required={consultation.id===null} name="pet" id="pet" value={consultation.pet?.id || ""}
+                        onChange={handleChange} >
+                        <option value="">None</option>
+                        {
+                            pets && pets.map(pet => <option key={pet.id} value={pet.id}>{pet.name}</option>)
+                        }
+                    </Input> 
+                </FormGenerator>
+                </div>
+            </div>
+    );
+
 }
-export default OwnerConsultationEdit;
