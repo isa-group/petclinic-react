@@ -99,6 +99,8 @@ export default function ConsultationListAdmin() {
                             <th>Status</th>
                             <th>Owner</th>
                             <th>Pet</th>
+                            <th>Clinic</th>
+                            <th>Sent To</th>
                             <th>Creation Date</th>
                             <th>Actions</th>
                         </tr>

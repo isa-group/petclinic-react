@@ -22,6 +22,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.samples.petclinic.clinic.Clinic;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
+import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.User;
@@ -68,6 +71,9 @@ class OwnerRestControllerTests {
 	private Owner sara;
 	private Owner juan;
 	private User user;
+	private User userClinicOwner;
+	private ClinicOwner clinicOwner;
+	private Clinic clinic;
 
 	@BeforeEach
 	void setup() {
@@ -78,7 +84,6 @@ class OwnerRestControllerTests {
 		george.setAddress("110 W. Liberty St.");
 		george.setCity("Sevilla");
 		george.setTelephone("608555102");
-		george.setPlan(PricingPlan.BASIC);
 
 		sara = new Owner();
 		sara.setId(2);
@@ -87,7 +92,6 @@ class OwnerRestControllerTests {
 		sara.setAddress("110 W. Liberty St.");
 		sara.setCity("Sevilla");
 		sara.setTelephone("608555102");
-		sara.setPlan(PricingPlan.BASIC);
 
 		juan = new Owner();
 		juan.setId(3);
@@ -96,17 +100,44 @@ class OwnerRestControllerTests {
 		juan.setAddress("110 W. Liberty St.");
 		juan.setCity("Sevilla");
 		juan.setTelephone("608555102");
-		juan.setPlan(PricingPlan.BASIC);
 
 		Authorities ownerAuth = new Authorities();
 		ownerAuth.setId(1);
 		ownerAuth.setAuthority("OWNER");
+
+		Authorities clinicOwnerAuth = new Authorities();
+		ownerAuth.setId(2);
+		ownerAuth.setAuthority("CLINIC_OWNER");
 
 		user = new User();
 		user.setId(1);
 		user.setUsername("user");
 		user.setPassword("password");
 		user.setAuthority(ownerAuth);
+
+		userClinicOwner = new User();
+		userClinicOwner.setId(1);
+		userClinicOwner.setUsername("clinicOwner");
+		userClinicOwner.setPassword("clinic_owner");
+		userClinicOwner.setAuthority(clinicOwnerAuth);
+
+		clinicOwner = new ClinicOwner();
+		clinicOwner.setId(1);
+		clinicOwner.setFirstName("John");
+		clinicOwner.setLastName("Doe");
+		clinicOwner.setUser(userClinicOwner);
+
+		clinic = new Clinic();
+		clinic.setId(1);
+		clinic.setName("Clinic");
+		clinic.setAddress("Address");
+		clinic.setTelephone("123456789");
+		clinic.setPlan(PricingPlan.BASIC);
+		clinic.setClinicOwner(clinicOwner);
+
+		george.setClinic(clinic);
+		sara.setClinic(clinic);
+		juan.setClinic(clinic);
 	}
 
 	@Test
@@ -127,7 +158,7 @@ class OwnerRestControllerTests {
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
 				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
-				.andExpect(jsonPath("$.plan").value(george.getPlan().toString()));
+				.andExpect(jsonPath("$.clinic.plan").value(george.getClinic().getPlan().toString()));
 	}
 
 	@Test
@@ -145,7 +176,7 @@ class OwnerRestControllerTests {
 		owner.setLastName("Prueba");
 		owner.setCity("Llerena");
 		owner.setAddress("Calle Reina,3");
-		owner.setPlan(PricingPlan.BASIC);
+		//owner.setPlan(PricingPlan.BASIC);
 		owner.setTelephone("999999999");
 		owner.setUser(user);
 
@@ -201,22 +232,7 @@ class OwnerRestControllerTests {
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
 				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
-				.andExpect(jsonPath("$.plan").value(george.getPlan().toString()));
-	}
-
-	@Test
-	@WithMockUser("owner")
-	void shouldUpdatePlan() throws Exception {
-		when(this.userService.findCurrentUser()).thenReturn(user);
-		when(this.userService.findOwnerByUser(any(Integer.class))).thenReturn(george);
-		when(this.ownerService.updatePlan(PricingPlan.GOLD, TEST_OWNER_ID)).thenReturn(george);
-		
-		mockMvc.perform(put("/api/v1/plan").with(csrf()).contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(PricingPlan.GOLD))).andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
-				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
-				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
-				.andExpect(jsonPath("$.plan").value(george.getPlan().toString()));
+				.andExpect(jsonPath("$.clinic.plan").value(george.getClinic().getPlan().toString()));
 	}
 
 	@Test

@@ -32,6 +32,7 @@ export default function VetListAdmin() {
         </td>
         <td>{vet.city}</td>
         <td style={{ whiteSpace: "break-spaces" }}>{specialtiesAux}</td>
+        <td>{vet.clinic.name}</td>
         <td>{vet.user.username}</td>
         <td>
           <ButtonGroup>
@@ -85,10 +86,11 @@ export default function VetListAdmin() {
         <Table aria-label="vets" className="mt-4">
           <thead>
             <tr>
-              <th width="20%">Name</th>
-              <th width="20%">City</th>
+              <th width="15%">Name</th>
+              <th width="15%">City</th>
               <th width="20%">Specialties</th>
-              <th width="20%">User</th>
+              <th width="15%">Clinic</th>
+              <th width="15%">User</th>
               <th width="20%">Actions</th>
             </tr>
           </thead>

@@ -132,44 +132,55 @@ public class VisitServiceTests {
 	@Test
 	@Transactional
 	void shouldCheckLimitForBasic() {
-		Visit v = createVisit(5); // pet of Owner4 BASIC
+		Visit v = createVisit(11); // pet of Owner4 BASIC
 		assertEquals(true, this.visitService.underLimit(v));
 		this.visitService.saveVisit(v);
-		v = createVisit(5);
+		v = createVisit(11);
 		assertEquals(false, this.visitService.underLimit(v));
 	}
 
 	@Test
 	@Transactional
 	void shouldCheckLimitForGold() {
-		Visit v = createVisit(9);
+		Visit v = createVisit(7);
 		assertEquals(true, this.visitService.underLimit(v));
 		this.visitService.saveVisit(v);
-		v = createVisit(9);
+		v = createVisit(7);
 		assertEquals(true, this.visitService.underLimit(v));
 		this.visitService.saveVisit(v);
-		v = createVisit(9);
+		v = createVisit(7);
 		assertEquals(true, this.visitService.underLimit(v));
 		this.visitService.saveVisit(v);
-		v = createVisit(9);
+		v = createVisit(7);
 		assertEquals(false, this.visitService.underLimit(v));
 	}
 
 	@Test
 	@Transactional
 	void shouldCheckLimitForPlatinum() {
-		Visit v = createVisit(12);
+		Visit v = createVisit(1);
 		assertEquals(true, this.visitService.underLimit(v));
 		this.visitService.saveVisit(v);
-		v = createVisit(10);
+		v = createVisit(1);
 		this.visitService.saveVisit(v);
-		v = createVisit(10);
+		v = createVisit(1);
 		this.visitService.saveVisit(v);
-		v = createVisit(10);
+		v = createVisit(1);
 		this.visitService.saveVisit(v);
-		v = createVisit(10);
+		v = createVisit(1);
 		this.visitService.saveVisit(v);
-		v = createVisit(10);
+		v = createVisit(1);
+		this.visitService.saveVisit(v);
+		v = createVisit(1);
+		this.visitService.saveVisit(v);
+		v = createVisit(1);
+		this.visitService.saveVisit(v);
+		v = createVisit(1);
+		this.visitService.saveVisit(v);
+		v = createVisit(1);
+		this.visitService.saveVisit(v);
+		v = createVisit(1);
+		this.visitService.saveVisit(v);
 		assertEquals(false, this.visitService.underLimit(v));
 	}
 

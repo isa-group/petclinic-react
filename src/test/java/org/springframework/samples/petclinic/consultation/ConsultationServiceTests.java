@@ -240,7 +240,7 @@ class ConsultationServiceTests {
 		Owner o = this.ownerService.findOwnerById(4);
 		UpperPlanFeatureException response = assertThrows(UpperPlanFeatureException.class,
 				() -> this.consultationService.updateOwnerTicket(ticket, id, o));
-		assertEquals("You need to be subscribed to plan PLATINUM to access this feature and you have plan BASIC.",
+		assertEquals("You need to be subscribed to plan PLATINUM to access this feature and you have plan GOLD.",
 				response.getMessage());
 	}
 
@@ -316,7 +316,7 @@ class ConsultationServiceTests {
 
 		UpperPlanFeatureException response = assertThrows(UpperPlanFeatureException.class,
 				() -> this.consultationService.deleteOwnerTicket(t, o));
-		assertEquals("You need to be subscribed to plan PLATINUM to access this feature and you have plan BASIC.",
+		assertEquals("You need to be subscribed to plan PLATINUM to access this feature and you have plan GOLD.",
 				response.getMessage());
 	}
 

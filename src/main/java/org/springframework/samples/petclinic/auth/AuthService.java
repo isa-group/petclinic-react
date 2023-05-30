@@ -6,9 +6,11 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.clinic.ClinicService;
+import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
+import org.springframework.samples.petclinic.clinic_owner.ClinicOwnerService;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
-import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
@@ -29,16 +31,19 @@ public class AuthService {
 	private final UserService userService;
 	private final OwnerService ownerService;
 	private final VetService vetService;
+	private final ClinicOwnerService clinicOwnerService;
+	private final ClinicService clinicService;
 
 	@Autowired
 	public AuthService(PasswordEncoder encoder, AuthoritiesService authoritiesService, UserService userService,
-			OwnerService ownerService, VetService vetService) {
+			OwnerService ownerService, VetService vetService, ClinicOwnerService clinicOwnerService, ClinicService clinicService) {
 		this.encoder = encoder;
 		this.authoritiesService = authoritiesService;
 		this.userService = userService;
 		this.ownerService = ownerService;
 		this.vetService = vetService;
-
+		this.clinicOwnerService = clinicOwnerService;
+		this.clinicService = clinicService;
 	}
 
 	@Transactional
@@ -64,8 +69,19 @@ public class AuthService {
 			vet.setLastName(request.getLastName());
 			vet.setCity(request.getCity());
 			vet.setSpecialties(new ArrayList<Specialty>());
+			vet.setClinic(clinicService.findClinicById(request.getClinic().getId()));
 			vet.setUser(user);
 			vetService.saveVet(vet);
+			break;
+		case "clinic owner":
+			role = authoritiesService.findByAuthority("CLINIC_OWNER");
+			user.setAuthority(role);
+			userService.saveUser(user);
+			ClinicOwner clinicOwner = new ClinicOwner();
+			clinicOwner.setFirstName(request.getFirstName());
+			clinicOwner.setLastName(request.getLastName());
+			clinicOwner.setUser(user);
+			clinicOwnerService.saveClinicOwner(clinicOwner);
 			break;
 		default:
 			role = authoritiesService.findByAuthority("OWNER");
@@ -77,7 +93,7 @@ public class AuthService {
 			owner.setAddress(request.getAddress());
 			owner.setCity(request.getCity());
 			owner.setTelephone(request.getTelephone());
-			owner.setPlan(PricingPlan.BASIC);
+			owner.setClinic(clinicService.findClinicById(request.getClinic().getId()));
 			owner.setUser(user);
 			ownerService.saveOwner(owner);
 

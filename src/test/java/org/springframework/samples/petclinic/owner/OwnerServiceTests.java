@@ -102,22 +102,13 @@ class OwnerServiceTests {
 
 	@Test
 	void shouldFindOptOwnerByUser() {
-		Optional<Owner> owner = this.ownerService.optFindOwnerByUser(2);
+		Optional<Owner> owner = this.ownerService.optFindOwnerByUser(4);
 		assertEquals("Franklin", owner.get().getLastName());
 	}
 
 	@Test
 	void shouldNotFindOptOwnerByIncorrectUser() {
 		assertThat(this.ownerService.optFindOwnerByUser(25)).isEmpty();
-	}
-
-	@Test
-	@Transactional
-	void shouldUpdatePlan() {
-		Owner owner = this.ownerService.findOwnerById(1);
-		assertEquals(PricingPlan.PLATINUM, owner.getPlan());
-		ownerService.updatePlan(PricingPlan.GOLD, 1);
-		assertEquals(PricingPlan.GOLD, owner.getPlan());
 	}
 
 	@Test
@@ -169,7 +160,6 @@ class OwnerServiceTests {
 		owner.setLastName("Apellido");
 		owner.setAddress("4, Evans Street");
 		owner.setCity("Wollongong");
-		owner.setPlan(PricingPlan.BASIC);
 		owner.setTelephone("444444444");
 		User user = new User();
 		user.setUsername("Sam");
@@ -186,11 +176,11 @@ class OwnerServiceTests {
 		assertTrue(stats.containsKey("totalOwners"));
 		assertEquals(((Collection<Owner>) ownerService.findAll()).size(), stats.get("totalOwners"));
 		assertTrue(stats.containsKey("basicOwners"));
-		assertEquals(4, stats.get("basicOwners"));
+		assertEquals(3, stats.get("basicOwners"));
 		assertTrue(stats.containsKey("goldOwners"));
 		assertEquals(3, stats.get("goldOwners"));
 		assertTrue(stats.containsKey("platinumOwners"));
-		assertEquals(3, stats.get("platinumOwners"));
+		assertEquals(4, stats.get("platinumOwners"));
 		assertTrue(stats.containsKey("ownersVisits"));
 	}
 

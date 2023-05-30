@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, ButtonGroup, Container, Table } from "reactstrap";
+import { Button, ButtonGroup, Table } from "reactstrap";
 import tokenService from "../../services/token.service";
 import useFetchState from "../../util/useFetchState";
 import getErrorModal from "../../util/getErrorModal";
@@ -31,7 +31,7 @@ export default function OwnerListAdmin() {
         <td>{owner.city}</td>
         <td>{owner.telephone}</td>
         <td>{owner.user.username}</td>
-        <td>{owner.plan}</td>
+        <td>{owner.clinic.name}</td>
         <td>
           <ButtonGroup>
             <Button
@@ -88,7 +88,7 @@ export default function OwnerListAdmin() {
                 <th width="10%">City</th>
                 <th width="10%">Telephone</th>
                 <th width="10%">User</th>
-                <th width="10%">Plan</th>
+                <th width="10%">Clinic</th>
                 <th width="40%">Actions</th>
               </tr>
             </thead>

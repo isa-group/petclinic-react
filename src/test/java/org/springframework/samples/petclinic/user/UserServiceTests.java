@@ -58,7 +58,7 @@ class UserServiceTests {
 	@Test
 	void shouldFindAllUsers() {
 		List<User> users = (List<User>) this.userService.findAll();
-		assertEquals(17, users.size());
+		assertEquals(19, users.size());
 	}
 
 	@Test
@@ -97,7 +97,7 @@ class UserServiceTests {
 
 	@Test
 	void shouldFindSingleOwnerByUserId() {
-		Owner owner = this.userService.findOwnerByUser(2);
+		Owner owner = this.userService.findOwnerByUser(4);
 		assertEquals("owner1", owner.getUser().getUsername());
 	}
 
@@ -108,7 +108,7 @@ class UserServiceTests {
 
 	@Test
 	void shouldFindSingleUser() {
-		User user = this.userService.findUser(2);
+		User user = this.userService.findUser(4);
 		assertEquals("owner1", user.getUsername());
 	}
 

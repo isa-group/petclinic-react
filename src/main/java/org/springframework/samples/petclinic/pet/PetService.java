@@ -23,9 +23,9 @@ import java.util.Map;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,14 +77,11 @@ public class PetService {
 
 	@Transactional(rollbackFor = DuplicatedPetNameException.class)
 	public Pet savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
-//		if (pet.getOwner() != null) {
 		Pet otherPet = getPetWithNameAndIdDifferent(pet);
 		if (otherPet != null && !otherPet.getId().equals(pet.getId())) {
 			throw new DuplicatedPetNameException();
 		} else
 			petRepository.save(pet);
-//		} else
-//			petRepository.save(pet);
 
 		return pet;
 	}
@@ -116,7 +113,7 @@ public class PetService {
 
 	public boolean underLimit(Owner owner) {
 		Integer petCount = this.petRepository.countPetsByOwner(owner.getId());
-		PricingPlan plan = owner.getPlan();
+		PricingPlan plan = owner.getClinic().getPlan();
 		switch (plan) {
 		case PLATINUM:
 			if (petCount < PLATINUM_LIMIT)

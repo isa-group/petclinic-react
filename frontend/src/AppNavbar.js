@@ -42,6 +42,12 @@ function AppNavbar() {
                         <NavLink style={{ color: "white" }} tag={Link} to="/consultations">Consultations</NavLink>
                     </NavItem>
                     <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/clinicOwners">Clinic Owners</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/clinics">Clinics</NavLink>
+                    </NavItem>
+                    <NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/users">Users</NavLink>
                     </NavItem>
                 </>
@@ -67,6 +73,25 @@ function AppNavbar() {
                 <>
                     <NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/consultations">Consultations</NavLink>
+                    </NavItem>
+                </>
+            )
+        }
+
+        if (role === "CLINIC_OWNER") {
+            ownerLinks = (
+                <>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/clinics">Clinics</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/owners">Owners</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/consultations">Consultations</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/vets">Vets</NavLink>
                     </NavItem>
                 </>
             )

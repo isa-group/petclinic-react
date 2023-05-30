@@ -16,6 +16,8 @@ class ConsultationService {
                         <td>{c.owner.user.username}</td> : <></>
                     }
                     <td>{c.pet.name}</td>
+                    <td>{c.owner.clinic.name}</td>
+                    <td>{c.isClinicComment ? "Clinic Owner" : "Clinic Vet"}</td>
                     <td>{(new Date(c.creationDate)).toLocaleString()}</td>
                     <td>
                         <ButtonGroup>

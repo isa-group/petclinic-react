@@ -57,6 +57,7 @@ export default function OwnerConsultationList() {
           <td>{c.title}</td>
           <td>{c.status}</td>
           <td>{c.pet?.name}</td>
+          <td>{c.isClinicComment ? "Clinic Owner" : "Clinic Vet"}</td>
           <td>{new Date(c.creationDate).toLocaleString()}</td>
           <td>
             <ButtonGroup>
@@ -133,7 +134,7 @@ export default function OwnerConsultationList() {
       })
     ).json();
     if (owner.message) setMessage(owner.message);
-    else setPlan(owner.plan);
+    else setPlan(owner.clinic.plan);
   }
 
   useEffect(() => {
@@ -188,6 +189,7 @@ export default function OwnerConsultationList() {
               <th>Title</th>
               <th>Status</th>
               <th>Pet</th>
+              <th>Sent To</th>
               <th>Creation Date</th>
               <th>Actions</th>
             </tr>
