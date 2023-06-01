@@ -48,6 +48,9 @@ import VetListClinicOwner from "./clinicOwner/vets/VetListClinicOwner";
 import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
 import PlanListAdmin from "./admin/plans/PlanListAdmin";
 import PlanEditAdmin from "./admin/plans/PlanEditAdmin";
+import useGenericFeature from "lib/components/feature/useGenericFeature";
+import { feature } from "lib/logic/model/Feature";
+import { and } from "lib/logic/model/BinaryLogicalPredicate";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -75,6 +78,15 @@ function App() {
   let userRoutes = <></>;
   let vetRoutes = <></>;
   let publicRoutes = <></>;
+
+  const addRoute = useGenericFeature({
+    on: [
+      {
+        expression: feature("pet-list"),
+        on: <Route path="/login" element={<Login />} />,
+      },
+    ]
+  });
 
   roles.forEach((role) => {
     if (role === "ADMIN") {
@@ -142,7 +154,7 @@ function App() {
     publicRoutes = (
       <>
         <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+        {addRoute}
       </>
     )
   } else {
