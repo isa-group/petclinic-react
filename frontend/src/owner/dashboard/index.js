@@ -5,6 +5,8 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../../static/css/owner/dashboard.css";
 import { useState, useEffect } from "react";
+import { Feature, On } from "lib/components/feature/Feature";
+import { feature } from "lib/logic/model/Feature";
 
 require("moment/locale/es.js");
 
@@ -58,7 +60,7 @@ export default function OwnerDashboard() {
     ).json();
     if (owner.message) setMessage(owner.message);
     else {
-      setPlan(owner.clinic.name);
+      setPlan(owner.clinic.plan);
     }
   }
 
@@ -70,7 +72,8 @@ export default function OwnerDashboard() {
     <>
       <div className="owner-dashboard-page-container">
         <h1 className="text-center dashboard-title">Dashboard</h1>
-        {plan.haveCalendar && (
+        <Feature>
+          <On expression={feature("haveCalendar")}>
             <div style={{ height: `${600}px` }} className="calendar-container">
               <Calendar
                 localizer={localizer}
@@ -88,7 +91,8 @@ export default function OwnerDashboard() {
                 }
               />
             </div>
-          )}
+          </On>
+        </Feature>
       </div>
       <Modal
         isOpen={modalShow}

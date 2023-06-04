@@ -117,6 +117,7 @@ public class UserService {
 		try{
 			user = findCurrentUser();
 		}catch(ResourceNotFoundException e){
+			System.out.println("User not found");
 			return findPublicFeatures();
 		}
 

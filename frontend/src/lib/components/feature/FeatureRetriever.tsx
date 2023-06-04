@@ -9,6 +9,7 @@ import {
 } from "../../../protobuf/featureResponse";
 import { Buffer } from "buffer";
 import { FeatureRequest as ProtoFeatureRequest } from "../../../protobuf/featureRequest";
+import tokenService from "services/token.service";
 
 export type AttributeValue = number | string;
 export type FeatureValue = boolean | AttributeValue;
@@ -80,6 +81,7 @@ export default class FeatureRetriever {
       .post(`/feature`, encodedIds, {
         headers: {
           "Content-Type": "application/octet-stream",
+          "Authorization": `Bearer ${tokenService.getLocalAccessToken()}`
         }
       })
       .then((response) => {

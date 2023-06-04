@@ -69,7 +69,7 @@ export default function OwnerConsultationList() {
               >
                 Details
               </Button>
-              {plan.haveOnlineConsultations ? (
+              {plan !== null && plan.haveOnlineConsultations ? (
                 <Button
                   size="sm"
                   color="primary"
@@ -134,7 +134,9 @@ export default function OwnerConsultationList() {
       })
     ).json();
     if (owner.message) setMessage(owner.message);
-    else setPlan(owner.clinic.name);
+    else {
+      setPlan(owner.clinic.plan);
+    }
   }
 
   useEffect(() => {
@@ -149,7 +151,7 @@ export default function OwnerConsultationList() {
         <h1 className="text-center">Consultations</h1>
         <Row className="row-cols-auto g-3 align-items-center">
           <Col>
-            {plan.haveOnlineConsultations ? (
+            {plan !== null && plan.haveOnlineConsultations ? (
               <Button color="success" tag={Link} to="/consultations/new">
                 Add Consultation
               </Button>

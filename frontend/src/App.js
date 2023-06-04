@@ -79,11 +79,26 @@ function App() {
   let vetRoutes = <></>;
   let publicRoutes = <></>;
 
-  const addRoute = useGenericFeature({
+  const ownersDashboard = useGenericFeature({
     on: [
       {
-        expression: feature("public"),
-        on: <Route path="/login" element={<Login />} />,
+        expression: feature("havePetsDashboard"),
+        on: <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} />,
+      },
+    ]
+  });
+
+  const onlineConsultations = useGenericFeature({
+    on: [
+      {
+        expression: feature("haveOnlineConsultations"),
+        on: (
+          <>
+            <Route path="/consultations" exact={true} element={<PrivateRoute><OwnerConsultationList /></PrivateRoute>} />
+            <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><OwnerConsultationEdit /></PrivateRoute>} />
+            <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><OwnerConsultationTickets /></PrivateRoute>} />
+          </>
+        ),
       },
     ]
   });
@@ -117,14 +132,12 @@ function App() {
     }
     if (role === "OWNER") {
       ownerRoutes = (
-        <>
-          <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} />
+        <> 
+          {ownersDashboard}
           <Route path="/myPets" exact={true} element={<PrivateRoute><OwnerPetList /></PrivateRoute>} />
           <Route path="/myPets/:id" exact={true} element={<PrivateRoute><OwnerPetEdit /></PrivateRoute>} />
           <Route path="/myPets/:id/visits/:id" exact={true} element={<PrivateRoute><OwnerVisitEdit /></PrivateRoute>} />
-          <Route path="/consultations" exact={true} element={<PrivateRoute><OwnerConsultationList /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><OwnerConsultationEdit /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><OwnerConsultationTickets /></PrivateRoute>} />
+          {onlineConsultations}
         </>)
     }
     if (role === "VET") {
@@ -154,7 +167,7 @@ function App() {
     publicRoutes = (
       <>
         <Route path="/register" element={<Register />} />
-        {addRoute}
+        <Route path="/login" element={<Login />} />
       </>
     )
   } else {
