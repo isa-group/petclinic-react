@@ -82,7 +82,7 @@ function App() {
   const addRoute = useGenericFeature({
     on: [
       {
-        expression: feature("pet-list"),
+        expression: feature("public"),
         on: <Route path="/login" element={<Login />} />,
       },
     ]

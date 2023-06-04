@@ -15,21 +15,33 @@
  */
 package org.springframework.samples.petclinic.user;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import javax.security.auth.message.AuthException;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.feature.FeatureController;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.plan.Plan;
+import org.springframework.samples.petclinic.protobuf.FeatureResponseOuterProto.FeatureResponse.Feature;
+import org.springframework.samples.petclinic.protobuf.FeatureResponseOuterProto.FeatureResponse.Feature.ValueType;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.eventbus.DeadEvent;
 
 @Service
 public class UserService {
@@ -77,6 +89,12 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
+	public ClinicOwner findClinicOwnerByUser(int userId) {
+		return userRepository.findClinicOwnerByUser(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("ClinicOwner", "id", userId));
+	}
+
+	@Transactional(readOnly = true)
 	public Owner findOwnerByUser(int id) {
 		return userRepository.findOwnerByUser(id).orElseThrow(() -> new ResourceNotFoundException("Owner", "ID", id));
 	}
@@ -89,6 +107,34 @@ public class UserService {
 		else
 			return userRepository.findByUsername(auth.getName())
 					.orElseThrow(() -> new ResourceNotFoundException("User", "Username", auth.getName()));
+	}
+
+	@Transactional(readOnly = true)
+	public Map<String, Feature> findFeaturesByUser() throws AuthException{
+
+		User user = null;
+
+		try{
+			user = findCurrentUser();
+		}catch(ResourceNotFoundException e){
+			return findPublicFeatures();
+		}
+
+		switch (user.getAuthority().getAuthority()) {
+		case "OWNER":
+			Owner owner = findOwnerByUser(user.getId());
+			return findFeaturesByOwner(owner);
+		case "VET":
+			Vet vet = findVetByUser(user.getId());
+			return findFeaturesByVet(vet);
+		case "ADMIN":
+			return findFeaturesByAdmin(user);
+		case "CLINIC_OWNER":
+			ClinicOwner clinicOwner = findClinicOwnerByUser(user.getId());
+			return findFeaturesByClinicOwner(clinicOwner);
+		default:
+			throw new AuthException("Invalid role");
+		}
 	}
 
 	public Boolean existsUser(String username) {
@@ -141,6 +187,67 @@ public class UserService {
 			break;
 		}
 
+	}
+
+	private Map<String, Feature> findFeaturesByOwner(Owner owner) {
+		
+		Map<String, Feature> featureMap = new HashMap<>();
+
+		Plan userPlan = owner.getClinic().getPlan();
+
+		Map<String, Object> planFeatures = parsePlanToMap(userPlan);
+
+		for (String key : planFeatures.keySet()) {
+			if(planFeatures.get(key) instanceof Boolean){
+				featureMap.put(key, Feature.newBuilder().setValueType(ValueType.BOOLEAN).setBooleanValue((Boolean) planFeatures.get(key)).build());
+			}else if(planFeatures.get(key) instanceof Integer){
+				featureMap.put(key, Feature.newBuilder().setValueType(ValueType.NUMERIC).setNumericValue((Integer) planFeatures.get(key)).build());
+			}else if(planFeatures.get(key) instanceof String){
+				featureMap.put(key, Feature.newBuilder().setValueType(ValueType.STRING).setStringValue((String) planFeatures.get(key)).build());
+			}
+		}
+		
+		return featureMap;
+	}
+	private Map<String, Feature> findFeaturesByVet(Vet vet) {
+		return new HashMap<>();
+	}
+	private Map<String, Feature> findFeaturesByAdmin(User admin) {
+		return new HashMap<>();
+	}
+	private Map<String, Feature> findFeaturesByClinicOwner(ClinicOwner clinicOwner) {
+		return new HashMap<>();
+	}
+
+	private Map<String, Feature> findPublicFeatures() {
+		
+		Map<String, Feature> featureMap = new HashMap<>();
+
+		featureMap.put("public", Feature.newBuilder().setValueType(ValueType.BOOLEAN).setBooleanValue(true).build());
+		
+		return featureMap;
+	}
+
+	private Map<String, Object> parsePlanToMap(Plan plan){
+		Map<String, Object> map = new HashMap<>();
+
+        Field[] fields = plan.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+			if(fieldName.equals("id") || fieldName.equals("name") || fieldName.equals("price")) {
+				continue;
+			}
+			try {
+				Object fieldValue = field.get(plan);
+				map.put(fieldName, fieldValue);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			
+        }
+
+        return map;
 	}
 
 }

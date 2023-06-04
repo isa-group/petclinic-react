@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.feature;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 import org.springframework.samples.petclinic.protobuf.FeatureResponseOuterProto.FeatureResponse;
 import org.springframework.samples.petclinic.protobuf.FeatureResponseOuterProto.FeatureResponse.Feature;
 import org.springframework.samples.petclinic.protobuf.FeatureResponseOuterProto.FeatureResponse.Feature.ValueType;
+import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 
@@ -19,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import javax.security.auth.message.AuthException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,27 +29,18 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/")
 public class FeatureController {
 
-    final Map<String, Feature> featureMap = new HashMap<>(); {}
+    private final UserService userService;
 
-    public FeatureController() {
+    @Autowired
+    public FeatureController(UserService userService) {
 
-        Feature featureBoolean = Feature.newBuilder().setValueType(ValueType.BOOLEAN).setBooleanValue(true).build();
-        Feature featureNumeric = Feature.newBuilder().setValueType(ValueType.NUMERIC).setNumericValue(5).build();
-        Feature featureString = Feature.newBuilder().setValueType(ValueType.BOOLEAN).setStringValue("dog cat bird snake").build();
-
-        featureMap.put("pet-list", featureBoolean);
-        featureMap.put("pet-read", featureBoolean);
-        featureMap.put("pet-edit", featureBoolean);
-        featureMap.put("pet-add", featureBoolean);
-        featureMap.put("pet-delete", featureBoolean);
-        featureMap.put("pet-requests-remaining", featureNumeric);
-        featureMap.put("pet-allowed-types", featureString);
+        this.userService = userService;
 
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/feature", method = RequestMethod.POST, consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> list(HttpServletRequest httpServletRequest) {
+    @PostMapping(value = "feature", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> featureList(HttpServletRequest httpServletRequest) {
         ServletInputStream inputStream;
 
         try {
@@ -59,6 +53,16 @@ public class FeatureController {
                 .lines().collect(Collectors.toList());
 
         Map<String, Feature> result = new HashMap<>();
+        Map<String, Feature> featureMap = new HashMap<>();
+        
+        try{
+            featureMap = userService.findFeaturesByUser();
+        }catch(AuthException e){
+            System.out.println("EXCEPCION");
+        }
+
+        System.out.println(list);
+        System.out.println(featureMap);
 
         for (String feature : list) {
             feature = feature.trim();
