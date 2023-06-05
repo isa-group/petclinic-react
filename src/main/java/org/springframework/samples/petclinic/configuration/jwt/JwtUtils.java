@@ -5,11 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.security.auth.message.AuthException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
 import org.springframework.samples.petclinic.user.Authorities;
+import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -30,12 +34,21 @@ public class JwtUtils {
 	@Value("${petclinic.app.jwtExpirationMs}")
 	private int jwtExpirationMs;
 
+	@Autowired
+	private UserService userService;
+
 	public String generateJwtToken(Authentication authentication) {
 
 		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("authorities",
 				userPrincipal.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList()));
+		
+		try{
+			claims.put("features", userService.findFeaturesByUser());
+		}catch(AuthException e){
+			logger.error("Error getting features: {}", e.getMessage());
+		}
 
 		return Jwts.builder().setClaims(claims).setSubject((userPrincipal.getUsername())).setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
