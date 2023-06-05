@@ -1,3 +1,9 @@
+import { Buffer } from "buffer";
+
+function parseJwt (token) {
+    return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+}
+
 class TokenService {
     getLocalRefreshToken() {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -12,6 +18,19 @@ class TokenService {
     getLocalAccessToken() {
         const jwt = JSON.parse(localStorage.getItem("jwt"));
         return jwt ? jwt : null;
+    }
+
+    getFeaturesFromToken() {
+        const jwt = JSON.parse(localStorage.getItem("jwt"));
+
+        if (jwt) {
+
+            let jwtBody = parseJwt(jwt);
+
+            return jwtBody.features;
+        }
+
+        return null;
     }
 
     updateLocalAccessToken(token) {

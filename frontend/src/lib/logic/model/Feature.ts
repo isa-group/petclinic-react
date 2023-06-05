@@ -1,6 +1,7 @@
 import FeatureRetriever from "../../components/feature/FeatureRetriever";
 import { NAryFunction, NAryFunctionOptions } from "./NAryFunction";
 import { error, ResultValue, value } from "./ResultValue";
+import tokenService from "services/token.service";
 
 export class Feature implements NAryFunction<boolean> {
     featureId: string;
@@ -12,12 +13,12 @@ export class Feature implements NAryFunction<boolean> {
     }
 
     async eval(options?: NAryFunctionOptions): Promise<ResultValue<boolean>> {
-        const retriever = this.featureRetriever ?? options?.featureRetriever;
+        const retriever = tokenService.getFeaturesFromToken();//this.featureRetriever ?? options?.featureRetriever;
         if (!retriever) {
             return error("Error evaluating Feature " + this.featureId + ". No FeatureRetriever provided");
         }
         try {
-            const feature = await retriever.getFeature(this.featureId);
+            const feature = retriever[this.featureId];
             if (typeof feature === "boolean") {
                 return value(feature);
             } else {
