@@ -13,6 +13,8 @@ import FormGenerator from "../../../components/formGenerator/formGenerator";
 import { visitEditFormInputs } from "./form/visitEditFormInputs";
 import moment from "moment";
 import { useState, useRef, useEffect } from "react";
+import { Default, Feature, On } from "lib/components/feature/Feature";
+import { feature } from "lib/logic/model/Feature";
 
 export default function OwnerVisitEdit() {
   let [visit, setVisit] = useState({
@@ -81,52 +83,51 @@ export default function OwnerVisitEdit() {
         />
       );
     } else {
-      if (plan.haveVetSelection) {
-        const vetsAux = vets.filter((vet) => vet.city === city);
-        const vetsOptions = getVetOptions(vetsAux);
-        return (
-          <Input
-            type="select"
-            required
-            name="vet"
-            id="vet"
-            value={visit.vet.id ? visit.vet.id : ""}
-            onChange={handleChange}
-          >
-            <option value="">None</option>
-            {vetsOptions}
-          </Input>
-        );
-      } else {
-        return (
-          <Input
-            type="text"
-            readOnly
-            name="vet"
-            id="vet"
-            value={
-              visit.vet.id ? visit.vet.firstName + " " + visit.vet.lastName : ""
-            }
-            onChange={handleChange}
-          />
-        );
-      }
-    }
-  }
-
-  function getVetOptions(vets) {
-    return vets.map((vet) => {
-      let spAux = vet.specialties
-        .map((s) => s.name)
-        .toString()
-        .replace(",", ", ");
       return (
-        <option key={vet.id} value={vet.id}>
-          {vet.firstName} {vet.lastName + " "}
-          {spAux !== "" ? "- " + spAux : ""}
-        </option>
+        <Feature>
+          <On expression={feature("haveVetSelection")}>
+            <Input
+              type="select"
+              required
+              name="vet"
+              id="vet"
+              value={visit.vet.id ? visit.vet.id : ""}
+              onChange={handleChange}
+            >
+              <option value="">None</option>
+              {vets
+                .filter((vet) => vet.city === city)
+                .map((vet) => {
+                  let spAux = vet.specialties
+                    .map((s) => s.name)
+                    .toString()
+                    .replace(",", ", ");
+                  return (
+                    <option key={vet.id} value={vet.id}>
+                      {vet.firstName} {vet.lastName + " "}
+                      {spAux !== "" ? "- " + spAux : ""}
+                    </option>
+                  );
+                })}
+            </Input>
+          </On>
+          <Default>
+            <Input
+              type="text"
+              readOnly
+              name="vet"
+              id="vet"
+              value={
+                visit.vet.id
+                  ? visit.vet.firstName + " " + visit.vet.lastName
+                  : ""
+              }
+              onChange={handleChange}
+            />
+          </Default>
+        </Feature>
       );
-    });
+    }
   }
 
   async function handleSubmit({ values }) {
@@ -229,7 +230,7 @@ export default function OwnerVisitEdit() {
         ...visitEditFormInputs[2].values,
         ...cities,
       ];
-      setCities(visitEditFormInputs[2].values)
+      setCities(visitEditFormInputs[2].values);
     }
 
     if (visit.id !== null) {
