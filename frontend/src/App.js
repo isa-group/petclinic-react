@@ -48,6 +48,9 @@ import VetListClinicOwner from "./clinicOwner/vets/VetListClinicOwner";
 import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
 import PlanListAdmin from "./admin/plans/PlanListAdmin";
 import PlanEditAdmin from "./admin/plans/PlanEditAdmin";
+import useGenericFeature from "lib/components/feature/useGenericFeature";
+import { feature } from "lib/logic/model/Feature";
+import { and } from "lib/logic/model/BinaryLogicalPredicate";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -75,6 +78,30 @@ function App() {
   let userRoutes = <></>;
   let vetRoutes = <></>;
   let publicRoutes = <></>;
+
+  const ownersDashboard = useGenericFeature({
+    on: [
+      {
+        expression: feature("havePetsDashboard"),
+        on: <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} />,
+      },
+    ]
+  });
+
+  const onlineConsultations = useGenericFeature({
+    on: [
+      {
+        expression: feature("haveOnlineConsultations"),
+        on: (
+          <>
+            <Route path="/consultations" exact={true} element={<PrivateRoute><OwnerConsultationList /></PrivateRoute>} />
+            <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><OwnerConsultationEdit /></PrivateRoute>} />
+            <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><OwnerConsultationTickets /></PrivateRoute>} />
+          </>
+        ),
+      },
+    ]
+  });
 
   roles.forEach((role) => {
     if (role === "ADMIN") {
@@ -105,14 +132,12 @@ function App() {
     }
     if (role === "OWNER") {
       ownerRoutes = (
-        <>
-          <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} />
+        <> 
+          {ownersDashboard}
           <Route path="/myPets" exact={true} element={<PrivateRoute><OwnerPetList /></PrivateRoute>} />
           <Route path="/myPets/:id" exact={true} element={<PrivateRoute><OwnerPetEdit /></PrivateRoute>} />
           <Route path="/myPets/:id/visits/:id" exact={true} element={<PrivateRoute><OwnerVisitEdit /></PrivateRoute>} />
-          <Route path="/consultations" exact={true} element={<PrivateRoute><OwnerConsultationList /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><OwnerConsultationEdit /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><OwnerConsultationTickets /></PrivateRoute>} />
+          {onlineConsultations}
         </>)
     }
     if (role === "VET") {
