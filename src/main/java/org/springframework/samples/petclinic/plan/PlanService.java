@@ -1,6 +1,9 @@
 package org.springframework.samples.petclinic.plan;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +53,28 @@ public class PlanService {
     @Transactional
     public void deleteById(int id) {
         planRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Map<String, String> getPlanParserExpresions() {
+
+        ParserPlan planParser = planRepository.findPlanParserById(1);
+		
+        Map<String, String> result = new HashMap<>();
+
+        Field[] fields = planParser.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+			try {
+				String fieldValue = (String) field.get(planParser);
+				result.put(fieldName, fieldValue);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			
+        }
+
+        return result;
     }
 }
