@@ -110,7 +110,7 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Map<String, Feature> findFeaturesByUser() throws AuthException{
+	public Map<String, Object> findFeaturesByUser() throws AuthException{
 
 		User user = null;
 
@@ -190,41 +190,35 @@ public class UserService {
 
 	}
 
-	private Map<String, Feature> findFeaturesByOwner(Owner owner) {
+	private Map<String, Object> findFeaturesByOwner(Owner owner) {
 		
-		Map<String, Feature> featureMap = new HashMap<>();
+		Map<String, Object> featureMap = new HashMap<>();
 
 		Plan userPlan = owner.getClinic().getPlan();
 
 		Map<String, Object> planFeatures = parsePlanToMap(userPlan);
 
 		for (String key : planFeatures.keySet()) {
-			if(planFeatures.get(key) instanceof Boolean){
-				featureMap.put(key, Feature.newBuilder().setValueType(ValueType.BOOLEAN).setBooleanValue((Boolean) planFeatures.get(key)).build());
-			}else if(planFeatures.get(key) instanceof Integer){
-				featureMap.put(key, Feature.newBuilder().setValueType(ValueType.NUMERIC).setNumericValue((Integer) planFeatures.get(key)).build());
-			}else if(planFeatures.get(key) instanceof String){
-				featureMap.put(key, Feature.newBuilder().setValueType(ValueType.STRING).setStringValue((String) planFeatures.get(key)).build());
-			}
+			featureMap.put(key, planFeatures.get(key));
 		}
 		
 		return featureMap;
 	}
-	private Map<String, Feature> findFeaturesByVet(Vet vet) {
+	private Map<String, Object> findFeaturesByVet(Vet vet) {
 		return new HashMap<>();
 	}
-	private Map<String, Feature> findFeaturesByAdmin(User admin) {
+	private Map<String, Object> findFeaturesByAdmin(User admin) {
 		return new HashMap<>();
 	}
-	private Map<String, Feature> findFeaturesByClinicOwner(ClinicOwner clinicOwner) {
+	private Map<String, Object> findFeaturesByClinicOwner(ClinicOwner clinicOwner) {
 		return new HashMap<>();
 	}
 
-	private Map<String, Feature> findPublicFeatures() {
+	private Map<String, Object> findPublicFeatures() {
 		
-		Map<String, Feature> featureMap = new HashMap<>();
+		Map<String, Object> featureMap = new HashMap<>();
 
-		featureMap.put("public", Feature.newBuilder().setValueType(ValueType.BOOLEAN).setBooleanValue(true).build());
+		featureMap.put("public", true);
 		
 		return featureMap;
 	}

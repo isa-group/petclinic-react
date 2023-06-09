@@ -1,9 +1,10 @@
 import "../../static/css/pricing/pricingPage.css";
 
-import { FaCheck, FaTimes, FaPaperPlane } from "react-icons/fa";
+import { FaPaperPlane } from "react-icons/fa";
 import { ImAirplane } from "react-icons/im";
-import { BsFillRocketTakeoffFill, BsDot } from "react-icons/bs";
+import { BsFillRocketTakeoffFill} from "react-icons/bs";
 import { useState } from "react";
+import { TfiReload } from "react-icons/tfi";
 
 import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
@@ -25,9 +26,21 @@ export default function PlanList() {
 
   const modal = getErrorModal(setVisible, visible, message);
 
+  function updateJWTToken() {
+    tokenService.updateJWTToken()
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((error) => {console.log(error)});
+  }
+
   return (
     <div className="pricing-page-container">
       {modal}
+      <button className="update-token-button" onClick={updateJWTToken}>
+        <TfiReload className="update-token-icon" color="white"/>
+        <div className="update-token-text">Update token</div>
+      </button>
       <div>
         <h1 className="pricing-title">Pricing Plans</h1>
       </div>

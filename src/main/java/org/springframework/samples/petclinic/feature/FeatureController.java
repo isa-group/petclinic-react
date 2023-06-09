@@ -38,43 +38,43 @@ public class FeatureController {
 
     }
 
-    @CrossOrigin
-    @PostMapping(value = "feature", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> featureList(HttpServletRequest httpServletRequest) {
-        ServletInputStream inputStream;
+    // @CrossOrigin
+    // @PostMapping(value = "feature", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    // public ResponseEntity<byte[]> featureList(HttpServletRequest httpServletRequest) {
+    //     ServletInputStream inputStream;
 
-        try {
-            inputStream = httpServletRequest.getInputStream();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    //     try {
+    //         inputStream = httpServletRequest.getInputStream();
+    //     } catch (IOException e) {
+    //         throw new RuntimeException(e);
+    //     }
 
-        final List<String> list = new BufferedReader(new InputStreamReader(inputStream))
-                .lines().collect(Collectors.toList());
+    //     final List<String> list = new BufferedReader(new InputStreamReader(inputStream))
+    //             .lines().collect(Collectors.toList());
 
-        Map<String, Feature> result = new HashMap<>();
-        Map<String, Feature> featureMap = new HashMap<>();
+    //     Map<String, Feature> result = new HashMap<>();
+    //     Map<String, Feature> featureMap = new HashMap<>();
         
-        try{
-            featureMap = userService.findFeaturesByUser();
-        }catch(AuthException e){
-            System.out.println("EXCEPCION");
-        }
+    //     try{
+    //         featureMap = userService.findFeaturesByUser();
+    //     }catch(AuthException e){
+    //         System.out.println("EXCEPCION");
+    //     }
 
-        System.out.println(list);
-        System.out.println(featureMap);
+    //     System.out.println(list);
+    //     System.out.println(featureMap);
 
-        for (String feature : list) {
-            feature = feature.trim();
-            if (featureMap.keySet().contains(feature)) {
-                result.put(feature, featureMap.get(feature));
-            }
-        }
+    //     for (String feature : list) {
+    //         feature = feature.trim();
+    //         if (featureMap.keySet().contains(feature)) {
+    //             result.put(feature, featureMap.get(feature));
+    //         }
+    //     }
 
-        FeatureResponse featureResponse = FeatureResponse.newBuilder().putAllFeatureMap(result).build();
+    //     FeatureResponse featureResponse = FeatureResponse.newBuilder().putAllFeatureMap(result).build();
         
-        byte[] protobufBytes = featureResponse.toByteArray();
+    //     byte[] protobufBytes = featureResponse.toByteArray();
 
-        return new ResponseEntity<>(protobufBytes, HttpStatus.OK);
-    }
+    //     return new ResponseEntity<>(protobufBytes, HttpStatus.OK);
+    // }
 }
