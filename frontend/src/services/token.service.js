@@ -37,12 +37,6 @@ class TokenService {
         window.localStorage.setItem("jwt", JSON.stringify(token));
     }
 
-    // updateLocalAccessToken(token) {
-    //     let user = JSON.parse(localStorage.getItem("user"));
-    //     user.token = token;
-    //     window.localStorage.setItem("user", JSON.stringify(user));
-    // }
-
     getUser() {
         return JSON.parse(localStorage.getItem("user"));
     }
@@ -54,6 +48,25 @@ class TokenService {
     removeUser() {
         window.localStorage.removeItem("user");
         window.localStorage.removeItem("jwt");
+    }
+
+    updateJWTToken() {
+
+        return new Promise((resolve, reject) => {
+            fetch("/api/v1/auth/refreshToken", {
+                method: 'POST',
+                headers: {
+                    "Authorization": `Bearer ${this.getLocalAccessToken()}`,
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                this.updateLocalAccessToken(data.newToken);
+                resolve();
+            }).catch((error) => {reject(error)});
+        });
     }
 
 }
