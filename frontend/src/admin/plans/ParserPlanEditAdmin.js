@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Form, Input, Label } from "reactstrap";
+import { Form, Input, Label, Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
@@ -22,6 +22,7 @@ export default function ParserPlanEditAdmin() {
   const id = getIdFromUrl(2);
   const [message, setMessage] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [visibleInfo, setVisibleInfo] = useState(false);
   const [parserPlan, setParserPlan] = useFetchState(
     emptyItem,
     `/api/v1/plans/parser/${id}`,
@@ -30,6 +31,10 @@ export default function ParserPlanEditAdmin() {
     setVisible,
     id
   );
+
+  function handleInfoModalVisible() {
+    setVisibleInfo(!visibleInfo);
+  }
 
   function handleChange(event) {
     const target = event.target;
@@ -56,17 +61,51 @@ export default function ParserPlanEditAdmin() {
         if (json.message) {
           setMessage(json.message);
           setVisible(true);
-        } else window.location.href = "/parserPlansAdmin?success";
+        } else setVisibleInfo(true);
       })
       .catch((message) => alert(message));
   }
 
   const modal = getErrorModal(setVisible, visible, message);
+  const infoModalCloseBtn = (
+    <button
+      className="close"
+      onClick={() => handleInfoModalVisible()}
+      type="button"
+    >
+      &times;
+    </button>
+  );
 
   return (
     <div className="auth-page-container">
-      <h2>Edit Parser Plan</h2>
+      <h2 style={{marginTop: "-5%"}}>Edit Parser Plan</h2>
       {modal}
+      <Modal
+          isOpen={visibleInfo}
+          toggle={() => handleInfoModalVisible()}
+          keyboard={false}
+        >
+          <ModalHeader
+            toggle={() => handleInfoModalVisible()}
+            close={infoModalCloseBtn}
+          >
+            Change Applied!
+          </ModalHeader>
+          <ModalBody>Parser plan updated successfully!</ModalBody>
+          <ModalFooter>
+            <Button
+              color="primary"
+              onClick={() => handleInfoModalVisible()}
+            >
+              Close
+            </Button>
+          </ModalFooter>
+        </Modal>
+      <h5 style={{ color: "#525151", margin: "30px 0" }}>
+          In this view you can edit the logic with whom pricing plans will be
+          automatically applied to users
+        </h5>
       <div className="auth-form-container">
         <Form onSubmit={handleSubmit}>
           <div className="custom-form-input">
@@ -163,7 +202,7 @@ export default function ParserPlanEditAdmin() {
           <div className="custom-button-row">
             <button className="auth-button">Save</button>
             <Link
-              to={`/parserPlansAdmin`}
+              to={`/`}
               className="auth-button"
               style={{ textDecoration: "none" }}
             >
