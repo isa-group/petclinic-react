@@ -93,7 +93,7 @@ export default function PlanEditAdmin() {
             />
           </div>
           <div className="custom-form-input">
-            <Label for="name" className="custom-form-input-label">
+            <Label for="price" className="custom-form-input-label">
               Price (in €)
             </Label>
             <Input
@@ -108,7 +108,7 @@ export default function PlanEditAdmin() {
             />
           </div>
           <div className="custom-form-input">
-            <Label for="name" className="custom-form-input-label">
+            <Label for="maxPets" className="custom-form-input-label">
               Max Pets
             </Label>
             <Input
@@ -122,7 +122,7 @@ export default function PlanEditAdmin() {
             />
           </div>
           <div className="custom-form-input">
-            <Label for="name" className="custom-form-input-label">
+            <Label for="maxVisitsPerMonthAndPet" className="custom-form-input-label">
               Max Visits per Pet and Month
             </Label>
             <Input
@@ -136,21 +136,7 @@ export default function PlanEditAdmin() {
             />
           </div>
           <div className="custom-form-input">
-            <Label for="name" className="custom-form-input-label">
-              Max Visits per Pet and Month
-            </Label>
-            <Input
-              type="number"
-              required
-              name="maxVisitsPerMonthAndPet"
-              id="maxVisitsPerMonthAndPet"
-              value={plan.maxVisitsPerMonthAndPet || ""}
-              onChange={handleChange}
-              className="custom-input"
-            />
-          </div>
-          <div className="custom-form-input">
-            <Label for="name" className="custom-form-input-label">
+            <Label for="supportPriority" className="custom-form-input-label">
               Support Priority
             </Label>
             <Input
@@ -199,7 +185,7 @@ export default function PlanEditAdmin() {
           <div className="custom-button-row">
             <button className="auth-button">Save</button>
             <Link
-              to={`/clinicOwners`}
+              to={`/plansAdmin`}
               className="auth-button"
               style={{ textDecoration: "none" }}
             >

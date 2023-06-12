@@ -2,14 +2,8 @@ package org.springframework.samples.petclinic.plan;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.samples.petclinic.model.BaseEntity;
 
@@ -23,31 +17,31 @@ import lombok.Setter;
 public class ParserPlan extends BaseEntity{
 
     @Column(name = "max_pets_parser")
-    @NotBlank
+    @NotNull
     private String maxPetsParser;
 
     @Column(name = "max_visits_per_month_and_pet_parser")
-    @NotBlank
+    @NotNull
     private String maxVisitsPerMonthAndPetParser;
 
     @Column(name = "support_priority_parser")
-    @NotBlank
+    @NotNull
     private String supportPriorityParser;
 
     @Column(name = "have_vet_selection_parser")
-    @NotBlank
+    @NotNull
     private String haveVetSelectionParser;
 
     @Column(name = "have_calendar_parser")
-    @NotBlank
+    @NotNull
     private String haveCalendarParser;
 
     @Column(name = "have_pets_dashboard_parser")
-    @NotBlank
+    @NotNull
     private String havePetsDashboardParser;
 
     @Column(name = "have_online_consultations_parser")
-    @NotBlank
+    @NotNull
     private String haveOnlineConsultationsParser;
 
 }

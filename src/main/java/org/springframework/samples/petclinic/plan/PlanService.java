@@ -16,9 +16,12 @@ public class PlanService {
     
     @Autowired
     private PlanRepository planRepository;
+    @Autowired
+    private ParserPlanRepository parserPlanRepository;
 
-    public PlanService(PlanRepository planRepository) {
+    public PlanService(PlanRepository planRepository, ParserPlanRepository parserPlanRepository) {
         this.planRepository = planRepository;
+        this.parserPlanRepository = parserPlanRepository;
     }
 
     @Transactional(readOnly = true)
@@ -27,8 +30,18 @@ public class PlanService {
     }
 
     @Transactional(readOnly = true)
+    public List<ParserPlan> findAllParserPlans() {
+        return (List<ParserPlan>) planRepository.findAllParserPlans();
+    }
+
+    @Transactional(readOnly = true)
     public Plan findById(int id) {
         return planRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Plan", "ID", id));
+    }
+
+    @Transactional(readOnly = true)
+    public ParserPlan findPlanParserById(int id) {
+        return planRepository.findPlanParserById(id);
     }
 
     @Transactional(readOnly = true)
@@ -42,12 +55,26 @@ public class PlanService {
     }
 
     @Transactional
+    public ParserPlan saveParserPlan(ParserPlan parserPlan) {
+        return parserPlanRepository.save(parserPlan);
+    }
+
+    @Transactional
     public Plan update(Plan plan, int planId) {
 
         Plan planToUpdate = findById(planId);
 		BeanUtils.copyProperties(plan, planToUpdate, "id", "clinicOwner", "owners");
 		
         return save(plan);
+    }
+
+    @Transactional
+    public ParserPlan updatePlanParser(ParserPlan parserPlan, int parserPlanId) {
+
+        ParserPlan parserPlanToUpdate = findPlanParserById(parserPlanId);
+		BeanUtils.copyProperties(parserPlan, parserPlanToUpdate, "id");
+		
+        return saveParserPlan(parserPlan);
     }
 
     @Transactional

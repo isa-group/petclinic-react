@@ -13,4 +13,7 @@ public interface PlanRepository extends CrudRepository<Plan, Integer>{
     @Query("SELECT pp FROM ParserPlan pp WHERE pp.id = :id")     
     public ParserPlan findPlanParserById(int id);
 
+    @Query("SELECT pp FROM ParserPlan pp")
+    public List<ParserPlan> findAllParserPlans();
+
 }
