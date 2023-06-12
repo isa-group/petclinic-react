@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Button,
-  Container,
   Form,
-  FormGroup,
   Input,
   Label,
   Row,
@@ -14,6 +11,7 @@ import getErrorModal from "../../util/getErrorModal";
 import useFetchData from "../../util/useFetchData";
 import getIdFromUrl from "../../util/getIdFromUrl";
 import useFetchState from "../../util/useFetchState";
+import { fetchWithInterceptor } from "../../services/api";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -71,7 +69,7 @@ export default function VetEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetch("/api/v1/vets" + (vet.id ? "/" + vet.id : ""), {
+    fetchWithInterceptor("/api/v1/vets" + (vet.id ? "/" + vet.id : ""), {
       method: vet.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,

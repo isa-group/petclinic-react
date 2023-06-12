@@ -55,14 +55,21 @@ import TokenService from "./token.service";
 // export default instance;
 
 export function fetchWithInterceptor(url, options) {
-    return fetch(url, options).then((response) => {
-      // Check if the response contains the 'newToken' header and update the token in localStorage
-      const newToken = response.headers.get('newToken');
-  
-      if (newToken && newToken !== 'null') {
-        localStorage.setItem('token', newToken);
-      }
-  
-      return response;
-    });
-  }
+  return fetch(url, options).then((response) => {
+    // Check if the response contains the 'newToken' header and update the token in localStorage
+    const newToken = response.headers.get("New-Token");
+
+    console.log(newToken);
+
+    if (
+      newToken !== null &&
+      newToken !== TokenService.getLocalAccessToken()
+    ) {
+      console.log("update token");
+      TokenService.updateLocalAccessToken(newToken);
+      window.location.reload();
+    }
+
+    return response;
+  });
+}

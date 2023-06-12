@@ -5,6 +5,7 @@ import getErrorModal from '../../util/getErrorModal';
 import useFetchState from '../../util/useFetchState';
 import getIdFromUrl from '../../util/getIdFromUrl';
 import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
+import { fetchWithInterceptor } from "../../services/api";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -33,7 +34,7 @@ export default function TicketListAdmin() {
     function handleSubmit(event) {
         event.preventDefault();
 
-        fetch(`/api/v1/consultations/${id}/tickets`, {
+        fetchWithInterceptor(`/api/v1/consultations/${id}/tickets`, {
             method: 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -61,7 +62,7 @@ export default function TicketListAdmin() {
         const aux = consultation;
         aux.status = "CLOSED"
 
-        fetch(`/api/v1/consultations/${id}`, {
+        fetchWithInterceptor(`/api/v1/consultations/${id}`, {
             method: 'PUT',
             headers: {
                 "Authorization": `Bearer ${jwt}`,

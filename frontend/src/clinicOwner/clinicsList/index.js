@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, ButtonGroup, Table } from "reactstrap";
 import tokenService from "../../services/token.service";
 import useFetchState from "../../util/useFetchState";
 import getErrorModal from "../../util/getErrorModal";
 import "../../static/css/admin/adminPage.css";
-import { useNavigate } from "react-router-dom";
+import { fetchWithInterceptor } from "../../services/api";
 
 const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
@@ -52,7 +52,7 @@ export default function ClinicsList() {
 
                     if(!confirmMessage) return;
 
-                    fetch(`/api/v1/clinics/${clinic.id}`, {
+                    fetchWithInterceptor(`/api/v1/clinics/${clinic.id}`, {
                       method: "DELETE",
                       headers: {
                         "Content-Type": "application/json",

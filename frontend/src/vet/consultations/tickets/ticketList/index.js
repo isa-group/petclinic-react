@@ -15,6 +15,7 @@ import {
   Row,
 } from "reactstrap";
 import tokenService from "../../../../services/token.service";
+import { fetchWithInterceptor } from "../../../../services/api";
 
 export default function VetConsultationTickets() {
   let [consultation, setConsultation] = useState({
@@ -50,7 +51,7 @@ export default function VetConsultationTickets() {
     event.preventDefault();
 
     const response = await (
-      await fetch(`/api/v1/consultations/${id}/tickets`, {
+      await fetchWithInterceptor(`/api/v1/consultations/${id}/tickets`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -68,7 +69,7 @@ export default function VetConsultationTickets() {
   }
 
   async function remove(ticketId) {
-    await fetch(`/api/v1/consultations/${id}/tickets/${ticketId}`, {
+    await fetchWithInterceptor(`/api/v1/consultations/${id}/tickets/${ticketId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -94,7 +95,7 @@ export default function VetConsultationTickets() {
     consultationRequest.status = "CLOSED";
 
     const response = await (
-      await fetch(`/api/v1/consultations/${id}`, {
+      await fetchWithInterceptor(`/api/v1/consultations/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -115,7 +116,7 @@ export default function VetConsultationTickets() {
 
   async function setUp() {
     const consultation = await (
-      await fetch(`/api/v1/consultations/${id}`, {
+      await fetchWithInterceptor(`/api/v1/consultations/${id}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
@@ -125,7 +126,7 @@ export default function VetConsultationTickets() {
     else setConsultation(consultation);
     if (!message) {
       const tickets = await (
-        await fetch(`/api/v1/consultations/${id}/tickets`, {
+        await fetchWithInterceptor(`/api/v1/consultations/${id}/tickets`, {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },

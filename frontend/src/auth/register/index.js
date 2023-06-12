@@ -6,6 +6,7 @@ import { registerFormOwnerInputs } from "./form/registerFormOwnerInputs";
 import { registerFormVetInputs } from "./form/registerFormVetInputs";
 import { registerFormClinicOwnerInputs } from "./form/registerFormClinicOwnerInputs";
 import { useEffect, useRef, useState } from "react";
+import { fetchWithInterceptor } from "../../services/api";
 
 export default function Register() {
   let [type, setType] = useState(null);
@@ -31,7 +32,7 @@ export default function Register() {
     request["authority"] = authority;
     let state = "";
 
-    fetch("/api/v1/auth/signup", {
+    fetchWithInterceptor("/api/v1/auth/signup", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(request),
@@ -43,7 +44,7 @@ export default function Register() {
             password: request.password,
           };
 
-          fetch("/api/v1/auth/signin", {
+          fetchWithInterceptor("/api/v1/auth/signin", {
             headers: { "Content-Type": "application/json" },
             method: "POST",
             body: JSON.stringify(loginRequest),
@@ -78,7 +79,7 @@ export default function Register() {
   useEffect(() => {
     if (type === "Owner" || type === "Vet") {
       if (registerFormOwnerInputs[5].values.length === 1){
-        fetch("/api/v1/clinics")
+        fetchWithInterceptor("/api/v1/clinics")
         .then(function (response) {
           if (response.status === 200) {
             return response.json();

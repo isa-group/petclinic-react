@@ -8,6 +8,7 @@ import moment from "moment";
 import { useState, useEffect } from "react";
 import { Feature, On } from "lib/components/feature/Feature";
 import { feature } from "lib/logic/model/Feature";
+import { fetchWithInterceptor } from "../../../services/api";
 
 export default function OwnerPetList() {
   let [pets, setPets] = useState([]);
@@ -18,7 +19,7 @@ export default function OwnerPetList() {
   const jwt = tokenService.getLocalAccessToken();
 
   function removePet(id) {
-    fetch(`/api/v1/pets/${id}`, {
+    fetchWithInterceptor(`/api/v1/pets/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -41,7 +42,7 @@ export default function OwnerPetList() {
 
   async function removeVisit(petId, visitId) {
     let status = "";
-    await fetch(`/api/v1/pets/${petId}/visits/${visitId}`, {
+    await fetchWithInterceptor(`/api/v1/pets/${petId}/visits/${visitId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -77,7 +78,7 @@ export default function OwnerPetList() {
 
   async function setUp() {
     let pets = await (
-      await fetch(`/api/v1/pets?userId=${user.id}`, {
+      await fetchWithInterceptor(`/api/v1/pets?userId=${user.id}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
@@ -89,7 +90,7 @@ export default function OwnerPetList() {
       for (let pet of pets) {
         let index = pets.findIndex((obj) => obj.id === pet.id);
         const visits = await (
-          await fetch(`/api/v1/pets/${pet.id}/visits`, {
+          await fetchWithInterceptor(`/api/v1/pets/${pet.id}/visits`, {
             headers: {
               Authorization: `Bearer ${jwt}`,
               "Content-Type": "application/json",
