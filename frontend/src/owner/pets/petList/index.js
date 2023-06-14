@@ -6,8 +6,7 @@ import tokenService from "../../../services/token.service";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import moment from "moment";
 import { useState, useEffect } from "react";
-import { Feature, On } from "lib/components/feature/Feature";
-import { feature } from "lib/logic/model/Feature";
+import { Feature, On, feature } from "feature-toggling-react";
 
 export default function OwnerPetList() {
   let [pets, setPets] = useState([]);

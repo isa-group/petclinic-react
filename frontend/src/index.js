@@ -7,8 +7,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter } from 'react-router-dom';
-import { FeatureContext } from './lib/components/feature/FeatureContext.tsx';
-import FeatureRetriever from "./lib/components/feature/FeatureRetriever.tsx";
+import { FeatureContext, FeatureRetriever } from 'feature-toggling-react';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

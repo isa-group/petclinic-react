@@ -13,8 +13,7 @@ import FormGenerator from "../../../components/formGenerator/formGenerator";
 import { visitEditFormInputs } from "./form/visitEditFormInputs";
 import moment from "moment";
 import { useState, useRef, useEffect } from "react";
-import { Default, Feature, On } from "lib/components/feature/Feature";
-import { feature } from "lib/logic/model/Feature";
+import { Default, Feature, On, feature } from "feature-toggling-react";
 
 export default function OwnerVisitEdit() {
   let [visit, setVisit] = useState({
