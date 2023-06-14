@@ -80,6 +80,11 @@ function AppNavbar() {
               Plans
             </NavLink>
           </NavItem>
+          <NavItem>
+            <NavLink style={{ color: "white" }} tag={Link} to="/parserPlansAdmin/1">
+              Plans Parser
+            </NavLink>
+          </NavItem>
         </>
       );
     }

@@ -40,9 +40,19 @@ public class PlanRestController {
         return new ResponseEntity<>(planService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping(value="/parser")
+    public ResponseEntity<List<ParserPlan>> getAllParserPlans() {
+        return new ResponseEntity<>(planService.findAllParserPlans(), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/{planId}")
     public ResponseEntity<Plan> getPlanById(@PathVariable int planId) {
         return new ResponseEntity<>(planService.findById(planId), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/parser/{parserPlanId}")
+    public ResponseEntity<ParserPlan> getParserPlanById(@PathVariable int parserPlanId) {
+        return new ResponseEntity<>(planService.findPlanParserById(parserPlanId), HttpStatus.OK);
     }
 
     @PostMapping
@@ -56,6 +66,14 @@ public class PlanRestController {
         RestPreconditions.checkNotNull(planService.findById(planId), "Plan", "ID", planId);
 
         return new ResponseEntity<>(planService.update(plan, planId), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/parser/{parserPlanId}")
+    public ResponseEntity<ParserPlan> updateParserPlan(@PathVariable("parserPlanId") int parserPlanId, @RequestBody @Valid ParserPlan parserPlan) {
+
+        RestPreconditions.checkNotNull(planService.findPlanParserById(parserPlanId), "ParserPlan", "ID", parserPlanId);
+
+        return new ResponseEntity<>(planService.updatePlanParser(parserPlan, parserPlanId), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{planId}")

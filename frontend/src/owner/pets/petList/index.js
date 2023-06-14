@@ -6,6 +6,8 @@ import tokenService from "../../../services/token.service";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import moment from "moment";
 import { useState, useEffect } from "react";
+import { Feature, On } from "lib/components/feature/Feature";
+import { feature } from "lib/logic/model/Feature";
 
 export default function OwnerPetList() {
   let [pets, setPets] = useState([]);
@@ -111,13 +113,17 @@ export default function OwnerPetList() {
       <div className="pet-list-page-container">
         <div className="title-and-add">
           <h1 className="pet-list-title">Pets</h1>
-          <Link
-            to="/myPets/new"
-            className="auth-button"
-            style={{ textDecoration: "none", marginBottom: "2rem" }}
-          >
-            Add Pet
-          </Link>
+          <Feature>
+            <On expression={feature("maxPets")}>
+              <Link
+                to="/myPets/new"
+                className="auth-button"
+                style={{ textDecoration: "none", marginBottom: "2rem" }}
+              >
+                Add Pet
+              </Link>
+            </On>
+          </Feature>
         </div>
         {pets.length > 0 ? (
           pets.map((pet) => {

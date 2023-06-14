@@ -17,7 +17,9 @@ package org.springframework.samples.petclinic.user;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,11 +29,16 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.feature.FeatureController;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.plan.Plan;
+import org.springframework.samples.petclinic.plan.PlanService;
 import org.springframework.samples.petclinic.protobuf.FeatureResponseOuterProto.FeatureResponse.Feature;
 import org.springframework.samples.petclinic.protobuf.FeatureResponseOuterProto.FeatureResponse.Feature.ValueType;
 import org.springframework.samples.petclinic.vet.Vet;
@@ -41,22 +48,27 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.eventbus.DeadEvent;
+class PlanContextManager {
+	public Map<String, Object> ownerContext = new HashMap();
+	public Map<String, Object> planContext = new HashMap();
+}
 
 @Service
 public class UserService {
 
 	private UserRepository userRepository;
 
-//	private OwnerService ownerService;
-//
+	// private OwnerService ownerService;
+	//
 	private VetService vetService;
+	private PlanService planService;
 
 	@Autowired
-	public UserService(UserRepository userRepository, VetService vetService) {
+	public UserService(UserRepository userRepository, VetService vetService, PlanService planService) {
 		this.userRepository = userRepository;
-//		this.ownerService = ownerService;
+		// this.ownerService = ownerService;
 		this.vetService = vetService;
+		this.planService = planService;
 	}
 
 	@Transactional
@@ -110,31 +122,31 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Map<String, Object> findFeaturesByUser() throws AuthException{
+	public Map<String, Object> findFeaturesByUser() throws AuthException {
 
 		User user = null;
 
-		try{
+		try {
 			user = findCurrentUser();
-		}catch(ResourceNotFoundException e){
+		} catch (ResourceNotFoundException e) {
 			System.out.println("User not found");
 			return findPublicFeatures();
 		}
 
 		switch (user.getAuthority().getAuthority()) {
-		case "OWNER":
-			Owner owner = findOwnerByUser(user.getId());
-			return findFeaturesByOwner(owner);
-		case "VET":
-			Vet vet = findVetByUser(user.getId());
-			return findFeaturesByVet(vet);
-		case "ADMIN":
-			return findFeaturesByAdmin(user);
-		case "CLINIC_OWNER":
-			ClinicOwner clinicOwner = findClinicOwnerByUser(user.getId());
-			return findFeaturesByClinicOwner(clinicOwner);
-		default:
-			throw new AuthException("Invalid role");
+			case "OWNER":
+				Owner owner = findOwnerByUser(user.getId());
+				return findFeaturesByOwner(owner);
+			case "VET":
+				Vet vet = findVetByUser(user.getId());
+				return findFeaturesByVet(vet);
+			case "ADMIN":
+				return findFeaturesByAdmin(user);
+			case "CLINIC_OWNER":
+				ClinicOwner clinicOwner = findClinicOwnerByUser(user.getId());
+				return findFeaturesByClinicOwner(clinicOwner);
+			default:
+				throw new AuthException("Invalid role");
 		}
 	}
 
@@ -164,73 +176,88 @@ public class UserService {
 	public void deleteUser(Integer id) {
 		User toDelete = findUser(id);
 		deleteRelations(id, toDelete.getAuthority().getAuthority());
-//		this.userRepository.deleteOwnerRelation(id);
-//		this.userRepository.deleteVetRelation(id);
+		// this.userRepository.deleteOwnerRelation(id);
+		// this.userRepository.deleteVetRelation(id);
 		this.userRepository.delete(toDelete);
 	}
 
 	private void deleteRelations(Integer id, String auth) {
 		switch (auth) {
-		case "OWNER":
-//			Optional<Owner> owner = ownerService.optFindOwnerByUser(id);
-//			if (owner.isPresent())
-//				ownerService.deleteOwner(owner.get().getId());
-			this.userRepository.deleteOwnerRelation(id);
-			break;
-		case "VET":
-			Optional<Vet> vet = vetService.optFindVetByUser(id);
-			if (vet.isPresent()) {
-				vetService.deleteVet(vet.get().getId());
-			}
-			break;
-		default:
-			// The only relations that have user are Owner and Vet
-			break;
+			case "OWNER":
+				// Optional<Owner> owner = ownerService.optFindOwnerByUser(id);
+				// if (owner.isPresent())
+				// ownerService.deleteOwner(owner.get().getId());
+				this.userRepository.deleteOwnerRelation(id);
+				break;
+			case "VET":
+				Optional<Vet> vet = vetService.optFindVetByUser(id);
+				if (vet.isPresent()) {
+					vetService.deleteVet(vet.get().getId());
+				}
+				break;
+			default:
+				// The only relations that have user are Owner and Vet
+				break;
 		}
 
 	}
 
 	private Map<String, Object> findFeaturesByOwner(Owner owner) {
-		
+
 		Map<String, Object> featureMap = new HashMap<>();
 
 		Plan userPlan = owner.getClinic().getPlan();
 
-		Map<String, Object> planFeatures = parsePlanToMap(userPlan);
+		PlanContextManager planContextManager = new PlanContextManager();
+		planContextManager.ownerContext = createOwnerContext(owner);
+		planContextManager.planContext = parsePlanToMap(userPlan);
 
-		for (String key : planFeatures.keySet()) {
-			featureMap.put(key, planFeatures.get(key));
+		Map<String, String> planEvaluationExpressions = planService.getPlanParserExpresions();
+		ExpressionParser parser = new SpelExpressionParser();
+		EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
+
+		for (String key : planEvaluationExpressions.keySet()) {
+			
+			String expression = planEvaluationExpressions.get(key);
+
+			if (!expression.trim().equals("")) {
+				Boolean result = parser.parseExpression(expression).getValue(context, planContextManager, Boolean.class);
+				featureMap.put(key.replace("Parser", ""), result);
+			}
 		}
-		
+
 		return featureMap;
 	}
+
 	private Map<String, Object> findFeaturesByVet(Vet vet) {
 		return new HashMap<>();
 	}
+
 	private Map<String, Object> findFeaturesByAdmin(User admin) {
 		return new HashMap<>();
 	}
+
 	private Map<String, Object> findFeaturesByClinicOwner(ClinicOwner clinicOwner) {
 		return new HashMap<>();
 	}
 
 	private Map<String, Object> findPublicFeatures() {
-		
+
 		Map<String, Object> featureMap = new HashMap<>();
 
 		featureMap.put("public", true);
-		
+
 		return featureMap;
 	}
 
-	private Map<String, Object> parsePlanToMap(Plan plan){
+	private Map<String, Object> parsePlanToMap(Plan plan) {
 		Map<String, Object> map = new HashMap<>();
 
-        Field[] fields = plan.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            String fieldName = field.getName();
-			if(fieldName.equals("id") || fieldName.equals("name") || fieldName.equals("price")) {
+		Field[] fields = plan.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			field.setAccessible(true);
+			String fieldName = field.getName();
+			if (fieldName.equals("id") || fieldName.equals("name") || fieldName.equals("price")) {
 				continue;
 			}
 			try {
@@ -239,10 +266,18 @@ public class UserService {
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
-			
-        }
 
-        return map;
+		}
+
+		return map;
+	}
+
+	private Map<String, Object> createOwnerContext(Owner owner) {
+		Map<String, Object> context = new HashMap<>();
+
+		context.put("pets", owner.getPets().size());
+
+		return context;
 	}
 
 }

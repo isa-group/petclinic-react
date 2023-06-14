@@ -50,7 +50,7 @@ import PlanListAdmin from "./admin/plans/PlanListAdmin";
 import PlanEditAdmin from "./admin/plans/PlanEditAdmin";
 import useGenericFeature from "lib/components/feature/useGenericFeature";
 import { feature } from "lib/logic/model/Feature";
-import { and } from "lib/logic/model/BinaryLogicalPredicate";
+import ParserPlanEditAdmin from "admin/plans/ParserPlanEditAdmin";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -128,6 +128,7 @@ function App() {
           <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketListAdmin /></PrivateRoute>} />
           <Route path="/plansAdmin" exact={true} element={<PrivateRoute><PlanListAdmin /></PrivateRoute>} />
           <Route path="/plansAdmin/:id" exact={true} element={<PrivateRoute><PlanEditAdmin /></PrivateRoute>} />
+          <Route path="/parserPlansAdmin/1" exact={true} element={<PrivateRoute><ParserPlanEditAdmin /></PrivateRoute>} />
         </>)
     }
     if (role === "OWNER") {
