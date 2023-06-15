@@ -41,6 +41,9 @@ public class AuthController {
 	private final JwtUtils jwtUtils;
 	private final AuthService authService;
 
+	@Value("${petclinic.app.jwtSecret}")
+	private String jwtSecret;
+
 	@Autowired
 	public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils,
 			AuthService authService) {
@@ -89,10 +92,10 @@ public class AuthController {
         userContext.put("havePetsDashboard", true);
         userContext.put("haveOnlineConsultations", true);
 
-		FeatureTogglingUtil util = new FeatureTogglingUtil("src/main/resources/json/plans.json", "src/main/resources/json/plansParser.json", userContext, "secret", userAuthorities);
-		String isValid = util.generateUserToken();
+		FeatureTogglingUtil util = new FeatureTogglingUtil("src/main/resources/json/plans.json", "src/main/resources/json/plansParser.json", userContext, jwtSecret, userAuthorities);
+		String token = util.generateUserToken();
 
-		return ResponseEntity.ok(isValid);
+		return ResponseEntity.ok(token);
 	}
 
 	@PostMapping("/refreshToken")
