@@ -29,6 +29,8 @@ import petclinic.payload.request.SignupRequest;
 import petclinic.payload.response.JwtResponse;
 import petclinic.payload.response.MessageResponse;
 
+import com.featuretogglingjava.FeatureTogglingUtil;
+
 //@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -65,6 +67,31 @@ public class AuthController {
 	@GetMapping("/validate")
 	public ResponseEntity<Boolean> validateToken(@RequestParam String token) {
 		Boolean isValid = jwtUtils.validateJwtToken(token);
+		return ResponseEntity.ok(isValid);
+	}
+
+	@GetMapping("/generate")
+	public ResponseEntity<String> geneToken() {
+
+		Authentication userAuth = SecurityContextHolder.getContext().getAuthentication();
+		
+		Object userAuthorities = new HashMap<>();
+
+		if(!(userAuth.getPrincipal() instanceof String)) {
+			UserDetailsImpl userDetails = (UserDetailsImpl) userAuth.getPrincipal();
+			userAuthorities = userDetails.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList());
+		}
+
+        Map<String, Object> userContext = new HashMap<>();
+        userContext.put("pets", 2);
+        userContext.put("haveVetSelection", true);
+        userContext.put("haveCalendar", true);
+        userContext.put("havePetsDashboard", true);
+        userContext.put("haveOnlineConsultations", true);
+
+		FeatureTogglingUtil util = new FeatureTogglingUtil("src/main/resources/json/plans.json", "src/main/resources/json/plansParser.json", userContext, "secret", userAuthorities);
+		String isValid = util.generateUserToken();
+
 		return ResponseEntity.ok(isValid);
 	}
 
