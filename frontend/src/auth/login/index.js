@@ -57,7 +57,7 @@ class Login extends Component {
       });
     if (this.state.navigation === true) {
       return window.location.reload();
-    } else window.location.href = "/dashboard";
+    } else window.location.href = "/";
   }
 
   render() {
