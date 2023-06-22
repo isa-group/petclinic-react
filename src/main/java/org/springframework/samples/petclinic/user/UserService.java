@@ -150,6 +150,34 @@ public class UserService {
 		}
 	}
 
+	@Transactional(readOnly = true)
+	public Plan findUserPlan() throws AuthException {
+
+		User user = null;
+
+		try {
+			user = findCurrentUser();
+		} catch (ResourceNotFoundException e) {
+			System.out.println("User not found");
+			return planService.findById(1);
+		}
+
+		switch (user.getAuthority().getAuthority()) {
+			case "OWNER":
+				Owner owner = findOwnerByUser(user.getId());
+				return owner.getClinic().getPlan();
+			case "VET":
+				Vet vet = findVetByUser(user.getId());
+				return vet.getClinic().getPlan();
+			case "ADMIN":
+				return planService.findById(3);
+			case "CLINIC_OWNER":
+				return planService.findById(3);
+			default:
+				throw new AuthException("Invalid role");
+		}
+	}
+
 	public Boolean existsUser(String username) {
 		return userRepository.existsByUsername(username);
 	}
@@ -244,28 +272,6 @@ public class UserService {
 		featureMap.put("public", true);
 
 		return featureMap;
-	}
-
-	private Map<String, Object> parsePlanToMap(Plan plan) {
-		Map<String, Object> map = new HashMap<>();
-
-		Field[] fields = plan.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			field.setAccessible(true);
-			String fieldName = field.getName();
-			if (fieldName.equals("id") || fieldName.equals("name") || fieldName.equals("price")) {
-				continue;
-			}
-			try {
-				Object fieldValue = field.get(plan);
-				map.put(fieldName, fieldValue);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-		return map;
 	}
 
 }

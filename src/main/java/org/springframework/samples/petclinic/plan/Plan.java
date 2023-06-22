@@ -1,5 +1,11 @@
 package org.springframework.samples.petclinic.plan;
 
+import java.util.Map;
+import java.util.HashMap;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -55,5 +61,27 @@ public class Plan extends BaseEntity{
     @Column(name = "have_online_consultations")
     @NotNull
     private Boolean haveOnlineConsultations;
+
+    public Map<String, Object> parseToMap() {
+		Map<String, Object> map = new HashMap<>();
+
+		Field[] fields = this.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			field.setAccessible(true);
+			String fieldName = field.getName();
+			if (fieldName.equals("id") || fieldName.equals("name") || fieldName.equals("price")) {
+				continue;
+			}
+			try {
+				Object fieldValue = field.get(this);
+				map.put(fieldName, fieldValue);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return map;
+	}
 
 }

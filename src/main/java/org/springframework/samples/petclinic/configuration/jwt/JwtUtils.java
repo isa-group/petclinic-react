@@ -24,6 +24,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
+import org.springframework.samples.petclinic.user.UserService;
+import org.springframework.samples.petclinic.plan.Plan;
+import org.springframework.samples.petclinic.plan.ParserPlan;
+import org.springframework.samples.petclinic.plan.PlanService;
+
 import es.us.isagroup.FeatureTogglingUtil;
 
 @Component
@@ -39,6 +44,9 @@ public class JwtUtils {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private PlanService planService;
+
 	public String generateJwtToken(Authentication authentication) {
 
 		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -48,8 +56,11 @@ public class JwtUtils {
 
 		try{
 			Map<String, Object> userContext = userService.findUserContext();
-			FeatureTogglingUtil util = new FeatureTogglingUtil("src/main/resources/json/plans.json",
-						"src/main/resources/json/plansParser.json", userContext, jwtSecret, userAuthorities);
+			Plan userPlan = userService.findUserPlan();
+			ParserPlan planParser = planService.findPlanParserById(1);
+
+			FeatureTogglingUtil util = new FeatureTogglingUtil(userPlan.parseToMap(),
+						planParser.parseToMap(), userContext, jwtSecret, userAuthorities);
 				newToken = util.generateUserToken();
 		}catch(AuthException e){
 			logger.error("Error getting features: {}", e.getMessage());

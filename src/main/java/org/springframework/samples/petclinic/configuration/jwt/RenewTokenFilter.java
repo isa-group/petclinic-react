@@ -21,6 +21,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.samples.petclinic.user.UserService;
+import org.springframework.samples.petclinic.plan.Plan;
+import org.springframework.samples.petclinic.plan.ParserPlan;
+import org.springframework.samples.petclinic.plan.PlanService;
 
 import es.us.isagroup.FeatureTogglingUtil;
 
@@ -28,6 +31,9 @@ public class RenewTokenFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private PlanService planService;
 
 	@Autowired
 	private JwtUtils jwtUtils;
@@ -54,9 +60,11 @@ public class RenewTokenFilter extends OncePerRequestFilter {
 				}
 
 				Map<String, Object> userContext = userService.findUserContext();
+				Plan userPlan = userService.findUserPlan();
+				ParserPlan planParser = planService.findPlanParserById(1);
 
-				FeatureTogglingUtil util = new FeatureTogglingUtil("src/main/resources/json/plans.json",
-						"src/main/resources/json/plansParser.json", userContext, jwtSecret, userAuthorities);
+				FeatureTogglingUtil util = new FeatureTogglingUtil(userPlan.parseToMap(),
+						planParser.parseToMap(), userContext, jwtSecret, userAuthorities);
 				
 				newToken = util.generateUserToken();
 
