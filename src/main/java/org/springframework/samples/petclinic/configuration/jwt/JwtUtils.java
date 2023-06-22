@@ -59,7 +59,13 @@ public class JwtUtils {
 			Plan userPlan = userService.findUserPlan();
 			ParserPlan planParser = planService.findPlanParserById(1);
 
-			FeatureTogglingUtil util = new FeatureTogglingUtil(userPlan.parseToMap(),
+			Map<String, Object> planContext = new HashMap<>();
+
+			if(userPlan != null){
+				planContext = userPlan.parseToMap();
+			}
+
+			FeatureTogglingUtil util = new FeatureTogglingUtil(planContext,
 						planParser.parseToMap(), userContext, jwtSecret, userAuthorities);
 				newToken = util.generateUserToken();
 		}catch(AuthException e){

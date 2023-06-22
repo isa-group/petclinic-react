@@ -62,8 +62,14 @@ public class RenewTokenFilter extends OncePerRequestFilter {
 				Map<String, Object> userContext = userService.findUserContext();
 				Plan userPlan = userService.findUserPlan();
 				ParserPlan planParser = planService.findPlanParserById(1);
+				
+				Map<String, Object> planContext = new HashMap<>();
 
-				FeatureTogglingUtil util = new FeatureTogglingUtil(userPlan.parseToMap(),
+				if(userPlan != null){
+					planContext = userPlan.parseToMap();
+				}
+
+				FeatureTogglingUtil util = new FeatureTogglingUtil(planContext,
 						planParser.parseToMap(), userContext, jwtSecret, userAuthorities);
 				
 				newToken = util.generateUserToken();

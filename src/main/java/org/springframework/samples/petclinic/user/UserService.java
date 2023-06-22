@@ -159,7 +159,7 @@ public class UserService {
 			user = findCurrentUser();
 		} catch (ResourceNotFoundException e) {
 			System.out.println("User not found");
-			return planService.findById(1);
+			return null;
 		}
 
 		switch (user.getAuthority().getAuthority()) {
@@ -170,9 +170,9 @@ public class UserService {
 				Vet vet = findVetByUser(user.getId());
 				return vet.getClinic().getPlan();
 			case "ADMIN":
-				return planService.findById(3);
+				return null;
 			case "CLINIC_OWNER":
-				return planService.findById(3);
+				return null;
 			default:
 				throw new AuthException("Invalid role");
 		}
