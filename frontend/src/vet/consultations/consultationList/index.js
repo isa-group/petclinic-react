@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import tokenService from "../../../services/token.service";
+import { fetchWithInterceptor } from "../../../services/api";
 
 export default function VetConsultationList() {
   let [consultations, setConsultations] = useState([]);
@@ -96,7 +97,7 @@ export default function VetConsultationList() {
 
   async function setUp() {
     const consultations = await (
-      await fetch(`/api/v1/consultations?userId=${user.id}`, {
+      await fetchWithInterceptor(`/api/v1/consultations?userId=${user.id}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",

@@ -1,4 +1,5 @@
 import { Buffer } from "buffer";
+import { fetchWithInterceptor } from "./api";
 
 function parseJwt (token) {
     return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
@@ -53,7 +54,7 @@ class TokenService {
     updateJWTToken() {
 
         return new Promise((resolve, reject) => {
-            fetch("/api/v1/auth/refreshToken", {
+            fetchWithInterceptor("/api/v1/auth/refreshToken", {
                 method: 'POST',
                 headers: {
                     "Authorization": `Bearer ${this.getLocalAccessToken()}`,
@@ -62,7 +63,6 @@ class TokenService {
             })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
                 this.updateLocalAccessToken(data.newToken);
                 resolve();
             }).catch((error) => {reject(error)});

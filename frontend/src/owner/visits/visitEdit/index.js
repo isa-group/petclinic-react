@@ -14,6 +14,7 @@ import { visitEditFormInputs } from "./form/visitEditFormInputs";
 import moment from "moment";
 import { useState, useRef, useEffect } from "react";
 import { Default, Feature, On, feature } from "feature-toggling-react";
+import { fetchWithInterceptor } from "../../../services/api";
 
 export default function OwnerVisitEdit() {
   let [visit, setVisit] = useState({
@@ -141,7 +142,7 @@ export default function OwnerVisitEdit() {
     visitRequest["pet"] = pet;
 
     const submit = await (
-      await fetch(
+      await fetchWithInterceptor(
         `/api/v1/pets/${petId}/visits` +
           (visitRequest.id ? "/" + visitRequest.id : ""),
         {
@@ -165,7 +166,7 @@ export default function OwnerVisitEdit() {
 
   async function setUp() {
     const petResponse = await (
-      await fetch(`/api/v1/pets/${petId}`, {
+      await fetchWithInterceptor(`/api/v1/pets/${petId}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
@@ -178,7 +179,7 @@ export default function OwnerVisitEdit() {
 
     if (!message) {
       const vetsResponse = await (
-        await fetch(`/api/v1/vets`, {
+        await fetchWithInterceptor(`/api/v1/vets`, {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
@@ -191,7 +192,7 @@ export default function OwnerVisitEdit() {
 
       if (visitId !== "new" && !message) {
         const visitResponse = await (
-          await fetch(`/api/v1/pets/${petId}/visits/${visitId}`, {
+          await fetchWithInterceptor(`/api/v1/pets/${petId}/visits/${visitId}`, {
             headers: {
               Authorization: `Bearer ${jwt}`,
             },

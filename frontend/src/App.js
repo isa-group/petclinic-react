@@ -50,6 +50,7 @@ import PlanListAdmin from "./admin/plans/PlanListAdmin";
 import PlanEditAdmin from "./admin/plans/PlanEditAdmin";
 import {useGenericFeature, feature} from "feature-toggling-react";
 import ParserPlanEditAdmin from "admin/plans/ParserPlanEditAdmin";
+import { TokenContextProvider } from "contexts/TokenContext";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -182,19 +183,21 @@ function App() {
 
   return (
     <div>
-      <ErrorBoundary FallbackComponent={ErrorFallback} >
-        <AppNavbar />
-        <Routes>
-          <Route path="/" exact={true} element={<Home />} />
-          <Route path="/plans" element={<PlanList />} />
-          <Route path="/docs" element={<SwaggerDocs />} />
-          {publicRoutes}
-          {userRoutes}
-          {adminRoutes}
-          {ownerRoutes}
-          {vetRoutes}
-        </Routes>
-      </ErrorBoundary>
+      <TokenContextProvider>
+        <ErrorBoundary FallbackComponent={ErrorFallback} >
+          <AppNavbar />
+          <Routes>
+            <Route path="/" exact={true} element={<Home />} />
+            <Route path="/plans" element={<PlanList />} />
+            <Route path="/docs" element={<SwaggerDocs />} />
+            {publicRoutes}
+            {userRoutes}
+            {adminRoutes}
+            {ownerRoutes}
+            {vetRoutes}
+          </Routes>
+        </ErrorBoundary>
+      </TokenContextProvider>
     </div>
   );
 }

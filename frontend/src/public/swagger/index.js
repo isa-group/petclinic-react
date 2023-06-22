@@ -1,6 +1,7 @@
 import { Component } from "react";
 import SwaggerUI from "swagger-ui-react";
 import "swagger-ui-react/swagger-ui.css"
+import { fetchWithInterceptor } from "../../services/api";
 
 class SwaggerDocs extends Component {
     constructor(props) {
@@ -11,7 +12,7 @@ class SwaggerDocs extends Component {
     }
 
     async componentDidMount() {
-        const docs = await (await fetch(`/v2/api-docs`, {
+        const docs = await (await fetchWithInterceptor(`/v2/api-docs`, {
             headers: {
                 "Content-Type": "application/json",
             },

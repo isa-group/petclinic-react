@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
+import { Form, Input, Label } from "reactstrap";
 import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchData from "../../util/useFetchData";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
 import "../../static/css/admin/adminPage.css";
+import { fetchWithInterceptor } from "../../services/api";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -43,7 +44,7 @@ export default function UserEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetch("/api/v1/users" + (user.id ? "/" + user.id : ""), {
+    fetchWithInterceptor("/api/v1/users" + (user.id ? "/" + user.id : ""), {
       method: user.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,
