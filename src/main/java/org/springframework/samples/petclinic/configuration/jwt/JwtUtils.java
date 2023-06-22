@@ -24,6 +24,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
+import es.us.isagroup.FeatureTogglingUtil;
+
 @Component
 public class JwtUtils {
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
@@ -41,18 +43,19 @@ public class JwtUtils {
 
 		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 		Map<String, Object> claims = new HashMap<>();
-		claims.put("authorities",
-				userPrincipal.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList()));
-		
+		Object userAuthorities = userPrincipal.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList());
+		String newToken = null;
+
 		try{
-			claims.put("features", userService.findFeaturesByUser());
+			Map<String, Object> userContext = userService.findUserContext();
+			FeatureTogglingUtil util = new FeatureTogglingUtil("src/main/resources/json/plans.json",
+						"src/main/resources/json/plansParser.json", userContext, jwtSecret, userAuthorities);
+				newToken = util.generateUserToken();
 		}catch(AuthException e){
 			logger.error("Error getting features: {}", e.getMessage());
 		}
 
-		return Jwts.builder().setClaims(claims).setSubject((userPrincipal.getUsername())).setIssuedAt(new Date())
-				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
+		return newToken;
 	}
 
 	public String generateTokenFromUsername(String username, Authorities authority) {

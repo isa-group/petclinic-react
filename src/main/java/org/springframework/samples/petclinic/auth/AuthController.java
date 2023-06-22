@@ -23,14 +23,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Value;
 
 import petclinic.payload.request.LoginRequest;
 import petclinic.payload.request.SignupRequest;
 import petclinic.payload.response.JwtResponse;
 import petclinic.payload.response.MessageResponse;
-
-import com.featuretogglingjava.FeatureTogglingUtil;
 
 //@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -41,9 +38,6 @@ public class AuthController {
 	private final UserService userService;
 	private final JwtUtils jwtUtils;
 	private final AuthService authService;
-
-	@Value("${petclinic.app.jwtSecret}")
-	private String jwtSecret;
 
 	@Autowired
 	public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils,
@@ -72,31 +66,6 @@ public class AuthController {
 	public ResponseEntity<Boolean> validateToken(@RequestParam String token) {
 		Boolean isValid = jwtUtils.validateJwtToken(token);
 		return ResponseEntity.ok(isValid);
-	}
-
-	@GetMapping("/generate")
-	public ResponseEntity<String> geneToken() {
-
-		Authentication userAuth = SecurityContextHolder.getContext().getAuthentication();
-		
-		Object userAuthorities = new HashMap<>();
-
-		if(!(userAuth.getPrincipal() instanceof String)) {
-			UserDetailsImpl userDetails = (UserDetailsImpl) userAuth.getPrincipal();
-			userAuthorities = userDetails.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList());
-		}
-
-        Map<String, Object> userContext = new HashMap<>();
-        userContext.put("pets", 2);
-        userContext.put("haveVetSelection", true);
-        userContext.put("haveCalendar", true);
-        userContext.put("havePetsDashboard", true);
-        userContext.put("haveOnlineConsultations", true);
-
-		FeatureTogglingUtil util = new FeatureTogglingUtil("src/main/resources/json/plans.json", "src/main/resources/json/plansParser.json", userContext, jwtSecret, userAuthorities);
-		String token = util.generateUserToken();
-
-		return ResponseEntity.ok(token);
 	}
 
 	@PostMapping("/refreshToken")
