@@ -48,7 +48,7 @@ import VetListClinicOwner from "./clinicOwner/vets/VetListClinicOwner";
 import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
 import PlanListAdmin from "./admin/plans/PlanListAdmin";
 import PlanEditAdmin from "./admin/plans/PlanEditAdmin";
-import {useGenericFeature, feature} from "feature-toggling-react";
+import {useGenericFeature, feature} from "pricingplans-react";
 import ParserPlanEditAdmin from "admin/plans/ParserPlanEditAdmin";
 
 function ErrorFallback({ error, resetErrorBoundary }) {

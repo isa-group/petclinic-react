@@ -13,7 +13,7 @@ import FormGenerator from "../../../components/formGenerator/formGenerator";
 import { visitEditFormInputs } from "./form/visitEditFormInputs";
 import moment from "moment";
 import { useState, useRef, useEffect } from "react";
-import { Default, Feature, On, feature } from "feature-toggling-react";
+import { Default, Feature, On, feature } from "pricingplans-react";
 import { fetchWithInterceptor } from "../../../services/api";
 
 export default function OwnerVisitEdit() {

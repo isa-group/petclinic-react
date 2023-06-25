@@ -19,6 +19,7 @@
     "filepond-plugin-image-preview": "^4.6.11",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",
+    "pricingplans-react": "^1.0.0",
     "protobufjs": "^6.11.3",
     "react": "^18.2.0",
     "react-big-calendar": "^1.6.8",

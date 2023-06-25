@@ -5,7 +5,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../../static/css/owner/dashboard.css";
 import { useState, useEffect } from "react";
-import { Feature, On, feature } from "feature-toggling-react";
+import { Feature, On, feature } from "pricingplans-react";
 import { fetchWithInterceptor } from "../../services/api";
 
 require("moment/locale/es.js");

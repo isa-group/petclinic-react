@@ -6,7 +6,7 @@ import tokenService from "../../../services/token.service";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import moment from "moment";
 import { useState, useEffect } from "react";
-import { Feature, On, feature } from "feature-toggling-react";
+import { Feature, On, feature } from "pricingplans-react";
 import { fetchWithInterceptor } from "../../../services/api";
 
 export default function OwnerPetList() {
