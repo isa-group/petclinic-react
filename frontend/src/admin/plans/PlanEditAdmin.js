@@ -5,6 +5,7 @@ import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
+import { fetchWithInterceptor } from "../../services/api";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -51,7 +52,7 @@ export default function PlanEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetch("/api/v1/plans" + (plan.id ? "/" + plan.id : ""), {
+    fetchWithInterceptor("/api/v1/plans" + (plan.id ? "/" + plan.id : ""), {
       method: plan.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,

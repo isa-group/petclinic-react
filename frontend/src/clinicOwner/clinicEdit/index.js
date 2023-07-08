@@ -6,8 +6,8 @@ import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
 import { useState } from "react";
 import { Form, Label, Input } from "reactstrap";
-import { Link } from "react-router-dom";
-import {useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { fetchWithInterceptor } from "../../services/api";
 
 const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
@@ -63,7 +63,7 @@ export default function EditClinic() {
     clinic.plan = plans.find((plan) => plan.name === clinic.plan.name);
 
     if (id !== "new") {
-      fetch(`/api/v1/clinics${id !== "new" ? `/${id}` : ""}`, {
+      fetchWithInterceptor(`/api/v1/clinics${id !== "new" ? `/${id}` : ""}`, {
         method: id !== "new" ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",

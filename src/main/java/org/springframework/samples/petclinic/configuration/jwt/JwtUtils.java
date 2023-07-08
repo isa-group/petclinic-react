@@ -24,6 +24,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
+import org.springframework.samples.petclinic.user.UserService;
+import org.springframework.samples.petclinic.plan.Plan;
+import org.springframework.samples.petclinic.plan.ParserPlan;
+import org.springframework.samples.petclinic.plan.PlanService;
+
+import io.github.isagroup.PricingEvaluatorUtil;
+
 @Component
 public class JwtUtils {
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
@@ -37,22 +44,39 @@ public class JwtUtils {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private PlanService planService;
+
 	public String generateJwtToken(Authentication authentication) {
 
 		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 		Map<String, Object> claims = new HashMap<>();
-		claims.put("authorities",
-				userPrincipal.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList()));
-		
+		Object userAuthorities = userPrincipal.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList());
+		String newToken = null;
+
 		try{
-			claims.put("features", userService.findFeaturesByUser());
+			Map<String, Object> userContext = userService.findUserContext();
+			Plan userPlan = userService.findUserPlan();
+			ParserPlan planParser = planService.findPlanParserById(1);
+
+			Map<String, Object> planContext = new HashMap<>();
+
+			if(userPlan != null){
+				planContext = userPlan.parseToMap();
+			}
+
+			PricingEvaluatorUtil util = new PricingEvaluatorUtil(planContext,
+						planParser.parseToMap(), userContext, userAuthorities, jwtSecret);
+			
+			util.addExpressionToToken("maxVisitsPerMonthAndPet", "userContext['pets'] > planContext['maxPets']");
+			
+			newToken = util.generateUserToken();
+
 		}catch(AuthException e){
 			logger.error("Error getting features: {}", e.getMessage());
 		}
 
-		return Jwts.builder().setClaims(claims).setSubject((userPrincipal.getUsername())).setIssuedAt(new Date())
-				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
+		return newToken;
 	}
 
 	public String generateTokenFromUsername(String username, Authorities authority) {
@@ -65,6 +89,10 @@ public class JwtUtils {
 
 	public String getUserNameFromJwtToken(String token) {
 		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+	}
+
+	public String getFeaturesFromJwtToken(String token) {
+		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().get("features").toString();
 	}
 
 	public boolean validateJwtToken(String authToken) {

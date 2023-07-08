@@ -1,0 +1,9 @@
+{
+    "maxPets": 3,
+    "maxVisitsPerMonthAndPet": 2,
+    "supportPriority": "HIGH",
+    "haveVetSelection": true,
+    "haveCalendar": true,
+    "havePetsDashboard": true,
+    "haveOnlineConsultations": true
+}

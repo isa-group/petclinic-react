@@ -11,6 +11,7 @@ import FormGenerator from "../../../components/formGenerator/formGenerator";
 import { petEditFormInputs } from "./form/petEditFormInputs";
 import "../../../static/css/owner/editPet.css";
 import "../../../static/css/auth/authButton.css"
+import { fetchWithInterceptor } from "../../../services/api";
 
 class OwnerPetEdit extends Component {
   emptyItem = {
@@ -42,7 +43,7 @@ class OwnerPetEdit extends Component {
   async componentDidMount() {
     if (this.petId !== "new") {
       const pet = await (
-        await fetch(`/api/v1/pets/${this.petId}`, {
+        await fetchWithInterceptor(`/api/v1/pets/${this.petId}`, {
           headers: {
             Authorization: `Bearer ${this.jwt}`,
           },
@@ -58,7 +59,7 @@ class OwnerPetEdit extends Component {
     }
     if (!this.state.message) {
       const types = await (
-        await fetch(`/api/v1/pets/types`, {
+        await fetchWithInterceptor(`/api/v1/pets/types`, {
           headers: {
             Authorization: `Bearer ${this.jwt}`,
           },
@@ -101,7 +102,7 @@ class OwnerPetEdit extends Component {
     };
 
     const submit = await (
-      await fetch("/api/v1/pets" + (pet.id ? "/" + this.petId : ""), {
+      await fetchWithInterceptor("/api/v1/pets" + (pet.id ? "/" + this.petId : ""), {
         method: pet.id ? "PUT" : "POST",
         headers: {
           Authorization: `Bearer ${this.jwt}`,

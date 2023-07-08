@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button, ButtonGroup, Table } from "reactstrap";
+import { Table } from "reactstrap";
 import tokenService from "../../services/token.service";
 import useFetchState from "../../util/useFetchState";
 import getErrorModal from "../../util/getErrorModal";
-import deleteFromList from "../../util/deleteFromList";
 import "../../static/css/admin/adminPage.css";
 
 const user = tokenService.getUser();

@@ -5,8 +5,8 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../../static/css/owner/dashboard.css";
 import { useState, useEffect } from "react";
-import { Feature, On } from "lib/components/feature/Feature";
-import { feature } from "lib/logic/model/Feature";
+import { Feature, On, feature } from "pricingplans-react";
+import { fetchWithInterceptor } from "../../services/api";
 
 require("moment/locale/es.js");
 
@@ -26,7 +26,7 @@ export default function OwnerDashboard() {
 
   async function setUp() {
     const visits = await (
-      await fetch(`/api/v1/visits/`, {
+      await fetchWithInterceptor(`/api/v1/visits/`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
@@ -52,7 +52,7 @@ export default function OwnerDashboard() {
     }
 
     const owner = await (
-      await fetch(`/api/v1/plan`, {
+      await fetchWithInterceptor(`/api/v1/plan`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },

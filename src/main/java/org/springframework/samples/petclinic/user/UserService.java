@@ -122,7 +122,7 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Map<String, Object> findFeaturesByUser() throws AuthException {
+	public Map<String, Object> findUserContext() throws AuthException {
 
 		User user = null;
 
@@ -130,21 +130,49 @@ public class UserService {
 			user = findCurrentUser();
 		} catch (ResourceNotFoundException e) {
 			System.out.println("User not found");
-			return findPublicFeatures();
+			return findPublicContext();
 		}
 
 		switch (user.getAuthority().getAuthority()) {
 			case "OWNER":
 				Owner owner = findOwnerByUser(user.getId());
-				return findFeaturesByOwner(owner);
+				return findOwnerContext(owner, user.getUsername());
 			case "VET":
 				Vet vet = findVetByUser(user.getId());
-				return findFeaturesByVet(vet);
+				return findVetContext(vet, user.getUsername());
 			case "ADMIN":
-				return findFeaturesByAdmin(user);
+				return findAdminContext(user, user.getUsername());
 			case "CLINIC_OWNER":
 				ClinicOwner clinicOwner = findClinicOwnerByUser(user.getId());
-				return findFeaturesByClinicOwner(clinicOwner);
+				return findClinicOwnerContext(clinicOwner, user.getUsername());
+			default:
+				throw new AuthException("Invalid role");
+		}
+	}
+
+	@Transactional(readOnly = true)
+	public Plan findUserPlan() throws AuthException {
+
+		User user = null;
+
+		try {
+			user = findCurrentUser();
+		} catch (ResourceNotFoundException e) {
+			System.out.println("User not found");
+			return null;
+		}
+
+		switch (user.getAuthority().getAuthority()) {
+			case "OWNER":
+				Owner owner = findOwnerByUser(user.getId());
+				return owner.getClinic().getPlan();
+			case "VET":
+				Vet vet = findVetByUser(user.getId());
+				return vet.getClinic().getPlan();
+			case "ADMIN":
+				return null;
+			case "CLINIC_OWNER":
+				return null;
 			default:
 				throw new AuthException("Invalid role");
 		}
@@ -202,82 +230,48 @@ public class UserService {
 
 	}
 
-	private Map<String, Object> findFeaturesByOwner(Owner owner) {
+	private Map<String, Object> findOwnerContext(Owner owner, String username) {
 
-		Map<String, Object> featureMap = new HashMap<>();
+		Map<String, Object> context = new HashMap<>();
 
-		Plan userPlan = owner.getClinic().getPlan();
+		context.put("username", username);
+		context.put("pets", owner.getPets().size());
 
-		PlanContextManager planContextManager = new PlanContextManager();
-		planContextManager.ownerContext = createOwnerContext(owner);
-		planContextManager.planContext = parsePlanToMap(userPlan);
-
-		Map<String, String> planEvaluationExpressions = planService.getPlanParserExpresions();
-		ExpressionParser parser = new SpelExpressionParser();
-		EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
-
-		for (String key : planEvaluationExpressions.keySet()) {
-			
-			String expression = planEvaluationExpressions.get(key);
-
-			if (!expression.trim().equals("")) {
-				Boolean result = parser.parseExpression(expression).getValue(context, planContextManager, Boolean.class);
-				featureMap.put(key.replace("Parser", ""), result);
-			}
-		}
-
-		return featureMap;
+		return context;
 	}
 
-	private Map<String, Object> findFeaturesByVet(Vet vet) {
-		return new HashMap<>();
+	private Map<String, Object> findVetContext(Vet vet, String username) {
+
+		Map<String, Object> context = new HashMap<>();
+
+		context.put("username", username);
+
+		return context;
 	}
 
-	private Map<String, Object> findFeaturesByAdmin(User admin) {
-		return new HashMap<>();
+	private Map<String, Object> findAdminContext(User admin, String username) {
+		Map<String, Object> context = new HashMap<>();
+
+		context.put("username", username);
+
+		return context;
 	}
 
-	private Map<String, Object> findFeaturesByClinicOwner(ClinicOwner clinicOwner) {
-		return new HashMap<>();
+	private Map<String, Object> findClinicOwnerContext(ClinicOwner clinicOwner, String username) {
+		Map<String, Object> context = new HashMap<>();
+
+		context.put("username", username);
+
+		return context;
 	}
 
-	private Map<String, Object> findPublicFeatures() {
+	private Map<String, Object> findPublicContext() {
 
 		Map<String, Object> featureMap = new HashMap<>();
 
 		featureMap.put("public", true);
 
 		return featureMap;
-	}
-
-	private Map<String, Object> parsePlanToMap(Plan plan) {
-		Map<String, Object> map = new HashMap<>();
-
-		Field[] fields = plan.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			field.setAccessible(true);
-			String fieldName = field.getName();
-			if (fieldName.equals("id") || fieldName.equals("name") || fieldName.equals("price")) {
-				continue;
-			}
-			try {
-				Object fieldValue = field.get(plan);
-				map.put(fieldName, fieldValue);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-		return map;
-	}
-
-	private Map<String, Object> createOwnerContext(Owner owner) {
-		Map<String, Object> context = new HashMap<>();
-
-		context.put("pets", owner.getPets().size());
-
-		return context;
 	}
 
 }

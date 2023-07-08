@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.samples.petclinic.configuration.jwt.AuthEntryPointJwt;
 import org.springframework.samples.petclinic.configuration.jwt.AuthTokenFilter;
+import org.springframework.samples.petclinic.configuration.jwt.RenewTokenFilter;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsServiceImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -45,6 +46,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
 	public AuthTokenFilter authenticationJwtTokenFilter() {
 		return new AuthTokenFilter();
+	}
+
+	@Bean
+	public RenewTokenFilter renewJwtTokenFilter() {
+		return new RenewTokenFilter();
 	}
 
 	@Override

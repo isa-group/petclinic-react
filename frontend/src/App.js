@@ -48,8 +48,7 @@ import VetListClinicOwner from "./clinicOwner/vets/VetListClinicOwner";
 import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
 import PlanListAdmin from "./admin/plans/PlanListAdmin";
 import PlanEditAdmin from "./admin/plans/PlanEditAdmin";
-import useGenericFeature from "lib/components/feature/useGenericFeature";
-import { feature } from "lib/logic/model/Feature";
+import {useGenericFeature, feature} from "pricingplans-react";
 import ParserPlanEditAdmin from "admin/plans/ParserPlanEditAdmin";
 
 function ErrorFallback({ error, resetErrorBoundary }) {

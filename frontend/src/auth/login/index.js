@@ -1,18 +1,12 @@
 import React, { Component } from "react";
 import "../../static/css/auth/authButton.css";
 import {
-  Form,
-  Button,
-  Container,
-  FormGroup,
-  Input,
-  Label,
-  Col,
   Alert,
 } from "reactstrap";
 import tokenService from "../../services/token.service";
 import FormGenerator from "../../components/formGenerator/formGenerator";
 import { loginFormInputs } from "./form/loginFormInputs";
+import { fetchWithInterceptor } from "../../services/api";
 
 class Login extends Component {
   constructor(props) {
@@ -39,7 +33,7 @@ class Login extends Component {
 
     const reqBody = values;
 
-    await fetch("/api/v1/auth/signin", {
+    await fetchWithInterceptor("/api/v1/auth/signin", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(reqBody),
@@ -57,7 +51,7 @@ class Login extends Component {
       });
     if (this.state.navigation === true) {
       return window.location.reload();
-    } else window.location.href = "/dashboard";
+    } else window.location.href = "/";
   }
 
   render() {

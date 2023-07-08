@@ -12,8 +12,8 @@ import {
 import { Link } from "react-router-dom";
 import tokenService from "./services/token.service";
 import jwt_decode from "jwt-decode";
-import { Feature, On } from "lib/components/feature/Feature";
-import { feature } from "lib/logic/model/Feature";
+import { Default, ErrorFallback, Feature, On, Loading } from "pricingplans-react";
+import { feature } from "pricingplans-react";
 
 function AppNavbar() {
   const [roles, setRoles] = useState([]);
@@ -193,6 +193,15 @@ function AppNavbar() {
               </NavLink>
             </NavItem>
           </On>
+          <Default>
+              <></>
+            </Default>
+            <Loading>
+              <></>
+            </Loading>
+            <ErrorFallback>
+              <></>
+            </ErrorFallback>
         </Feature>
       </>
     );

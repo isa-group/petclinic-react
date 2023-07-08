@@ -5,6 +5,7 @@ import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
+import { fetchWithInterceptor } from "../../services/api";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -47,7 +48,7 @@ export default function ParserPlanEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetch(`/api/v1/plans/parser/${parserPlan.id}`, {
+    fetchWithInterceptor(`/api/v1/plans/parser/${parserPlan.id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${jwt}`,
