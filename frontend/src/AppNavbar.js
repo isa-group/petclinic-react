@@ -108,15 +108,6 @@ function AppNavbar() {
                 </NavLink>
               </NavItem>
             </On>
-            <Default>
-              <></>
-            </Default>
-            <Loading>
-              <></>
-            </Loading>
-            <ErrorFallback>
-              <></>
-            </ErrorFallback>
           </Feature>
         </>
       );

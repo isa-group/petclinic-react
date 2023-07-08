@@ -29,7 +29,7 @@ import org.springframework.samples.petclinic.plan.Plan;
 import org.springframework.samples.petclinic.plan.ParserPlan;
 import org.springframework.samples.petclinic.plan.PlanService;
 
-import es.us.isagroup.FeatureTogglingUtil;
+import io.github.isagroup.PricingEvaluatorUtil;
 
 @Component
 public class JwtUtils {
@@ -65,9 +65,13 @@ public class JwtUtils {
 				planContext = userPlan.parseToMap();
 			}
 
-			FeatureTogglingUtil util = new FeatureTogglingUtil(planContext,
-						planParser.parseToMap(), userContext, jwtSecret, userAuthorities);
-				newToken = util.generateUserToken();
+			PricingEvaluatorUtil util = new PricingEvaluatorUtil(planContext,
+						planParser.parseToMap(), userContext, userAuthorities, jwtSecret);
+			
+			util.addExpressionToToken("maxVisitsPerMonthAndPet", "userContext['pets'] > planContext['maxPets']");
+			
+			newToken = util.generateUserToken();
+
 		}catch(AuthException e){
 			logger.error("Error getting features: {}", e.getMessage());
 		}

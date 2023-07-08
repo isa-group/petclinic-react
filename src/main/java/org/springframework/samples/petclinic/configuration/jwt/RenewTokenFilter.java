@@ -25,7 +25,7 @@ import org.springframework.samples.petclinic.plan.Plan;
 import org.springframework.samples.petclinic.plan.ParserPlan;
 import org.springframework.samples.petclinic.plan.PlanService;
 
-import es.us.isagroup.FeatureTogglingUtil;
+import io.github.isagroup.PricingEvaluatorUtil;
 
 public class RenewTokenFilter extends OncePerRequestFilter {
 
@@ -69,9 +69,11 @@ public class RenewTokenFilter extends OncePerRequestFilter {
 					planContext = userPlan.parseToMap();
 				}
 
-				FeatureTogglingUtil util = new FeatureTogglingUtil(planContext,
-						planParser.parseToMap(), userContext, jwtSecret, userAuthorities);
-				
+				PricingEvaluatorUtil util = new PricingEvaluatorUtil(planContext,
+						planParser.parseToMap(), userContext, userAuthorities, jwtSecret);
+
+				util.addExpressionToToken("maxVisitsPerMonthAndPet", "userContext['pets'] < planContext['maxPets']");
+
 				newToken = util.generateUserToken();
 
 				String newTokenFeatures = jwtUtils.getFeaturesFromJwtToken(newToken);
@@ -85,6 +87,7 @@ public class RenewTokenFilter extends OncePerRequestFilter {
 				}
 			}
 		} catch (Exception e) {
+			logger.error("Cannot set user authentication: {}", e);
 			logger.info("Anonymous user logged");
 		}
 
