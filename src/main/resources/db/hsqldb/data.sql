@@ -4,7 +4,7 @@ INSERT INTO plans(id, name, price, max_pets, max_visits_per_month_and_pet, suppo
 INSERT INTO plans(id, name, price, max_pets, max_visits_per_month_and_pet, support_priority, have_vet_selection, have_calendar, have_pets_dashboard, have_online_consultations) VALUES (2, 'GOLD', 5.0, 4, 3, 'MEDIUM', 1, 1, 0, 0);
 INSERT INTO plans(id, name, price, max_pets, max_visits_per_month_and_pet, support_priority, have_vet_selection, have_calendar, have_pets_dashboard, have_online_consultations) VALUES (3, 'PLATINUM', 12.0, 7, 6, 'HIGH', 1, 1, 1, 1);
 
-INSERT INTO parser_plans(id, max_pets_parser, max_visits_per_month_and_pet_parser, support_priority_parser, have_vet_selection_parser, have_calendar_parser, have_pets_dashboard_parser, have_online_consultations_parser) VALUES (1, 'userContext[''pets''] < planContext[''maxPets'']', 'userContext[''prueba'']', '', 'planContext[''haveVetSelection'']', 'planContext[''haveCalendar'']', 'planContext[''havePetsDashboard'']', 'planContext[''haveOnlineConsultations'']');
+INSERT INTO parser_plans(id, max_pets_parser, max_visits_per_month_and_pet_parser, support_priority_parser, have_vet_selection_parser, have_calendar_parser, have_pets_dashboard_parser, have_online_consultations_parser) VALUES (1, 'userContext[''pets''] < planContext[''maxPets'']', '', '', 'planContext[''haveVetSelection'']', 'planContext[''haveCalendar'']', 'planContext[''havePetsDashboard'']', 'planContext[''haveOnlineConsultations'']');
 
 -- One admin user, named admin1 with passwor 4dm1n and authority admin
 INSERT INTO authorities(id,authority) VALUES (1,'ADMIN');
