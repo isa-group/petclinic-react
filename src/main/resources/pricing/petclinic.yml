@@ -65,7 +65,7 @@ plans:
     unit: user/month
     features: null
     usageLimits: null
-  ADVANCED:
+  GOLD:
     description: Advanced plan
     monthlyPrice: 5.0
     annualPrice: 5.0
@@ -86,7 +86,7 @@ plans:
       haveOnlineConsultation:
         value: false
     usageLimits: null
-  PRO:
+  PLATINUM:
     description: Pro plan
     monthlyPrice: 10.0
     annualPrice: 10.0
