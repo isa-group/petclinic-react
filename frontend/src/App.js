@@ -90,7 +90,7 @@ function App() {
   const onlineConsultations = useGenericFeature({
     on: [
       {
-        expression: feature("haveOnlineConsultations"),
+        expression: feature("haveOnlineConsultation"),
         on: (
           <>
             <Route path="/consultations" exact={true} element={<PrivateRoute><OwnerConsultationList /></PrivateRoute>} />

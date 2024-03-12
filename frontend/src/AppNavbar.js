@@ -97,7 +97,7 @@ function AppNavbar() {
             </NavLink>
           </NavItem>
           <Feature>
-            <On expression={feature("haveOnlineConsultations")}>
+            <On expression={feature("haveOnlineConsultation")}>
               <NavItem>
                 <NavLink
                   style={{ color: "white" }}

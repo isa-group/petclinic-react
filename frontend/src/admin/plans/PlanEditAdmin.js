@@ -14,13 +14,13 @@ export default function PlanEditAdmin() {
     id: "",
     name: "",
     price: 0.0,
-    maxPets: 1,
-    maxVisitsPerMonthAndPet: 1,
+    pets: true,
+    visits: true,
     supportPriority: "",
     haveVetSelection: false,
     haveCalendar: false,
     havePetsDashboard: false,
-    haveOnlineConsultations: false,
+    haveOnlineConsultation: false,
   };
   const id = getIdFromUrl(2);
   const [message, setMessage] = useState(null);

@@ -114,7 +114,7 @@ export default function OwnerPetList() {
         <div className="title-and-add">
           <h1 className="pet-list-title">Pets</h1>
           <Feature>
-            <On expression={feature("maxPets")}>
+            <On expression={feature("pets")}>
               <Link
                 to="/myPets/new"
                 className="auth-button"

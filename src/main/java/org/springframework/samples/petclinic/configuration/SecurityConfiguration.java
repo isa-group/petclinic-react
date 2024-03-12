@@ -49,10 +49,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return new AuthTokenFilter();
 	}
 
-	// @Bean
-	// public RenewTokenFilter renewJwtTokenFilter() {
-	// 	return new RenewTokenFilter();
-	// }
+	@Bean
+	public RenewTokenFilter renewJwtTokenFilter() {
+		return new RenewTokenFilter();
+	}
 
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
