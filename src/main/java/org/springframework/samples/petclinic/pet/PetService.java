@@ -30,6 +30,8 @@ import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.github.isagroup.annotations.PricingPlanAware;
+
 @Service
 public class PetService {
 
@@ -75,6 +77,7 @@ public class PetService {
 		return petRepository.findAllPetsByUserId(id);
 	}
 
+	@PricingPlanAware(featureName = "maxPets")
 	@Transactional(rollbackFor = DuplicatedPetNameException.class)
 	public Pet savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
 		Pet otherPet = getPetWithNameAndIdDifferent(pet);

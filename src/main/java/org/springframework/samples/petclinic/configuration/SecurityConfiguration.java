@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.samples.petclinic.configuration.jwt.AuthEntryPointJwt;
 import org.springframework.samples.petclinic.configuration.jwt.AuthTokenFilter;
-import org.springframework.samples.petclinic.configuration.jwt.RenewTokenFilter;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsServiceImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,6 +19,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import io.github.isagroup.filters.RenewTokenFilter;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -48,10 +49,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return new AuthTokenFilter();
 	}
 
-	@Bean
-	public RenewTokenFilter renewJwtTokenFilter() {
-		return new RenewTokenFilter();
-	}
+	// @Bean
+	// public RenewTokenFilter renewJwtTokenFilter() {
+	// 	return new RenewTokenFilter();
+	// }
 
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {

@@ -148,7 +148,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.24</version> <!--$NO-MVN-MAN-VER$-->
+			<version>1.18.30</version> <!--$NO-MVN-MAN-VER$-->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -191,10 +191,12 @@
 		</dependency>
 
 		<dependency>
-            <groupId>io.github.isa-group</groupId>
-            <artifactId>pricingplans-4j</artifactId>
-            <version>1.1.0</version>
-        </dependency>
+			<groupId>io.github.isa-group</groupId>
+			<artifactId>pricingplans-4j</artifactId>
+			<version>3.1.0-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>/Users/alejandro/Desktop/Proyectos/Trabajo/Técnico 2023 (corto)/feature-toggling-java/target/PRICINGPLANS_4J.jar</systemPath>
+		</dependency>
 	</dependencies>
 
 	<build>

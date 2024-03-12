@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -21,7 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.samples.petclinic.configuration.jwt.JwtUtils;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
 import org.springframework.samples.petclinic.owner.OwnerRestController;
 import org.springframework.samples.petclinic.user.UserService;
@@ -34,6 +34,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.github.isagroup.PricingEvaluatorUtil;
+import io.github.isagroup.services.jwt.JwtUtils;
 import petclinic.payload.request.LoginRequest;
 import petclinic.payload.request.SignupRequest;
 
@@ -57,6 +59,9 @@ class AuthControllerTests {
 
 	@MockBean
 	private JwtUtils jwtUtils;
+
+	@MockBean
+	private PricingEvaluatorUtil pricingEvaluatorUtil;
 
 	@MockBean
 	private UserService userService;
@@ -101,7 +106,7 @@ class AuthControllerTests {
 	void shouldAuthenticateUser() throws Exception {
 		Authentication auth = Mockito.mock(Authentication.class);
 
-		when(this.jwtUtils.generateJwtToken(any(Authentication.class))).thenReturn(token);
+		when(this.pricingEvaluatorUtil.generateUserToken()).thenReturn(token);
 		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(auth);
 		Mockito.doReturn(userDetails).when(auth).getPrincipal();
 

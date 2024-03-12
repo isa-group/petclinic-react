@@ -1,0 +1,123 @@
+saasName: petclinic
+day: 15
+month: 1
+year: 2024
+currency: EUR
+hasAnnualPayment: false
+features:
+  maxPets:
+    description: maxPets description
+    valueType: NUMERIC
+    defaultValue: 2
+    expression: userContext['pets'] < planContext['features']['maxPets']
+    serverExpression: userContext['pets'] <= planContext['features']['maxPets']
+    type: DOMAIN
+  maxVisitsPerMonthAndPet:
+    description: maxVisitsPerMonthAndPet description
+    valueType: NUMERIC
+    defaultValue: 1
+    expression: ''
+    type: DOMAIN
+  supportPriority:
+    description: supportPriority description
+    valueType: TEXT
+    defaultValue: LOW
+    expression: ''
+    type: SUPPORT
+  haveCalendar:
+    description: haveCalendar description
+    valueType: BOOLEAN
+    defaultValue: false
+    expression: planContext['features']['haveCalendar']
+    type: DOMAIN
+  havePetsDashboard:
+    description: havePetsDashboard description
+    valueType: BOOLEAN
+    defaultValue: false
+    expression: planContext['features']['havePetsDashboard']
+    type: DOMAIN
+  haveVetSelection:
+    description: haveVetSelection description
+    valueType: BOOLEAN
+    defaultValue: false
+    expression: planContext['features']['haveVetSelection']
+    type: DOMAIN
+  haveOnlineConsultation:
+    description: haveOnlineConsultation description
+    valueType: BOOLEAN
+    defaultValue: false
+    expression: planContext['features']['haveOnlineConsultation']
+    type: DOMAIN
+usageLimits:
+  maxPets:
+    description: ''
+    valueType: NUMERIC
+    defaultValue: 10
+    unit: pet
+    type: NON_RENEWABLE
+    linkedFeatures:
+    - maxPets
+plans:
+  BASIC:
+    description: Basic plan
+    monthlyPrice: 0.0
+    annualPrice: 0.0
+    unit: user/month
+    features: null
+    usageLimits: null
+  ADVANCED:
+    description: Advanced plan
+    monthlyPrice: 5.0
+    annualPrice: 5.0
+    unit: user/month
+    features:
+      maxPets:
+        value: 4
+      maxVisitsPerMonthAndPet:
+        value: 3
+      supportPriority:
+        value: MEDIUM
+      haveCalendar:
+        value: true
+      havePetsDashboard:
+        value: false
+      haveVetSelection:
+        value: true
+      haveOnlineConsultation:
+        value: false
+    usageLimits: null
+  PRO:
+    description: Pro plan
+    monthlyPrice: 10.0
+    annualPrice: 10.0
+    unit: user/month
+    features:
+      maxPets:
+        value: 7
+      maxVisitsPerMonthAndPet:
+        value: 6
+      supportPriority:
+        value: HIGH
+      haveCalendar:
+        value: true
+      havePetsDashboard:
+        value: true
+      haveVetSelection:
+        value: true
+      haveOnlineConsultation:
+        value: true
+    usageLimits: null
+  NEW_PLAN:
+    description: New plan description
+    monthlyPrice: 2.0
+    annualPrice: 2.0
+    unit: null
+    features:
+      maxPets:
+        value: 6
+      supportPriority:
+        value: HIGH
+      haveCalendar:
+        value: true
+    usageLimits: null
+addOns: null
