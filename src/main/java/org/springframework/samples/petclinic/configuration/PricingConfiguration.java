@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.configuration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
 import org.springframework.samples.petclinic.plan.Plan;
+import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,6 +41,17 @@ public class PricingConfiguration extends PricingContext {
     @Override
     public String getConfigFilePath(){
         return "pricing/petclinic.yml";
+    }
+
+    @Override
+    public Boolean userAffectedByPricing(){
+        Authentication userAuth = SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) userAuth.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+            .collect(Collectors.toList());
+        
+        return roles.contains("OWNER");
     }
 
     @Override
