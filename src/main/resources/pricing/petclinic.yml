@@ -16,7 +16,7 @@ features:
     description: visits description
     valueType: BOOLEAN
     defaultValue: true
-    expression: ''
+    expression: planContext['usageLimits']['maxVisitsPerMonthAndPet']
     type: DOMAIN
   supportPriority:
     description: supportPriority description
