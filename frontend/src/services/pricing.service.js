@@ -4,7 +4,6 @@ class PricingService {
         let valueMap = {};
 
         for (let feature of Object.values(plan.features)){
-            console.log(feature);
             if (feature.expression.includes("usageLimits")){
                 let usageLimitName = feature.expression.split("usageLimits")[1].split(/['"]/)[2];
                 let usageLimit = plan.usageLimits[usageLimitName];

@@ -217,6 +217,7 @@ public class UserService {
 
 		context.put("username", username);
 		context.put("pets", owner.getPets().size());
+		context.put("visits", 0);
 
 		return context;
 	}

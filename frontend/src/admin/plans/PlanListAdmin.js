@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, ButtonGroup, Table } from "reactstrap";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import tokenService from "../../services/token.service";
+import pricingService from "services/pricing.service";
 import useFetchState from "../../util/useFetchState";
 import getErrorModal from "../../util/getErrorModal";
 import deleteFromList from "../../util/deleteFromList";
@@ -23,35 +24,39 @@ export default function PlanListAdmin() {
   const [alerts, setAlerts] = useState([]);
 
   const planList = plans.map((plan) => {
+
+    plan["id"] = plan.name;
+    let valueMap = pricingService.getValueMapOfPlanFeatures(plan);
+
     return (
       <tr key={plan.id}>
         <td className="text-center">{plan.name}</td>
-        <td className="text-center">{`${plan.price}€`}</td>
-        <td className="text-center">{plan.maxPets}</td>
-        <td className="text-center">{plan.maxVisitsPerMonthAndPet}</td>
-        <td className="text-center">{plan.supportPriority}</td>
-        <td className="text-center">{plan.haveVetSelection ? <FaCheck color="green" /> : <FaTimes color="red" />}</td>
-        <td className="text-center">{plan.haveCalendar ? <FaCheck color="green" /> : <FaTimes color="red" />}</td>
-        <td className="text-center">{plan.havePetsDashboard ? <FaCheck color="green" /> : <FaTimes color="red" />}</td>
-        <td className="text-center">{plan.haveOnlineConsultations ? <FaCheck color="green" /> : <FaTimes color="red" />}</td>
+        <td className="text-center">{`${plan.monthlyPrice}€`}</td>
+        <td className="text-center">{valueMap.pets}</td>
+        <td className="text-center">{valueMap.visits}</td>
+        <td className="text-center">{valueMap.supportPriority}</td>
+        <td className="text-center">{valueMap.haveVetSelection ? <FaCheck color="green" /> : <FaTimes color="red" />}</td>
+        <td className="text-center">{valueMap.haveCalendar ? <FaCheck color="green" /> : <FaTimes color="red" />}</td>
+        <td className="text-center">{valueMap.havePetsDashboard ? <FaCheck color="green" /> : <FaTimes color="red" />}</td>
+        <td className="text-center">{valueMap.haveOnlineConsultation ? <FaCheck color="green" /> : <FaTimes color="red" />}</td>
         <td className="text-center">
           <ButtonGroup>
             <Button
               size="sm"
               color="primary"
-              aria-label={"edit-" + plan.id}
+              aria-label={"edit-" + plan.name}
               tag={Link}
-              to={"/plansAdmin/" + plan.id}
+              to={"/plansAdmin/" + plan.name}
             >
               Edit
             </Button>
             <Button
               size="sm"
               color="danger"
-              aria-label={"delete-" + plan.id}
+              aria-label={"delete-" + plan.name}
               onClick={() =>
                 deleteFromList(
-                  `/api/v1/plans/${plan.id}`,
+                  `/api/v1/plans/${plan.name}`,
                   plan.id,
                   [plans, setPlans],
                   [alerts, setAlerts],
@@ -77,7 +82,7 @@ export default function PlanListAdmin() {
         {alerts.map((a) => a.alert)}
         {modal}
         <div className="float-right">
-          <Button color="success" tag={Link} to="/plans/new">
+          <Button color="success" tag={Link} to="/plansAdmin/new">
             Add Plan
           </Button>
         </div>
