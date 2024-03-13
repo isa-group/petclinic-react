@@ -15,11 +15,7 @@
  */
 package org.springframework.samples.petclinic.user;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,20 +23,10 @@ import javax.security.auth.message.AuthException;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.feature.FeatureController;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.plan.Plan;
-import org.springframework.samples.petclinic.plan.PlanService;
-import org.springframework.samples.petclinic.protobuf.FeatureResponseOuterProto.FeatureResponse.Feature;
-import org.springframework.samples.petclinic.protobuf.FeatureResponseOuterProto.FeatureResponse.Feature.ValueType;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.core.Authentication;
@@ -49,8 +35,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 class PlanContextManager {
-	public Map<String, Object> ownerContext = new HashMap();
-	public Map<String, Object> planContext = new HashMap();
+	public Map<String, Object> ownerContext = new HashMap<String, Object>();
+	public Map<String, Object> planContext = new HashMap<String, Object>();
 }
 
 @Service
@@ -58,17 +44,12 @@ public class UserService {
 
 	private UserRepository userRepository;
 
-	// private OwnerService ownerService;
-	//
 	private VetService vetService;
-	private PlanService planService;
 
-	@Autowired
-	public UserService(UserRepository userRepository, VetService vetService, PlanService planService) {
+	public UserService(UserRepository userRepository, VetService vetService) {
 		this.userRepository = userRepository;
 		// this.ownerService = ownerService;
 		this.vetService = vetService;
-		this.planService = planService;
 	}
 
 	@Transactional
@@ -151,7 +132,7 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Plan findUserPlan() throws AuthException {
+	public String findUserPlan() throws AuthException {
 
 		User user = null;
 

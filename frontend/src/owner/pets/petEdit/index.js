@@ -116,7 +116,7 @@ class OwnerPetEdit extends Component {
     if (submit.message){
       this.setState({ message: submit.message, modalShow: true });
     }
-    //else window.location.href = `/myPets`;
+    else window.location.href = `/myPets`;
   }
 
   render() {

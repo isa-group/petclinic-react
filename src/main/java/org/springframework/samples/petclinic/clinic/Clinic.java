@@ -18,8 +18,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.plan.Plan;
-import org.springframework.samples.petclinic.plan.PricingPlan;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -47,10 +45,9 @@ public class Clinic extends BaseEntity{
 	@Digits(fraction = 0, integer = 10)
 	private String telephone;
 
-	@ManyToOne
-	@JoinColumn(name = "plan", referencedColumnName = "id")
-	@NotNull
-	private Plan plan;
+	@Column(name = "plan")
+	@NotBlank
+	private String plan;
 
     @ManyToOne
 	@JoinColumn(name = "clinic_owner", referencedColumnName = "id")

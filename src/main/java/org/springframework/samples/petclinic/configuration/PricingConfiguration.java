@@ -11,16 +11,12 @@ import javax.security.auth.message.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
-import org.springframework.samples.petclinic.plan.Plan;
-import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import io.github.isagroup.PricingContext;
-import io.github.isagroup.models.PricingManager;
-import io.github.isagroup.services.yaml.YamlUtils;
 
 @Component
 public class PricingConfiguration extends PricingContext {
@@ -81,10 +77,9 @@ public class PricingConfiguration extends PricingContext {
 
     @Override
     public String getUserPlan() {
-        Plan userPlan;
         try {
-            userPlan = userService.findUserPlan();
-            return userPlan.getName().toString();
+            String userPlan = userService.findUserPlan();
+            return userPlan;
         } catch (AuthException e) {
             logger.info("Anonimous user");
             return "BASIC";

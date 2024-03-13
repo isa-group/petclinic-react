@@ -23,27 +23,27 @@ import java.util.Map;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.configuration.PricingConfiguration;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
-import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.github.isagroup.annotations.PricingPlanAware;
+import io.github.isagroup.models.Plan;
+import io.github.isagroup.models.PricingManager;
 
 @Service
 public class PetService {
 
-	private final Integer BASIC_LIMIT = 2;
-	private final Integer GOLD_LIMIT = 4;
-	private final Integer PLATINUM_LIMIT = 7;
-
 	private PetRepository petRepository;
+	private PricingConfiguration pricingConfiguration;
 
 	@Autowired
-	public PetService(PetRepository petRepository) {
+	public PetService(PetRepository petRepository, PricingConfiguration pricingConfiguration) {
 		this.petRepository = petRepository;
+		this.pricingConfiguration = pricingConfiguration;
 	}
 
 	@Transactional(readOnly = true)
@@ -116,7 +116,18 @@ public class PetService {
 
 	public boolean underLimit(Owner owner) {
 		Integer petCount = this.petRepository.countPetsByOwner(owner.getId());
-		return petCount < owner.getClinic().getPlan().getMaxPets();
+		PricingManager pricingManager = pricingConfiguration.getPricingManager();
+		Plan plan = pricingManager.getPlans().get(owner.getClinic().getPlan());
+
+		Integer limitValue = (Integer) plan.getUsageLimits().get("maxPets").getValue();
+		Integer limitDefaultValue = (Integer) plan.getUsageLimits().get("maxPets").getDefaultValue();
+
+		if (limitValue == null){
+			return petCount < limitDefaultValue;
+		}
+
+		return petCount < limitValue;
+
 	}
 
 	public Map<String, Object> getPetsStats() {
