@@ -35,9 +35,9 @@
 		<npm.version>8.19.2</npm.version>
 		<frontend-src-dir>${project.basedir}/frontend</frontend-src-dir>
 
-		<sonar.organization>rafasana14</sonar.organization>
+		<sonar.organization>ISA Group</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<sonar.projectName>PetClinic - TFG - Rafael Sanabria Espárrago</sonar.projectName>
+		<sonar.projectName>PetClinic</sonar.projectName>
 		<sonar.sources>src/main/java,frontend/src</sonar.sources>
 	</properties>
 
@@ -192,10 +192,8 @@
 
 		<dependency>
 			<groupId>io.github.isa-group</groupId>
-			<artifactId>pricingplans-4j</artifactId>
-			<version>3.1.0-SNAPSHOT</version>
-			<scope>system</scope>
-			<systemPath>/Users/alejandro/Desktop/Proyectos/Trabajo/Técnico 2023 (corto)/feature-toggling-java/target/PRICINGPLANS_4J.jar</systemPath>
+			<artifactId>Pricing4Java</artifactId>
+			<version>3.1.0</version>
 		</dependency>
 	</dependencies>
 
