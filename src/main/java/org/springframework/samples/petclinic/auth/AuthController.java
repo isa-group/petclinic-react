@@ -9,7 +9,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.configuration.jwt.JwtUtils;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
@@ -24,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.isagroup.PricingEvaluatorUtil;
+import io.github.isagroup.services.jwt.JwtUtils;
 import petclinic.payload.request.LoginRequest;
 import petclinic.payload.request.SignupRequest;
 import petclinic.payload.response.JwtResponse;
@@ -37,15 +38,17 @@ public class AuthController {
 	private final AuthenticationManager authenticationManager;
 	private final UserService userService;
 	private final JwtUtils jwtUtils;
+	private final PricingEvaluatorUtil pricingEvaluatorUtil;
 	private final AuthService authService;
 
 	@Autowired
-	public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils,
+	public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils, PricingEvaluatorUtil pricingEvaluatorUtil,
 			AuthService authService) {
 		this.userService = userService;
 		this.jwtUtils = jwtUtils;
 		this.authenticationManager = authenticationManager;
 		this.authService = authService;
+		this.pricingEvaluatorUtil = pricingEvaluatorUtil;
 	}
 
 	@PostMapping("/signin")
@@ -54,7 +57,7 @@ public class AuthController {
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
+		String jwt = pricingEvaluatorUtil.generateUserToken();
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
@@ -70,10 +73,8 @@ public class AuthController {
 
 	@PostMapping("/refreshToken")
 	public ResponseEntity<Map<String, Object>> refreshToken() {
-
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		
-		String jwt = jwtUtils.generateJwtToken(authentication);
+		String jwt = pricingEvaluatorUtil.generateUserToken();
 
 		Map<String, Object> response = new HashMap<>();
 

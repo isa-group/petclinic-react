@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.pet.PetService;
-import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,9 +86,9 @@ public class OwnerService {
 	@Transactional(readOnly = true)
 	public Map<String, Object> getOwnersStats() {
 		Map<String, Object> res = new HashMap<>();
-		Integer basicOwners = this.ownerRepository.countByPlan(PricingPlan.BASIC);
-		Integer goldOwners = this.ownerRepository.countByPlan(PricingPlan.GOLD);
-		Integer platinumOwners = this.ownerRepository.countByPlan(PricingPlan.PLATINUM);
+		Integer basicOwners = this.ownerRepository.countByPlan("BASIC");
+		Integer goldOwners = this.ownerRepository.countByPlan("GOLD");
+		Integer platinumOwners = this.ownerRepository.countByPlan("PLATINUM");
 		Integer totalOwners = this.ownerRepository.countAll();
 		Integer moreThanOnePet = getOwnersWithMoreThanOnePet();
 		Map<String, Integer> ownersVisits = getOwnersVisits();

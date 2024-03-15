@@ -17,7 +17,7 @@
 	<properties>
 
 		<!-- Generic properties -->
-		<java.version>1.8</java.version>
+		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -35,9 +35,9 @@
 		<npm.version>8.19.2</npm.version>
 		<frontend-src-dir>${project.basedir}/frontend</frontend-src-dir>
 
-		<sonar.organization>rafasana14</sonar.organization>
+		<sonar.organization>ISA Group</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<sonar.projectName>PetClinic - TFG - Rafael Sanabria Espárrago</sonar.projectName>
+		<sonar.projectName>PetClinic</sonar.projectName>
 		<sonar.sources>src/main/java,frontend/src</sonar.sources>
 	</properties>
 
@@ -148,7 +148,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.24</version> <!--$NO-MVN-MAN-VER$-->
+			<version>1.18.30</version> <!--$NO-MVN-MAN-VER$-->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -191,10 +191,10 @@
 		</dependency>
 
 		<dependency>
-            <groupId>io.github.isa-group</groupId>
-            <artifactId>pricingplans-4j</artifactId>
-            <version>1.1.0</version>
-        </dependency>
+			<groupId>io.github.isa-group</groupId>
+			<artifactId>Pricing4Java</artifactId>
+			<version>3.1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -25,8 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.clinic.Clinic;
 import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.plan.Plan;
-import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
@@ -70,8 +68,6 @@ class OwnerRestControllerTests {
 	private User userClinicOwner;
 	private ClinicOwner clinicOwner;
 	private Clinic clinic;
-	private Plan planBasic;
-	private Plan planPlatinum;
 
 	@BeforeEach
 	void setup() {
@@ -114,26 +110,6 @@ class OwnerRestControllerTests {
 		user.setPassword("password");
 		user.setAuthority(ownerAuth);
 
-		planBasic = new Plan();
-		planBasic.setName(PricingPlan.BASIC);
-		planBasic.setPrice(0.0);
-		planBasic.setMaxPets(2);
-		planBasic.setMaxVisitsPerMonthAndPet(1);
-		planBasic.setHaveVetSelection(false);
-		planBasic.setHaveCalendar(false);
-		planBasic.setHavePetsDashboard(false);
-		planBasic.setHaveOnlineConsultations(false);
-
-		planPlatinum = new Plan();
-		planPlatinum.setName(PricingPlan.PLATINUM);
-		planPlatinum.setPrice(12.0);
-		planPlatinum.setMaxPets(7);
-		planPlatinum.setMaxVisitsPerMonthAndPet(6);
-		planPlatinum.setHaveVetSelection(true);
-		planPlatinum.setHaveCalendar(true);
-		planPlatinum.setHavePetsDashboard(true);
-		planPlatinum.setHaveOnlineConsultations(true);
-
 		userClinicOwner = new User();
 		userClinicOwner.setId(1);
 		userClinicOwner.setUsername("clinicOwner");
@@ -151,7 +127,7 @@ class OwnerRestControllerTests {
 		clinic.setName("Clinic");
 		clinic.setAddress("Address");
 		clinic.setTelephone("123456789");
-		clinic.setPlan(planBasic);
+		clinic.setPlan("BASIC");
 		clinic.setClinicOwner(clinicOwner);
 
 		george.setClinic(clinic);
@@ -177,7 +153,7 @@ class OwnerRestControllerTests {
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
 				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
-				.andExpect(jsonPath("$.clinic.plan.name").value(george.getClinic().getPlan().getName().toString()));
+				.andExpect(jsonPath("$.clinic.plan").value(george.getClinic().getPlan()));
 	}
 
 	@Test
@@ -251,7 +227,7 @@ class OwnerRestControllerTests {
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
 				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
-				.andExpect(jsonPath("$.clinic.plan.name").value(george.getClinic().getPlan().getName().toString()));
+				.andExpect(jsonPath("$.clinic.plan").value(george.getClinic().getPlan()));
 	}
 
 	@Test

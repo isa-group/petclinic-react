@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Form, Input, Label } from "reactstrap";
 import tokenService from "../../services/token.service";
+import pricingService from "../../services/pricing.service";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
@@ -13,14 +14,14 @@ export default function PlanEditAdmin() {
   const emptyItem = {
     id: "",
     name: "",
-    price: 0.0,
-    maxPets: 1,
-    maxVisitsPerMonthAndPet: 1,
+    monthlyPrice: 0.0,
+    pets: true,
+    visits: true,
     supportPriority: "",
     haveVetSelection: false,
     haveCalendar: false,
     havePetsDashboard: false,
-    haveOnlineConsultations: false,
+    haveOnlineConsultation: false,
   };
   const id = getIdFromUrl(2);
   const [message, setMessage] = useState(null);
@@ -52,8 +53,8 @@ export default function PlanEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithInterceptor("/api/v1/plans" + (plan.id ? "/" + plan.id : ""), {
-      method: plan.id ? "PUT" : "POST",
+    fetchWithInterceptor("/api/v1/plans" + (id !== "new" ? "/" + id : ""), {
+      method: id !== "new" ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,
         Accept: "application/json",
@@ -63,7 +64,9 @@ export default function PlanEditAdmin() {
     })
       .then((response) => response.json())
       .then((json) => {
-        if (json.message) {
+        console.log(json.message);
+        console.log(json.message.startsWith("Plan"));
+        if (json.message && !json.message.startsWith("Plan")) {
           setMessage(json.message);
           setVisible(true);
         } else window.location.href = "/plansAdmin";
@@ -72,6 +75,24 @@ export default function PlanEditAdmin() {
   }
 
   const modal = getErrorModal(setVisible, visible, message);
+
+  useEffect(() => {
+    if (plan.name !== undefined && plan.features !== undefined){
+      let valueMap = pricingService.getValueMapOfPlanFeatures(plan);
+      let formattedPlanObject = {
+        name: plan.name,
+        monthlyPrice: plan.monthlyPrice,
+        pets: valueMap.pets,
+        visits: valueMap.visits,
+        supportPriority: valueMap.supportPriority,
+        haveVetSelection: valueMap.haveVetSelection,
+        haveCalendar: valueMap.haveCalendar,
+        havePetsDashboard: valueMap.havePetsDashboard,
+        haveOnlineConsultation: valueMap.haveOnlineConsultation,
+      }
+      setPlan(formattedPlanObject);
+    }
+  }, [plan])
 
   return (
     <div className="auth-page-container">
@@ -94,16 +115,16 @@ export default function PlanEditAdmin() {
             />
           </div>
           <div className="custom-form-input">
-            <Label for="price" className="custom-form-input-label">
+            <Label for="monthlyPrice" className="custom-form-input-label">
               Price (in €)
             </Label>
             <Input
               type="number"
               step="0.01"
               required
-              name="price"
-              id="price"
-              value={plan.price || ""}
+              name="monthlyPrice"
+              id="monthlyPrice"
+              value={plan.monthlyPrice === undefined ? "" : plan.monthlyPrice}
               onChange={handleChange}
               className="custom-input"
             />
@@ -115,9 +136,9 @@ export default function PlanEditAdmin() {
             <Input
               type="number"
               required
-              name="maxPets"
-              id="maxPets"
-              value={plan.maxPets || ""}
+              name="pets"
+              id="pets"
+              value={plan.pets || ""}
               onChange={handleChange}
               className="custom-input"
             />
@@ -129,9 +150,9 @@ export default function PlanEditAdmin() {
             <Input
               type="number"
               required
-              name="maxVisitsPerMonthAndPet"
-              id="maxVisitsPerMonthAndPet"
-              value={plan.maxVisitsPerMonthAndPet || ""}
+              name="visits"
+              id="visits"
+              value={plan.visits || ""}
               onChange={handleChange}
               className="custom-input"
             />
@@ -179,7 +200,7 @@ export default function PlanEditAdmin() {
           <div className="checkbox-row">
             Have online consultations
             <label class="checkbox-container">
-              <Input type="checkbox" name="haveOnlineConsultations" id="haveOnlineConsultations" checked={plan.haveOnlineConsultations} onChange={handleCheckboxChange}/>
+              <Input type="checkbox" name="haveOnlineConsultation" id="haveOnlineConsultation" checked={plan.haveOnlineConsultation} onChange={handleCheckboxChange}/>
               <div class="checkbox-checkmark"></div>
             </label>
           </div>

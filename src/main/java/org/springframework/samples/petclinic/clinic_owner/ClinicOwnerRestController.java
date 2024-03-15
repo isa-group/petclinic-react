@@ -32,7 +32,6 @@ public class ClinicOwnerRestController {
     private final ClinicOwnerService clinicOwnerService;
 	private final UserService userService;
 
-	@Autowired
 	public ClinicOwnerRestController(ClinicOwnerService clinicOwnerService, UserService userService) {
 		this.clinicOwnerService = clinicOwnerService;
 		this.userService = userService;
@@ -55,8 +54,6 @@ public class ClinicOwnerRestController {
 
 	@PostMapping
 	public ResponseEntity<ClinicOwner> create(@Valid @RequestBody ClinicOwner clinicOwner, @RequestParam(required = false) int userId) {
-		
-		System.out.println("ID: " + userId);
 
 		User user = userService.findUser(userId);
 		clinicOwner.setUser(user);

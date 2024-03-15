@@ -11,6 +11,8 @@ import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
 import Plan from "./Plan";
 
+import pricingService from "../../services/pricing.service";
+
 const jwt = tokenService.getLocalAccessToken();
 
 export default function PlanList() {
@@ -47,7 +49,7 @@ export default function PlanList() {
       <div className="section-pricing">
         <div className="pricing-container">
           {plans?.map((plan) => {
-
+            
             let icon;
 
             switch (plan.name) {
@@ -65,18 +67,20 @@ export default function PlanList() {
                 break;
             }
 
+            let valueMap = pricingService.getValueMapOfPlanFeatures(plan);
+
             return (
               <Plan
                 icon={icon}
                 name={plan.name}
-                price={plan.price}
-                maxPets={plan.maxPets}
-                maxVisitsPerMonthAndPet={plan.maxVisitsPerMonthAndPet}
-                supportPriority={plan.supportPriority}
-                haveVetSelection={plan.haveVetSelection}
-                haveCalendar={plan.haveCalendar}
-                havePetsDashboard={plan.havePetsDashboard}
-                haveOnlineConsultations={plan.haveOnlineConsultations}
+                price={plan.monthlyPrice}
+                maxPets={valueMap.pets}
+                maxVisitsPerMonthAndPet={valueMap.visits}
+                supportPriority={valueMap.supportPriority}
+                haveVetSelection={valueMap.haveVetSelection}
+                haveCalendar={valueMap.haveCalendar}
+                havePetsDashboard={valueMap.havePetsDashboard}
+                haveOnlineConsultations={valueMap.haveOnlineConsultation}
               />
             );
           })}

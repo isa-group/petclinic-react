@@ -1,12 +1,49 @@
-mysql:
-  image: mysql:5.7
-  ports:
-    - "3306:3306"
-  environment:
-    - MYSQL_ROOT_PASSWORD=
-    - MYSQL_ALLOW_EMPTY_PASSWORD=true
-    - MYSQL_USER=petclinic
-    - MYSQL_PASSWORD=petclinic
-    - MYSQL_DATABASE=petclinic
-  volumes:
-    - "./conf.d:/etc/mysql/conf.d:ro"
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=r00tP4ssw0rd
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_USER=petclinic
+      - MYSQL_PASSWORD=petclinic
+      - MYSQL_DATABASE=petclinic
+    networks:
+      - petclinic
+  
+  frontend:
+    restart: always
+    container_name: frontend
+    image: frontend:latest
+    build: 
+      context: .
+      dockerfile: frontend/docker/Dockerfile
+    command: sh -c "serve -s build -l 80 --no-clipboard"
+    ports:
+      - 80:80
+    networks:
+      - petclinic
+
+  backend:
+    restart: always
+    container_name: backend
+    image: backend:latest
+    build: 
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+        SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/petclinic
+        SPRING_DATASOURCE_USERNAME: petclinic
+        SPRING_DATASOURCE_PASSWORD: petclinic
+    depends_on:
+      - mysql
+    networks:
+      - petclinic
+
+networks:
+  petclinic:
+    driver: bridge

@@ -31,7 +31,6 @@ import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.PetService;
-import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
@@ -43,10 +42,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.net.HttpHeaders;
+
+import io.github.isagroup.services.jwt.JwtUtils;
 import petclinic.payload.response.MessageResponse;
 
 @RestController
@@ -56,6 +59,7 @@ public class VisitRestController {
 	private final VisitService visitService;
 	private final UserService userService;
 	private final OwnerService ownerService;
+	private final JwtUtils jwtUtils;
 	private static final String VET_AUTH = "VET";
 	private static final String ADMIN_AUTH = "ADMIN";
 	private static final String OWNER_AUTH = "OWNER";
@@ -63,11 +67,12 @@ public class VisitRestController {
 
 	@Autowired
 	public VisitRestController(PetService petService, UserService userService, OwnerService ownerService,
-			VisitService visitService) {
+			VisitService visitService, JwtUtils jwtUtils) {
 		this.petService = petService;
 		this.userService = userService;
 		this.ownerService = ownerService;
 		this.visitService = visitService;
+		this.jwtUtils = jwtUtils;
 	}
 
 	@InitBinder("visit")
@@ -107,7 +112,7 @@ public class VisitRestController {
 				if (this.visitService.underLimit(newVisit)) {
 					savedVisit = this.visitService.saveVisit(newVisit);
 				} else
-					throw new LimitReachedException("Visits per month for your Pet " + pet.getName(), owner.getClinic().getPlan().getName());
+					throw new LimitReachedException("Visits per month for your Pet " + pet.getName(), owner.getClinic().getPlan());
 			} else
 				throw new ResourceNotOwnedException(pet);
 		} else
@@ -194,11 +199,13 @@ public class VisitRestController {
 	}
 
 	@GetMapping(value = "/api/v1/visits/stats")
-	public ResponseEntity<Map<String, Object>> getStats() {
+	public ResponseEntity<Map<String, Object>> getStats(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationToken) {
 		User user = this.userService.findCurrentUser();
 		if (user.hasAuthority(OWNER_AUTH).equals(true)) {
 			Owner o = userService.findOwnerByUser(user.getId());
-			if (o.getClinic().getPlan().getHavePetsDashboard())
+			String jwt = authorizationToken.split(" ")[1];
+			Map<String, Map<String, Object>> featuresEvaluation = jwtUtils.getFeaturesFromJwtToken(jwt);
+			if ((Boolean) featuresEvaluation.get("havePetsDashboard").get("eval"))
 				return new ResponseEntity<>(this.visitService.getVisitsOwnerStats(o.getId()), HttpStatus.OK);
 		} else if (user.hasAuthority(ADMIN_AUTH).equals(true))
 			return new ResponseEntity<>(this.visitService.getVisitsAdminStats(), HttpStatus.OK);
