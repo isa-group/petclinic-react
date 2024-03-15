@@ -187,7 +187,7 @@ function App() {
         <Routes>
           <Route path="/" exact={true} element={<Home />} />
           <Route path="/plans" element={<PlanList />} />
-          <Route path="/docs" element={<SwaggerDocs />} />
+          {/* <Route path="/docs" element={<SwaggerDocs />} /> */}
           {publicRoutes}
           {userRoutes}
           {adminRoutes}

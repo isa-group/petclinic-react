@@ -47,6 +47,15 @@ This operation will create a group of three containers:
 
 Once the containers are up and running, you can access petclinic through: http://localhost
 
+## Credentials to run the demo
+
+| Username     | Password    | Role         |
+|--------------|-------------|--------------|
+| admin1       | 4dm1n       | ADMIN        |
+| vet1         | v3t         | VET          |
+| owner1       | 0wn3r       | OWNER        |
+| clinicOwner1 | cl1n1c0wn3r | CLINIC_OWNER |
+
 ## In case you find a bug/suggested improvement for Spring Petclinic
 Our issue tracker is available here: https://github.com/gii-is-DP1/spring-petclinic/issues
 
