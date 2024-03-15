@@ -35,6 +35,7 @@ import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -53,6 +54,7 @@ import io.github.isagroup.services.jwt.JwtUtils;
 import petclinic.payload.response.MessageResponse;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class VisitRestController {
 
 	private final PetService petService;

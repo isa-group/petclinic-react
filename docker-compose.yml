@@ -12,7 +12,7 @@ services:
       - MYSQL_DATABASE=petclinic
     networks:
       - petclinic
-  
+
   frontend:
     restart: always
     container_name: frontend
@@ -20,9 +20,10 @@ services:
     build: 
       context: .
       dockerfile: frontend/docker/Dockerfile
-    command: sh -c "serve -s build -l 80 --no-clipboard"
+    # command: sh -c "serve -s build -l 80 --no-clipboard"
+    command: sh -c "npm start"
     ports:
-      - 80:80
+      - 80:3000
     networks:
       - petclinic
 
@@ -36,13 +37,13 @@ services:
     ports:
       - 8080:8080
     environment:
-        SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/petclinic
-        SPRING_DATASOURCE_USERNAME: petclinic
-        SPRING_DATASOURCE_PASSWORD: petclinic
+        spring.datasource.url: jdbc:mysql://mysql:3306/petclinic?allowPublicKeyRetrieval=true
     depends_on:
       - mysql
     networks:
       - petclinic
+    volumes:
+      - .m2:/root/.m2
 
 networks:
   petclinic:

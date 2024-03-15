@@ -55,15 +55,11 @@ import TokenService from "./token.service";
 // export default instance;
 
 export function fetchWithInterceptor(url, options) {
-
-  return fetch(url, options).then((response) => {
+  return fetch("http://localhost:8080" + url, options).then((response) => {
     // Check if the response contains the 'newToken' header and update the token in localStorage
     const newToken = response.headers.get("New-Token");
 
-    if (
-      newToken !== null &&
-      newToken !== TokenService.getLocalAccessToken()
-    ) {
+    if (newToken !== null && newToken !== TokenService.getLocalAccessToken()) {
       TokenService.updateLocalAccessToken(newToken);
       alert("Clinic plan changed!");
       window.location.reload();

@@ -155,11 +155,11 @@ function AppNavbar() {
   if (!jwt) {
     publicLinks = (
       <>
-        <NavItem>
+        {/* <NavItem>
           <NavLink style={{ color: "white" }} id="docs" tag={Link} to="/docs">
             Docs
           </NavLink>
-        </NavItem>
+        </NavItem> */}
         <NavItem>
           <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">
             Pricing Plans

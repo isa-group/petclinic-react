@@ -47,7 +47,7 @@ class Login extends Component {
         tokenService.updateLocalAccessToken(data.token);
       })
       .catch((message) => {
-        alert(message);
+        console.error(message);
       });
     if (this.state.navigation === true) {
       return window.location.reload();
