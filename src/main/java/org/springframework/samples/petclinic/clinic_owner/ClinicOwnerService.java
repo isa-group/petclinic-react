@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClinicOwnerService {
     private ClinicOwnerRepository clinicOwnerRepository;
 
-    @Autowired
 	public ClinicOwnerService(ClinicOwnerRepository clinicOwnerRepository) {
 		this.clinicOwnerRepository = clinicOwnerRepository;
 	}

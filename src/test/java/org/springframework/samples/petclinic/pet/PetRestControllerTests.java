@@ -34,8 +34,6 @@ import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedExceptio
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerRestController;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
-import org.springframework.samples.petclinic.plan.Plan;
-import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
@@ -88,31 +86,9 @@ class PetRestControllerTests {
 	private Clinic clinic;
 	private ClinicOwner clinicOwner;
 	private User clinicOwnerUser;
-	private Plan planBasic;
-	private Plan planPlatinum;
 
 	@BeforeEach
 	void setup() {
-
-		planBasic = new Plan();
-		planBasic.setName(PricingPlan.BASIC);
-		planBasic.setPrice(0.0);
-		planBasic.setMaxPets(2);
-		planBasic.setMaxVisitsPerMonthAndPet(1);
-		planBasic.setHaveVetSelection(false);
-		planBasic.setHaveCalendar(false);
-		planBasic.setHavePetsDashboard(false);
-		planBasic.setHaveOnlineConsultations(false);
-
-		planPlatinum = new Plan();
-		planPlatinum.setName(PricingPlan.PLATINUM);
-		planPlatinum.setPrice(12.0);
-		planPlatinum.setMaxPets(7);
-		planPlatinum.setMaxVisitsPerMonthAndPet(6);
-		planPlatinum.setHaveVetSelection(true);
-		planPlatinum.setHaveCalendar(true);
-		planPlatinum.setHavePetsDashboard(true);
-		planPlatinum.setHaveOnlineConsultations(true);
 
 		Authorities clinicOwnerAuth = new Authorities();
 		clinicOwnerAuth.setId(1);
@@ -132,7 +108,7 @@ class PetRestControllerTests {
 		clinic.setId(TEST_CLINIC_ID);
 		clinic.setName("Clinic Test");
 		clinic.setAddress("Test Address");
-		clinic.setPlan(planBasic);
+		clinic.setPlan("BASIC");
 		clinic.setTelephone("123456789");
 		clinic.setClinicOwner(clinicOwner);
 

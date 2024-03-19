@@ -20,6 +20,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import io.github.isagroup.filters.RenewTokenFilter;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -47,6 +49,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return new AuthTokenFilter();
 	}
 
+	@Bean
+	public RenewTokenFilter renewJwtTokenFilter() {
+		return new RenewTokenFilter();
+	}
+
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -65,9 +72,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+		http
+			.cors().and()
+			.csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**", "/swagger-resources/**").permitAll()
+				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**", "/swagger-resources/**", "/feature").permitAll()
 				.antMatchers(HttpMethod.GET, "/api/v1/clinics").permitAll()
 				.antMatchers(HttpMethod.GET, "/", "/oups").permitAll()
 				.antMatchers("/api/v1/auth/**").permitAll()
@@ -85,6 +94,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.GET, "/api/v1/vets/stats").hasAuthority(ADMIN)
 				.antMatchers(HttpMethod.GET, "/api/v1/vets/**").authenticated()
 				.antMatchers("/api/v1/vets/**").hasAnyAuthority(ADMIN, "VET", CLINIC_OWNER)
+				.antMatchers("/api/v1/plans/*").hasAuthority(ADMIN)
 				.antMatchers(HttpMethod.GET, "/api/v1/plans").permitAll()
 				.anyRequest().authenticated();
 

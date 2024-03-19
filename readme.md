@@ -1,8 +1,9 @@
 # Spring PetClinic Sample Application 
 
-This is a fork of https://github.com/spring-projects/spring-petclinic to be used for the DP1 course. The main changes that have been performed were:
+This is a fork of https://github.com/spring-projects/spring-petclinic to be used for the Pricing4SaaS research. The main changes that have been performed were:
+
 - Trimming several parts of the application to keep the example low
-- Reorganize some parts of the code according to best practices introduced in the course
+- Redesigned the frontend using React as the main framework
 
 ## Understanding the Spring Petclinic application with a few diagrams
 <a href="https://speakerdeck.com/michaelisvy/spring-petclinic-sample-application">See the presentation here</a>
@@ -12,21 +13,48 @@ Petclinic is a [Spring Boot](https://spring.io/guides/gs/spring-boot) applicatio
 
 
 ```
-git clone https://github.com/gii-is-DP1/spring-petclinic.git
-cd spring-petclinic
-./mvnw package
-java -jar target/*.jar
+git clone https://github.com/isa-group/petclinic-react
+cd petclinic-react
+mvn -f ./pom.xml clean package -Dmaven.test.skip=true
+java -jar target/petclinic.jar
 ```
 
 You can then access petclinic here: http://localhost:8080/
 
-<img width="1042" alt="petclinic-screenshot" src="https://cloud.githubusercontent.com/assets/838318/19727082/2aee6d6c-9b8e-11e6-81fe-e889a5ddfded.png">
+<img width="1042" alt="petclinic-screenshot" src="./readme-static-files/test.png">
 
 Or you can run it from Maven directly using the Spring Boot Maven plugin. If you do this it will pick up changes that you make in the project immediately (changes to Java source files require a compile as well - most people use an IDE for this):
 
 ```
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
+
+## Running petclinic with docker
+
+If you have the docker engine installed on your machine, you can easily run petclinic using the following command:
+
+```
+git clone https://github.com/isa-group/petclinic-react
+cd petclinic-react
+docker-compose up -d
+```
+
+This operation will create a group of three containers:
+
+- A MySQL container that will be used to store the data
+- The spring-boot REST API that will take the backend role, and is connected to MySQL
+- The React frontend
+
+Once the containers are up and running, you can access petclinic through: http://localhost
+
+## Credentials to run the demo
+
+| Username     | Password    | Role         |
+|--------------|-------------|--------------|
+| admin1       | 4dm1n       | ADMIN        |
+| vet1         | v3t         | VET          |
+| owner1       | 0wn3r       | OWNER        |
+| clinicOwner1 | cl1n1c0wn3r | CLINIC_OWNER |
 
 ## In case you find a bug/suggested improvement for Spring Petclinic
 Our issue tracker is available here: https://github.com/gii-is-DP1/spring-petclinic/issues
@@ -37,7 +65,7 @@ Our issue tracker is available here: https://github.com/gii-is-DP1/spring-petcli
 In its default configuration, Petclinic uses an in-memory database (H2) which
 gets populated at startup with data. 
 
-## Working with Petclinic in your IDE
+<!-- ## Working with Petclinic in your IDE
 
 ### Prerequisites
 The following items should be installed in your system:
@@ -48,7 +76,7 @@ The following items should be installed in your system:
   not there, just follow the install process here: https://www.eclipse.org/m2e/
   * [Spring Tools Suite](https://spring.io/tools) (STS)
   * IntelliJ IDEA
-  * [VS Code](https://code.visualstudio.com)
+  * [VS Code](https://code.visualstudio.com) -->
 
 ### Steps:
 

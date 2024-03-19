@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.samples.petclinic.vet.Vet;
 
 public interface ClinicRepository extends CrudRepository<Clinic, Integer> {
@@ -21,6 +20,6 @@ public interface ClinicRepository extends CrudRepository<Clinic, Integer> {
     @Query("SELECT c FROM Clinic c WHERE c.clinicOwner.user.id = :userId")
     List<Clinic> findClinicsByUserId(int userId);
 
-    @Query("SELECT c FROM Clinic c WHERE c.plan.name = :plan")
-    List<Clinic> findClinicsOfPlan(PricingPlan plan);
+    @Query("SELECT c FROM Clinic c WHERE c.plan = :plan")
+    List<Clinic> findClinicsOfPlan(String plan);
 }

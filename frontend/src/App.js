@@ -48,6 +48,8 @@ import VetListClinicOwner from "./clinicOwner/vets/VetListClinicOwner";
 import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
 import PlanListAdmin from "./admin/plans/PlanListAdmin";
 import PlanEditAdmin from "./admin/plans/PlanEditAdmin";
+import {useGenericFeature, feature} from "pricingplans-react";
+import ParserPlanEditAdmin from "admin/plans/ParserPlanEditAdmin";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -76,6 +78,30 @@ function App() {
   let vetRoutes = <></>;
   let publicRoutes = <></>;
 
+  const ownersDashboard = useGenericFeature({
+    on: [
+      {
+        expression: feature("havePetsDashboard"),
+        on: <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} />,
+      },
+    ]
+  });
+
+  const onlineConsultations = useGenericFeature({
+    on: [
+      {
+        expression: feature("haveOnlineConsultation"),
+        on: (
+          <>
+            <Route path="/consultations" exact={true} element={<PrivateRoute><OwnerConsultationList /></PrivateRoute>} />
+            <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><OwnerConsultationEdit /></PrivateRoute>} />
+            <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><OwnerConsultationTickets /></PrivateRoute>} />
+          </>
+        ),
+      },
+    ]
+  });
+
   roles.forEach((role) => {
     if (role === "ADMIN") {
       adminRoutes = (
@@ -101,18 +127,17 @@ function App() {
           <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketListAdmin /></PrivateRoute>} />
           <Route path="/plansAdmin" exact={true} element={<PrivateRoute><PlanListAdmin /></PrivateRoute>} />
           <Route path="/plansAdmin/:id" exact={true} element={<PrivateRoute><PlanEditAdmin /></PrivateRoute>} />
+          <Route path="/parserPlansAdmin/1" exact={true} element={<PrivateRoute><ParserPlanEditAdmin /></PrivateRoute>} />
         </>)
     }
     if (role === "OWNER") {
       ownerRoutes = (
-        <>
-          <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} />
+        <> 
+          {ownersDashboard}
           <Route path="/myPets" exact={true} element={<PrivateRoute><OwnerPetList /></PrivateRoute>} />
           <Route path="/myPets/:id" exact={true} element={<PrivateRoute><OwnerPetEdit /></PrivateRoute>} />
           <Route path="/myPets/:id/visits/:id" exact={true} element={<PrivateRoute><OwnerVisitEdit /></PrivateRoute>} />
-          <Route path="/consultations" exact={true} element={<PrivateRoute><OwnerConsultationList /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><OwnerConsultationEdit /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><OwnerConsultationTickets /></PrivateRoute>} />
+          {onlineConsultations}
         </>)
     }
     if (role === "VET") {
@@ -162,7 +187,7 @@ function App() {
         <Routes>
           <Route path="/" exact={true} element={<Home />} />
           <Route path="/plans" element={<PlanList />} />
-          <Route path="/docs" element={<SwaggerDocs />} />
+          {/* <Route path="/docs" element={<SwaggerDocs />} /> */}
           {publicRoutes}
           {userRoutes}
           {adminRoutes}

@@ -15,13 +15,16 @@
  */
 package org.springframework.samples.petclinic.user;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import javax.security.auth.message.AuthException;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.vet.Vet;
@@ -31,19 +34,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+class PlanContextManager {
+	public Map<String, Object> ownerContext = new HashMap<String, Object>();
+	public Map<String, Object> planContext = new HashMap<String, Object>();
+}
+
 @Service
 public class UserService {
 
 	private UserRepository userRepository;
 
-//	private OwnerService ownerService;
-//
 	private VetService vetService;
 
-	@Autowired
 	public UserService(UserRepository userRepository, VetService vetService) {
 		this.userRepository = userRepository;
-//		this.ownerService = ownerService;
+		// this.ownerService = ownerService;
 		this.vetService = vetService;
 	}
 
@@ -77,6 +82,12 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
+	public ClinicOwner findClinicOwnerByUser(int userId) {
+		return userRepository.findClinicOwnerByUser(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("ClinicOwner", "id", userId));
+	}
+
+	@Transactional(readOnly = true)
 	public Owner findOwnerByUser(int id) {
 		return userRepository.findOwnerByUser(id).orElseThrow(() -> new ResourceNotFoundException("Owner", "ID", id));
 	}
@@ -89,6 +100,63 @@ public class UserService {
 		else
 			return userRepository.findByUsername(auth.getName())
 					.orElseThrow(() -> new ResourceNotFoundException("User", "Username", auth.getName()));
+	}
+
+	@Transactional(readOnly = true)
+	public Map<String, Object> findUserContext() throws AuthException {
+
+		User user = null;
+
+		try {
+			user = findCurrentUser();
+		} catch (ResourceNotFoundException e) {
+			System.out.println("User not found");
+			return findPublicContext();
+		}
+
+		switch (user.getAuthority().getAuthority()) {
+			case "OWNER":
+				Owner owner = findOwnerByUser(user.getId());
+				return findOwnerContext(owner, user.getUsername());
+			case "VET":
+				Vet vet = findVetByUser(user.getId());
+				return findVetContext(vet, user.getUsername());
+			case "ADMIN":
+				return findAdminContext(user, user.getUsername());
+			case "CLINIC_OWNER":
+				ClinicOwner clinicOwner = findClinicOwnerByUser(user.getId());
+				return findClinicOwnerContext(clinicOwner, user.getUsername());
+			default:
+				throw new AuthException("Invalid role");
+		}
+	}
+
+	@Transactional(readOnly = true)
+	public String findUserPlan() throws AuthException {
+
+		User user = null;
+
+		try {
+			user = findCurrentUser();
+		} catch (ResourceNotFoundException e) {
+			System.out.println("User not found");
+			return null;
+		}
+
+		switch (user.getAuthority().getAuthority()) {
+			case "OWNER":
+				Owner owner = findOwnerByUser(user.getId());
+				return owner.getClinic().getPlan();
+			case "VET":
+				Vet vet = findVetByUser(user.getId());
+				return vet.getClinic().getPlan();
+			case "ADMIN":
+				return null;
+			case "CLINIC_OWNER":
+				return null;
+			default:
+				throw new AuthException("Invalid role");
+		}
 	}
 
 	public Boolean existsUser(String username) {
@@ -117,30 +185,75 @@ public class UserService {
 	public void deleteUser(Integer id) {
 		User toDelete = findUser(id);
 		deleteRelations(id, toDelete.getAuthority().getAuthority());
-//		this.userRepository.deleteOwnerRelation(id);
-//		this.userRepository.deleteVetRelation(id);
+		// this.userRepository.deleteOwnerRelation(id);
+		// this.userRepository.deleteVetRelation(id);
 		this.userRepository.delete(toDelete);
 	}
 
 	private void deleteRelations(Integer id, String auth) {
 		switch (auth) {
-		case "OWNER":
-//			Optional<Owner> owner = ownerService.optFindOwnerByUser(id);
-//			if (owner.isPresent())
-//				ownerService.deleteOwner(owner.get().getId());
-			this.userRepository.deleteOwnerRelation(id);
-			break;
-		case "VET":
-			Optional<Vet> vet = vetService.optFindVetByUser(id);
-			if (vet.isPresent()) {
-				vetService.deleteVet(vet.get().getId());
-			}
-			break;
-		default:
-			// The only relations that have user are Owner and Vet
-			break;
+			case "OWNER":
+				// Optional<Owner> owner = ownerService.optFindOwnerByUser(id);
+				// if (owner.isPresent())
+				// ownerService.deleteOwner(owner.get().getId());
+				this.userRepository.deleteOwnerRelation(id);
+				break;
+			case "VET":
+				Optional<Vet> vet = vetService.optFindVetByUser(id);
+				if (vet.isPresent()) {
+					vetService.deleteVet(vet.get().getId());
+				}
+				break;
+			default:
+				// The only relations that have user are Owner and Vet
+				break;
 		}
 
+	}
+
+	private Map<String, Object> findOwnerContext(Owner owner, String username) {
+
+		Map<String, Object> context = new HashMap<>();
+
+		context.put("username", username);
+		context.put("pets", owner.getPets().size());
+		context.put("visits", 0);
+
+		return context;
+	}
+
+	private Map<String, Object> findVetContext(Vet vet, String username) {
+
+		Map<String, Object> context = new HashMap<>();
+
+		context.put("username", username);
+
+		return context;
+	}
+
+	private Map<String, Object> findAdminContext(User admin, String username) {
+		Map<String, Object> context = new HashMap<>();
+
+		context.put("username", username);
+
+		return context;
+	}
+
+	private Map<String, Object> findClinicOwnerContext(ClinicOwner clinicOwner, String username) {
+		Map<String, Object> context = new HashMap<>();
+
+		context.put("username", username);
+
+		return context;
+	}
+
+	private Map<String, Object> findPublicContext() {
+
+		Map<String, Object> featureMap = new HashMap<>();
+
+		featureMap.put("public", true);
+
+		return featureMap;
 	}
 
 }

@@ -28,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +43,7 @@ import petclinic.payload.response.MessageResponse;
 
 @RestController
 @RequestMapping("/api/v1/owners")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class OwnerRestController {
 
 	private final OwnerService ownerService;

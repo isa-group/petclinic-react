@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,11 +29,11 @@ import petclinic.payload.response.MessageResponse;
 
 @RestController
 @RequestMapping("/api/v1/clinicOwners")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class ClinicOwnerRestController {
     private final ClinicOwnerService clinicOwnerService;
 	private final UserService userService;
 
-	@Autowired
 	public ClinicOwnerRestController(ClinicOwnerService clinicOwnerService, UserService userService) {
 		this.clinicOwnerService = clinicOwnerService;
 		this.userService = userService;
@@ -55,8 +56,6 @@ public class ClinicOwnerRestController {
 
 	@PostMapping
 	public ResponseEntity<ClinicOwner> create(@Valid @RequestBody ClinicOwner clinicOwner, @RequestParam(required = false) int userId) {
-		
-		System.out.println("ID: " + userId);
 
 		User user = userService.findUser(userId);
 		clinicOwner.setUser(user);

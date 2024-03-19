@@ -9,6 +9,7 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { fetchWithInterceptor } from "../../../services/api";
 
 export default function OwnerConsultationList() {
   let [consultations, setConsultations] = useState([]);
@@ -69,7 +70,7 @@ export default function OwnerConsultationList() {
               >
                 Details
               </Button>
-              {plan.haveOnlineConsultations ? (
+              {plan !== null && plan.haveOnlineConsultations ? (
                 <Button
                   size="sm"
                   color="primary"
@@ -115,7 +116,7 @@ export default function OwnerConsultationList() {
 
   async function setUp() {
     const consultations = await (
-      await fetch("/api/v1/consultations", {
+      await fetchWithInterceptor("/api/v1/consultations", {
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
@@ -127,14 +128,16 @@ export default function OwnerConsultationList() {
     setFiltered(consultations);
 
     const owner = await (
-      await fetch(`/api/v1/plan`, {
+      await fetchWithInterceptor(`/api/v1/plan`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
       })
     ).json();
     if (owner.message) setMessage(owner.message);
-    else setPlan(owner.clinic.name);
+    else {
+      setPlan(owner.clinic.plan);
+    }
   }
 
   useEffect(() => {
@@ -149,7 +152,7 @@ export default function OwnerConsultationList() {
         <h1 className="text-center">Consultations</h1>
         <Row className="row-cols-auto g-3 align-items-center">
           <Col>
-            {plan.haveOnlineConsultations ? (
+            {plan !== null && plan.haveOnlineConsultations ? (
               <Button color="success" tag={Link} to="/consultations/new">
                 Add Consultation
               </Button>

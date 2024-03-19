@@ -1,19 +1,22 @@
 package org.springframework.samples.petclinic.auth;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.configuration.jwt.JwtUtils;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
+import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,28 +24,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.isagroup.PricingEvaluatorUtil;
+import io.github.isagroup.services.jwt.JwtUtils;
 import petclinic.payload.request.LoginRequest;
 import petclinic.payload.request.SignupRequest;
 import petclinic.payload.response.JwtResponse;
 import petclinic.payload.response.MessageResponse;
 
-//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/auth")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
 	private final UserService userService;
 	private final JwtUtils jwtUtils;
+	private final PricingEvaluatorUtil pricingEvaluatorUtil;
 	private final AuthService authService;
 
 	@Autowired
-	public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils,
+	public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils, PricingEvaluatorUtil pricingEvaluatorUtil,
 			AuthService authService) {
 		this.userService = userService;
 		this.jwtUtils = jwtUtils;
 		this.authenticationManager = authenticationManager;
 		this.authService = authService;
+		this.pricingEvaluatorUtil = pricingEvaluatorUtil;
 	}
 
 	@PostMapping("/signin")
@@ -51,8 +58,7 @@ public class AuthController {
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
-
+		String jwt = pricingEvaluatorUtil.generateUserToken();
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
@@ -64,6 +70,18 @@ public class AuthController {
 	public ResponseEntity<Boolean> validateToken(@RequestParam String token) {
 		Boolean isValid = jwtUtils.validateJwtToken(token);
 		return ResponseEntity.ok(isValid);
+	}
+
+	@PostMapping("/refreshToken")
+	public ResponseEntity<Map<String, Object>> refreshToken() {
+		
+		String jwt = pricingEvaluatorUtil.generateUserToken();
+
+		Map<String, Object> response = new HashMap<>();
+
+		response.put("newToken", jwt);
+
+		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/signup")

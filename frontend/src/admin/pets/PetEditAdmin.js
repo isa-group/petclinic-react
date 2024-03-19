@@ -7,6 +7,7 @@ import useFetchData from "../../util/useFetchData";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
 import "../../static/css/admin/adminPage.css";
+import { fetchWithInterceptor } from "../../services/api";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -48,7 +49,7 @@ export default function PetEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetch("/api/v1/pets" + (pet.id ? "/" + pet.id : ""), {
+    fetchWithInterceptor("/api/v1/pets" + (pet.id ? "/" + pet.id : ""), {
       method: pet.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,

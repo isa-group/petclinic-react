@@ -4,18 +4,23 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@simbathesailor/use-what-changed": "^2.0.0",
     "@splidejs/react-splide": "^0.7.12",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^29.5.1",
+    "axios": "^0.25.0",
     "bootstrap": "^5.2.3",
+    "buffer": "^6.0.3",
     "filepond": "^4.30.4",
     "filepond-plugin-file-encode": "^2.1.10",
     "filepond-plugin-image-exif-orientation": "^1.0.11",
     "filepond-plugin-image-preview": "^4.6.11",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",
+    "pricingplans-react": "^2.1.2",
+    "protobufjs": "^6.11.3",
     "react": "^18.2.0",
     "react-big-calendar": "^1.6.8",
     "react-dom": "^18.2.0",
@@ -25,6 +30,7 @@
     "react-router-dom": "^6.11.0",
     "reactstrap": "^9.1.6",
     "swagger-ui-react": "^4.18.3",
+    "typescript": "^4.5.4",
     "web-vitals": "^3.1.1"
   },
   "devDependencies": {
@@ -36,7 +42,7 @@
     "source-map-loader": "^4.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "tsc && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "coverage": "react-scripts test --coverage --watchAll --collectCoverageFrom='!src/{index,reportWebVitals,error-page,App}.{js,jsx}'",

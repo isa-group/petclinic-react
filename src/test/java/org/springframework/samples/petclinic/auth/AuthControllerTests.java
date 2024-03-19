@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.samples.petclinic.configuration.jwt.JwtUtils;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
 import org.springframework.samples.petclinic.owner.OwnerRestController;
 import org.springframework.samples.petclinic.user.UserService;
@@ -29,11 +29,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.github.isagroup.PricingEvaluatorUtil;
+import io.github.isagroup.services.jwt.JwtUtils;
 import petclinic.payload.request.LoginRequest;
 import petclinic.payload.request.SignupRequest;
 
@@ -57,6 +60,9 @@ class AuthControllerTests {
 
 	@MockBean
 	private JwtUtils jwtUtils;
+
+	@MockBean
+	private PricingEvaluatorUtil pricingEvaluatorUtil;
 
 	@MockBean
 	private UserService userService;
@@ -91,8 +97,11 @@ class AuthControllerTests {
 		signupRequest.setTelephone("999999999");
 		signupRequest.setAuthority("OWNER");
 
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("OWNER"));
+
 		userDetails = new UserDetailsImpl(1, loginRequest.getUsername(), loginRequest.getPassword(),
-				List.of(new SimpleGrantedAuthority("OWNER")));
+				authorities);
 
 		token = "JWT TOKEN";
 	}
@@ -101,7 +110,7 @@ class AuthControllerTests {
 	void shouldAuthenticateUser() throws Exception {
 		Authentication auth = Mockito.mock(Authentication.class);
 
-		when(this.jwtUtils.generateJwtToken(any(Authentication.class))).thenReturn(token);
+		when(this.pricingEvaluatorUtil.generateUserToken()).thenReturn(token);
 		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(auth);
 		Mockito.doReturn(userDetails).when(auth).getPrincipal();
 

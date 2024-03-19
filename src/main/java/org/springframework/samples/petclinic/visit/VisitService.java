@@ -11,23 +11,24 @@ import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.configuration.PricingConfiguration;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.plan.PricingPlan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import io.github.isagroup.models.Plan;
+import io.github.isagroup.models.PricingManager;
 
 @Service
 public class VisitService {
 
-	private static final Integer BASIC_LIMIT = 1;
-	private static final Integer GOLD_LIMIT = 3;
-	private static final Integer PLATINUM_LIMIT = 6;
-
 	private final VisitRepository visitRepository;
+	private final PricingConfiguration	pricingConfiguration;
 
 	@Autowired
-	public VisitService(VisitRepository visitRepository) {
+	public VisitService(VisitRepository visitRepository, PricingConfiguration	pricingConfiguration) {
 		this.visitRepository = visitRepository;
+		this.pricingConfiguration = pricingConfiguration;
 	}
 
 	@Transactional(readOnly = true)
@@ -74,8 +75,17 @@ public class VisitService {
 	public boolean underLimit(Visit visit) {
 		Integer visitCount = this.visitRepository.countVisitsByPetInMonth(visit.getPet().getId(),
 				visit.getDatetime().getMonthValue(), visit.getDatetime().getYear());
-				
-		return visitCount < visit.getPet().getOwner().getClinic().getPlan().getMaxVisitsPerMonthAndPet();
+		PricingManager pricingManager = pricingConfiguration.getPricingManager();
+		Plan plan = pricingManager.getPlans().get(visit.getVet().getClinic().getPlan());
+
+		Integer limitValue = (Integer) plan.getUsageLimits().get("maxVisitsPerMonthAndPet").getValue();
+		Integer limitDefaultValue = (Integer) plan.getUsageLimits().get("maxVisitsPerMonthAndPet").getDefaultValue();
+
+		if (limitValue == null){
+			return visitCount < limitDefaultValue;
+		}
+
+		return visitCount < limitValue;
 	}
 
 	public Map<String, Object> getVisitsOwnerStats(int ownerId) {

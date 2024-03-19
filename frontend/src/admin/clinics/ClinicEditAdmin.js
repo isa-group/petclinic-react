@@ -5,6 +5,7 @@ import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
+import { fetchWithInterceptor } from "../../services/api";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -66,7 +67,7 @@ export default function ClinicEditAdmin() {
     clinic.clinicOwner = clinicOwners.filter((clinicOwner) => clinicOwner.id === parseInt(clinic.clinicOwner))[0];
     clinic.plan = plans.filter((plan) => plan.name === clinic.plan.name)[0];
 
-    fetch("/api/v1/clinics" + (clinic.id ? "/" + clinic.id : ""), {
+    fetchWithInterceptor("/api/v1/clinics" + (clinic.id ? "/" + clinic.id : ""), {
       method: clinic.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,
