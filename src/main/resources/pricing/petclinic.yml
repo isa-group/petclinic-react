@@ -79,12 +79,12 @@ plans:
       havePetsDashboard:
         value: false
       haveVetSelection:
-        value: false
+        value: true
       haveOnlineConsultation:
         value: false
     usageLimits:
       maxPets:
-        value: 2
+        value: 3
       maxVisitsPerMonthAndPet:
         value: 1
   GOLD:

@@ -37,7 +37,13 @@ export default function PlanEditAdmin() {
 
   function handleChange(event) {
     const target = event.target;
-    const value = target.value;
+    let value;
+    try{
+      value = parseInt(target.value);
+    } catch (error){
+      value = target.value;
+    }
+
     const name = target.name;
 
     setPlan({ ...plan, [name]: value });
@@ -64,9 +70,7 @@ export default function PlanEditAdmin() {
     })
       .then((response) => response.json())
       .then((json) => {
-        console.log(json.message);
-        console.log(json.message.startsWith("Plan"));
-        if (json.message && !json.message.startsWith("Plan")) {
+        if (json.message) {
           setMessage(json.message);
           setVisible(true);
         } else window.location.href = "/plansAdmin";
