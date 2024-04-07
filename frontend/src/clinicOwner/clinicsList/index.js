@@ -5,7 +5,7 @@ import tokenService from "../../services/token.service";
 import useFetchState from "../../util/useFetchState";
 import getErrorModal from "../../util/getErrorModal";
 import "../../static/css/admin/adminPage.css";
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
@@ -52,7 +52,7 @@ export default function ClinicsList() {
 
                     if(!confirmMessage) return;
 
-                    fetchWithInterceptor(`/api/v1/clinics/${clinic.id}`, {
+                    fetchWithPricingInterceptor(`/api/v1/clinics/${clinic.id}`, {
                       method: "DELETE",
                       headers: {
                         "Content-Type": "application/json",

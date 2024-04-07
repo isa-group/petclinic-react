@@ -5,7 +5,7 @@ import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
@@ -38,7 +38,7 @@ export default function ClinicOwnerEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithInterceptor("/api/v1/clinicOwners" + (clinicOwner.id ? "/" + clinicOwner.id : "" + `?userId=${user.id}`), {
+    fetchWithPricingInterceptor("/api/v1/clinicOwners" + (clinicOwner.id ? "/" + clinicOwner.id : "" + `?userId=${user.id}`), {
       method: clinicOwner.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,

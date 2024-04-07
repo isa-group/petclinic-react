@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import { useLocalState } from '../util/useLocalStorage';
-import { fetchWithInterceptor } from "../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";;
 
 const Dashboard = () => {
     const [jwt,] = useLocalState("jwt", "");
 
     function createPet() {
-        fetchWithInterceptor("/api/v1/pets", {
+        fetchWithPricingInterceptor("/api/v1/pets", {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,

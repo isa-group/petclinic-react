@@ -9,7 +9,7 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchWithInterceptor } from "../../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 export default function OwnerConsultationList() {
   let [consultations, setConsultations] = useState([]);
@@ -116,7 +116,7 @@ export default function OwnerConsultationList() {
 
   async function setUp() {
     const consultations = await (
-      await fetchWithInterceptor("/api/v1/consultations", {
+      await fetchWithPricingInterceptor("/api/v1/consultations", {
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
@@ -128,7 +128,7 @@ export default function OwnerConsultationList() {
     setFiltered(consultations);
 
     const owner = await (
-      await fetchWithInterceptor(`/api/v1/plan`, {
+      await fetchWithPricingInterceptor(`/api/v1/plan`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },

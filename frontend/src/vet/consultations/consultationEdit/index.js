@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
-import { fetchWithInterceptor } from "../../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 class OwnerConsultationEdit extends Component {
 
@@ -26,7 +26,7 @@ class OwnerConsultationEdit extends Component {
 
     async componentDidMount() {
         if (this.id !== "new") {
-            const consultation = await (await fetchWithInterceptor(`/api/v1/consultations/${this.id}`, {
+            const consultation = await (await fetchWithPricingInterceptor(`/api/v1/consultations/${this.id}`, {
                 headers: {
                     "Authorization": `Bearer ${this.jwt}`,
                 },
@@ -49,7 +49,7 @@ class OwnerConsultationEdit extends Component {
         event.preventDefault();
         const { consultation, } = this.state;
 
-        const response = await (await fetchWithInterceptor('/api/v1/consultations' + (consultation.id ? '/' + this.id : ''), {
+        const response = await (await fetchWithPricingInterceptor('/api/v1/consultations' + (consultation.id ? '/' + this.id : ''), {
             method: consultation.id ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,

@@ -7,7 +7,7 @@ import useFetchData from "../../util/useFetchData";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
 import "../../static/css/admin/adminPage.css";
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -44,7 +44,7 @@ export default function UserEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithInterceptor("/api/v1/users" + (user.id ? "/" + user.id : ""), {
+    fetchWithPricingInterceptor("/api/v1/users" + (user.id ? "/" + user.id : ""), {
       method: user.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,

@@ -6,7 +6,7 @@ import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
 import "../../static/css/admin/adminPage.css";
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -37,7 +37,7 @@ export default function SpecialtyEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithInterceptor(
+    fetchWithPricingInterceptor(
       "/api/v1/vets/specialties" + (specialty.id ? "/" + specialty.id : ""),
       {
         method: specialty.id ? "PUT" : "POST",

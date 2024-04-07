@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import { fetchWithInterceptor } from "./api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 function parseJwt (token) {
     return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
@@ -54,7 +54,7 @@ class TokenService {
     updateJWTToken() {
 
         return new Promise((resolve, reject) => {
-            fetchWithInterceptor("/api/v1/auth/refreshToken", {
+            fetchWithPricingInterceptor("/api/v1/auth/refreshToken", {
                 method: 'POST',
                 headers: {
                     "Authorization": `Bearer ${this.getLocalAccessToken()}`,

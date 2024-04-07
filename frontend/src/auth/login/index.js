@@ -6,7 +6,7 @@ import {
 import tokenService from "../../services/token.service";
 import FormGenerator from "../../components/formGenerator/formGenerator";
 import { loginFormInputs } from "./form/loginFormInputs";
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 class Login extends Component {
   constructor(props) {
@@ -33,7 +33,7 @@ class Login extends Component {
 
     const reqBody = values;
 
-    await fetchWithInterceptor("/api/v1/auth/signin", {
+    await fetchWithPricingInterceptor("/api/v1/auth/signin", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(reqBody),

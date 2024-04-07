@@ -8,7 +8,7 @@ import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
 import "../../static/css/admin/adminPage.css";
 import "../../static/css/owner/consultations.css";
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
@@ -63,7 +63,7 @@ export default function ConsultationEditClinicOwner() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithInterceptor(
+    fetchWithPricingInterceptor(
       "/api/v1/consultations" + (consultation.id ? "/" + consultation.id : ""),
       {
         method: consultation.id ? "PUT" : "POST",

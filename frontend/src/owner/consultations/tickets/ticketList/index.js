@@ -14,7 +14,7 @@ import {
 } from "reactstrap";
 import "../../../../static/css/owner/ticketPage.css";
 import { useEffect, useRef, useState } from "react";
-import { fetchWithInterceptor } from "../../../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";;
 
 export default function OwnerConsultationTickets() {
   let [consultation, setConsultation] = useState({
@@ -51,7 +51,7 @@ export default function OwnerConsultationTickets() {
     event.preventDefault();
 
     const response = await (
-      await fetchWithInterceptor(`/api/v1/consultations/${id}/tickets`, {
+      await fetchWithPricingInterceptor(`/api/v1/consultations/${id}/tickets`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -69,7 +69,7 @@ export default function OwnerConsultationTickets() {
   }
 
   async function remove(ticketId) {
-    await fetchWithInterceptor(`/api/v1/consultations/${id}/tickets/${ticketId}`, {
+    await fetchWithPricingInterceptor(`/api/v1/consultations/${id}/tickets/${ticketId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -91,7 +91,7 @@ export default function OwnerConsultationTickets() {
 
   async function setUp() {
     const consultation = await (
-      await fetchWithInterceptor(`/api/v1/consultations/${id}`, {
+      await fetchWithPricingInterceptor(`/api/v1/consultations/${id}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
@@ -101,7 +101,7 @@ export default function OwnerConsultationTickets() {
     else setConsultation(consultation);
     if (!message) {
       const tickets = await (
-        await fetchWithInterceptor(`/api/v1/consultations/${id}/tickets`, {
+        await fetchWithPricingInterceptor(`/api/v1/consultations/${id}/tickets`, {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
@@ -112,7 +112,7 @@ export default function OwnerConsultationTickets() {
     }
     if (!message) {
       const owner = await (
-        await fetchWithInterceptor(`/api/v1/plan`, {
+        await fetchWithPricingInterceptor(`/api/v1/plan`, {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },

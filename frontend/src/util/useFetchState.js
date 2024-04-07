@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchWithInterceptor } from "../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";;
 
 export default function useFetchState(initial, url, jwt, setMessage, setVisible, id = null) {
     const [data, setData] = useState(initial);
@@ -7,7 +7,7 @@ export default function useFetchState(initial, url, jwt, setMessage, setVisible,
         if (url) {
             if (!id || id !== "new") {
                 let ignore = false;
-                fetchWithInterceptor(url, {
+                fetchWithPricingInterceptor(url, {
                     headers: {
                         "Authorization": `Bearer ${jwt}`,
                     },
@@ -25,7 +25,7 @@ export default function useFetchState(initial, url, jwt, setMessage, setVisible,
                         }
                     }).catch((message) => {
                         console.log(message);
-                        setMessage('Failed to fetchWithInterceptor data');
+                        setMessage('Failed to fetchWithPricingInterceptor data');
                         setVisible(true);
                     });
                 return () => {

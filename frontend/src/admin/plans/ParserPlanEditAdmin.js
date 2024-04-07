@@ -5,7 +5,7 @@ import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -48,7 +48,7 @@ export default function ParserPlanEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithInterceptor(`/api/v1/plans/parser/${parserPlan.id}`, {
+    fetchWithPricingInterceptor(`/api/v1/plans/parser/${parserPlan.id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${jwt}`,

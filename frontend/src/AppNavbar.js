@@ -12,8 +12,8 @@ import {
 import { Link } from "react-router-dom";
 import tokenService from "./services/token.service";
 import jwt_decode from "jwt-decode";
-import { Default, ErrorFallback, Feature, On, Loading } from "pricingplans-react";
-import { feature } from "pricingplans-react";
+import { Default, ErrorFallback, Feature, On, Loading } from "pricing4react";
+import { feature } from "pricing4react";
 
 function AppNavbar() {
   const [roles, setRoles] = useState([]);

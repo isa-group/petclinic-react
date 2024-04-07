@@ -5,7 +5,7 @@ import getErrorModal from '../../util/getErrorModal';
 import useFetchState from '../../util/useFetchState';
 import getIdFromUrl from '../../util/getIdFromUrl';
 import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -34,7 +34,7 @@ export default function TicketListAdmin() {
     function handleSubmit(event) {
         event.preventDefault();
 
-        fetchWithInterceptor(`/api/v1/consultations/${id}/tickets`, {
+        fetchWithPricingInterceptor(`/api/v1/consultations/${id}/tickets`, {
             method: 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -62,7 +62,7 @@ export default function TicketListAdmin() {
         const aux = consultation;
         aux.status = "CLOSED"
 
-        fetchWithInterceptor(`/api/v1/consultations/${id}`, {
+        fetchWithPricingInterceptor(`/api/v1/consultations/${id}`, {
             method: 'PUT',
             headers: {
                 "Authorization": `Bearer ${jwt}`,

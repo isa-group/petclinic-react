@@ -11,7 +11,7 @@ import getErrorModal from "../../util/getErrorModal";
 import useFetchData from "../../util/useFetchData";
 import getIdFromUrl from "../../util/getIdFromUrl";
 import useFetchState from "../../util/useFetchState";
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -69,7 +69,7 @@ export default function VetEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithInterceptor("/api/v1/vets" + (vet.id ? "/" + vet.id : ""), {
+    fetchWithPricingInterceptor("/api/v1/vets" + (vet.id ? "/" + vet.id : ""), {
       method: vet.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,

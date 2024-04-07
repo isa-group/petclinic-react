@@ -5,7 +5,7 @@ import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
 import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -52,7 +52,7 @@ export default function OwnerEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithInterceptor("/api/v1/owners" + (owner.id ? "/" + owner.id : ""), {
+    fetchWithPricingInterceptor("/api/v1/owners" + (owner.id ? "/" + owner.id : ""), {
       method: owner.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,

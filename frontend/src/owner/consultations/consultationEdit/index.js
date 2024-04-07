@@ -7,7 +7,7 @@ import tokenService from "../../../services/token.service";
 import FormGenerator from "../../../components/formGenerator/formGenerator";
 import "../../../static/css/owner/consultations.css";
 import getIdFromUrl from "../../../util/getIdFromUrl";
-import { fetchWithInterceptor } from "../../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 export default function OwnerConsultationEdit() {
   let [consultation, setConsultation] = useState({
@@ -52,7 +52,7 @@ export default function OwnerConsultationEdit() {
     consultationRequest["owner"] = owner;
 
     const response = await (
-      await fetchWithInterceptor(
+      await fetchWithPricingInterceptor(
         "/api/v1/consultations" + (consultationRequest.id ? "/" + id : ""),
         {
           method: consultationRequest.id ? "PUT" : "POST",
@@ -72,7 +72,7 @@ export default function OwnerConsultationEdit() {
   async function setUp() {
     if (id !== "new") {
       const consultation = await (
-        await fetchWithInterceptor(`/api/v1/consultations/${id}`, {
+        await fetchWithPricingInterceptor(`/api/v1/consultations/${id}`, {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
@@ -83,7 +83,7 @@ export default function OwnerConsultationEdit() {
     }
     if (!message) {
       const pets = await (
-        await fetchWithInterceptor(`/api/v1/pets?userId=${userId}`, {
+        await fetchWithPricingInterceptor(`/api/v1/pets?userId=${userId}`, {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },

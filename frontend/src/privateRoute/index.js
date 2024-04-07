@@ -1,6 +1,6 @@
 import tokenService from '../services/token.service';
 import Login from '../auth/login';
-import { fetchWithInterceptor } from "../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";;
 import { useState } from 'react';
 
 const PrivateRoute = ({ children }) => {
@@ -9,7 +9,7 @@ const PrivateRoute = ({ children }) => {
     const [isValid, setIsValid] = useState(null);
     const [message, setMessage] = useState(null);
     if (jwt) {
-        fetchWithInterceptor(`/api/v1/auth/validate?token=${jwt}`, {
+        fetchWithPricingInterceptor(`/api/v1/auth/validate?token=${jwt}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',

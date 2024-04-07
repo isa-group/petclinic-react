@@ -7,7 +7,7 @@ import useFetchData from "../../util/useFetchData";
 import getIdFromUrl from "../../util/getIdFromUrl";
 import useFetchState from "../../util/useFetchState";
 import "../../static/css/admin/adminPage.css";
-import { fetchWithInterceptor } from "../../services/api";
+import { fetchWithPricingInterceptor } from "pricing4react";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -49,7 +49,7 @@ export default function VisitEditAdmin() {
     event.preventDefault();
     setVisit({ ...visit, pet: pet });
 
-    fetchWithInterceptor(`/api/v1/pets/${petId}/visits` + (visit.id ? "/" + visit.id : ""), {
+    fetchWithPricingInterceptor(`/api/v1/pets/${petId}/visits` + (visit.id ? "/" + visit.id : ""), {
       method: visit.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,
