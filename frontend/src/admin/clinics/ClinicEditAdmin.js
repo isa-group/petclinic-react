@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 import { Form, Input, Label } from "reactstrap";
 import tokenService from "../../services/token.service";
 import getErrorModal from "../../util/getErrorModal";
-import useFetchState from "../../util/useFetchState";
 import getIdFromUrl from "../../util/getIdFromUrl";
-import { fetchWithPricingInterceptor } from "pricing4react";
+import useFetchState from "../../util/useFetchState";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -15,10 +14,6 @@ export default function ClinicEditAdmin() {
     name: "",
     address: "",
     telephone: "",
-    plan: {
-      id: "",
-      name: "",
-    }
   };
   const id = getIdFromUrl(2);
   const [message, setMessage] = useState(null);
@@ -40,34 +35,21 @@ export default function ClinicEditAdmin() {
     setVisible
   );
 
-  const [plans, setPlans] = useFetchState(
-    [],
-    `/api/v1/plans`,
-    jwt,
-    setMessage,
-    setVisible
-  );
-
   function handleChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    if (name === "plan"){
-      setClinic({ ...clinic, [name]: {
-        name: value
-      } });
-    }else{
-      setClinic({ ...clinic, [name]: value });
-    }
+    setClinic({ ...clinic, [name]: value });
   }
 
   function handleSubmit(event) {
     event.preventDefault();
 
     clinic.clinicOwner = clinicOwners.filter((clinicOwner) => clinicOwner.id === parseInt(clinic.clinicOwner))[0];
-    clinic.plan = plans.filter((plan) => plan.name === clinic.plan.name)[0];
 
-    fetchWithPricingInterceptor("/api/v1/clinics" + (clinic.id ? "/" + clinic.id : ""), {
+    console.log(clinic);
+
+    fetch("/api/v1/clinics" + (clinic.id ? "/" + clinic.id : ""), {
       method: clinic.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -145,16 +127,14 @@ export default function ClinicEditAdmin() {
               name="plan"
               required
               type="select"
-              value={clinic.plan.name || ""}
+              value={clinic.plan || ""}
               onChange={handleChange}
               className="custom-input"
             >
               <option value="">None</option>
-              {plans.map((plan) => {
-                return(
-                    <option value={plan.name}>{plan.name}</option>
-                );
-              })}
+              <option value="BASIC">BASIC</option>
+              <option value="GOLD">GOLD</option>
+              <option value="PLATINUM">PLATINUM</option>
               
             </Input>
           </div>

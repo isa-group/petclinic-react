@@ -11,24 +11,23 @@ import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.configuration.PricingConfiguration;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.isagroup.models.Plan;
-import io.github.isagroup.models.PricingManager;
-
 @Service
 public class VisitService {
 
+	private static final Integer BASIC_LIMIT = 1;
+	private static final Integer GOLD_LIMIT = 3;
+	private static final Integer PLATINUM_LIMIT = 6;
+
 	private final VisitRepository visitRepository;
-	private final PricingConfiguration	pricingConfiguration;
 
 	@Autowired
-	public VisitService(VisitRepository visitRepository, PricingConfiguration	pricingConfiguration) {
+	public VisitService(VisitRepository visitRepository) {
 		this.visitRepository = visitRepository;
-		this.pricingConfiguration = pricingConfiguration;
 	}
 
 	@Transactional(readOnly = true)
@@ -75,17 +74,23 @@ public class VisitService {
 	public boolean underLimit(Visit visit) {
 		Integer visitCount = this.visitRepository.countVisitsByPetInMonth(visit.getPet().getId(),
 				visit.getDatetime().getMonthValue(), visit.getDatetime().getYear());
-		PricingManager pricingManager = pricingConfiguration.getPricingManager();
-		Plan plan = pricingManager.getPlans().get(visit.getVet().getClinic().getPlan());
+		PricingPlan plan = visit.getPet().getOwner().getClinic().getPlan();
+		switch (plan) {
+		case PLATINUM:
+			if (visitCount < PLATINUM_LIMIT)
+				return true;
+			break;
+		case GOLD:
+			if (visitCount < GOLD_LIMIT)
+				return true;
+			break;
+		default:
+			if (visitCount < BASIC_LIMIT)
+				return true;
+			break;
 
-		Integer limitValue = (Integer) plan.getUsageLimits().get("maxVisitsPerMonthAndPet").getValue();
-		Integer limitDefaultValue = (Integer) plan.getUsageLimits().get("maxVisitsPerMonthAndPet").getDefaultValue();
-
-		if (limitValue == null){
-			return visitCount < limitDefaultValue;
 		}
-
-		return visitCount < limitValue;
+		return false;
 	}
 
 	public Map<String, Object> getVisitsOwnerStats(int ownerId) {

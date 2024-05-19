@@ -15,27 +15,21 @@
  */
 package org.springframework.samples.petclinic.owner;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotEmpty;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.samples.petclinic.clinic.Clinic;
 import org.springframework.samples.petclinic.model.Person;
-import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.user.User;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -68,17 +62,12 @@ public class Owner extends Person {
 	private String telephone;
 
 	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST })
-	@JoinColumn(name = "user", referencedColumnName = "id")
+	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
 
 	@ManyToOne
 	@JoinColumn(name = "clinic", referencedColumnName = "id")
 	private Clinic clinic;
-
-	@OneToMany(mappedBy = "owner", orphanRemoval = true)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JsonIgnore
-	private Set<Pet> pets;
 
 }

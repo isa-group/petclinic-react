@@ -23,6 +23,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.pet.Pet;
 
 /**
@@ -53,7 +54,7 @@ public interface OwnerRepository extends CrudRepository<Owner, Integer> {
 	// STATS
 
 	@Query("SELECT COUNT(o) FROM Owner o WHERE o.clinic.plan = :plan")
-	public Integer countByPlan(String plan);
+	public Integer countByPlan(PricingPlan plan);
 
 	@Query("SELECT COUNT(o) FROM Owner o")
 	public Integer countAll();

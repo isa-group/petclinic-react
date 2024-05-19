@@ -2,13 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Form, Input, Label } from "reactstrap";
 import tokenService from "../../services/token.service";
-import getErrorModal from "../../util/getErrorModal";
-import useFetchData from "../../util/useFetchData";
-import useFetchState from "../../util/useFetchState";
-import getIdFromUrl from "../../util/getIdFromUrl";
 import "../../static/css/admin/adminPage.css";
 import "../../static/css/owner/consultations.css";
-import { fetchWithPricingInterceptor } from "pricing4react";
+import getErrorModal from "../../util/getErrorModal";
+import getIdFromUrl from "../../util/getIdFromUrl";
+import useFetchData from "../../util/useFetchData";
+import useFetchState from "../../util/useFetchState";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -56,7 +55,7 @@ export default function ConsultationEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithPricingInterceptor(
+    fetch(
       "/api/v1/consultations" + (consultation.id ? "/" + consultation.id : ""),
       {
         method: consultation.id ? "PUT" : "POST",

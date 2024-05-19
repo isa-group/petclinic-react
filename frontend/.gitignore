@@ -21,3 +21,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# sonar
+.scannerwork
+sonarqube/extensions
+sonarqube/data
+sonarqube/logs

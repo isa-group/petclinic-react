@@ -10,7 +10,6 @@ import {
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import tokenService from "../../../services/token.service";
-import { fetchWithPricingInterceptor } from "pricing4react";
 
 export default function VetConsultationList() {
   let [consultations, setConsultations] = useState([]);
@@ -97,7 +96,7 @@ export default function VetConsultationList() {
 
   async function setUp() {
     const consultations = await (
-      await fetchWithPricingInterceptor(`/api/v1/consultations?userId=${user.id}`, {
+      await fetch(`/api/v1/consultations?userId=${user.id}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",

@@ -27,7 +27,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.clinic.Clinic;
-import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
+import org.springframework.samples.petclinic.clinicowner.ClinicOwner;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
@@ -122,7 +123,7 @@ class VisitControllerTests {
 		clinic.setId(TEST_CLINIC_ID);
 		clinic.setName("Clinic Test");
 		clinic.setAddress("Test Address");
-		clinic.setPlan("BASIC");
+		clinic.setPlan(PricingPlan.BASIC);
 		clinic.setTelephone("123456789");
 		clinic.setClinicOwner(clinicOwner);
 
@@ -636,7 +637,7 @@ class VisitControllerTests {
 	@WithMockUser(username = "owner", authorities = "OWNER")
 	void shouldReturnOwnerStats() throws Exception {
 		logged.setId(TEST_USER_ID);
-		clinic.setPlan("PLATINUM");
+		clinic.setPlan(PricingPlan.PLATINUM);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.getVisitsOwnerStats(george.getId())).thenReturn(new HashMap<>());

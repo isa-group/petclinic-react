@@ -53,11 +53,6 @@ public class ClinicService {
 		return clinicRepository.findVetsOfUserClinics(userId);
 	}
 
-	@Transactional(readOnly = true)
-	public List<Clinic> findClinicsOfPlan(String plan) throws DataAccessException {
-		return clinicRepository.findClinicsOfPlan(plan);
-	}
-
     @Transactional
 	public Clinic save(Clinic clinic) throws DataAccessException {
 		clinicRepository.save(clinic);

@@ -1,5 +1,0 @@
-syntax = "proto3";
-option java_outer_classname = "FeatureRequestOuterProto";
-message FeatureRequest {
-    repeated string features = 1;
-}

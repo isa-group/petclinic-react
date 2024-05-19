@@ -1,39 +1,21 @@
-import React, { Component } from "react";
-import "../../static/css/auth/authButton.css";
-import {
-  Alert,
-} from "reactstrap";
-import tokenService from "../../services/token.service";
+import React, { useState } from "react";
+import { Alert } from "reactstrap";
 import FormGenerator from "../../components/formGenerator/formGenerator";
+import tokenService from "../../services/token.service";
+import "../../static/css/auth/authButton.css";
 import { loginFormInputs } from "./form/loginFormInputs";
-import { fetchWithPricingInterceptor } from "pricing4react";
+import {fetchWithPricingInterceptor} from "pricing4react";
 
-class Login extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      navigation: props.navigation ? props.navigation : false,
-      children: props.children ? props.children : null,
-    };
-    this.loginFormRef = React.createRef();
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+export default function Login() {
+  const [message, setMessage] = useState(null)
+  const loginFormRef = React.createRef();      
+  
 
-  handleChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-    this.setState({
-      [name]: value,
-    });
-  }
-
-  async handleSubmit({ values }) {
+  async function handleSubmit({ values }) {
 
     const reqBody = values;
-
-    await fetchWithPricingInterceptor("/api/v1/auth/signin", {
+    setMessage(null);
+    await fetch("/api/v1/auth/signin", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(reqBody),
@@ -45,20 +27,19 @@ class Login extends Component {
       .then(function (data) {
         tokenService.setUser(data);
         tokenService.updateLocalAccessToken(data.token);
+        localStorage.setItem("pricingToken", JSON.stringify(data.pricingToken));
+        window.location.href = "/home";
       })
-      .catch((message) => {
-        console.error(message);
-      });
-    if (this.state.navigation === true) {
-      return window.location.reload();
-    } else window.location.href = "/";
+      .catch((error) => {         
+        setMessage(error);
+      });            
   }
 
-  render() {
+  
     return (
       <div className="auth-page-container">
-        {this.state.message ? (
-          <Alert color="primary">{this.state.message}</Alert>
+        {message ? (
+          <Alert color="primary">{message}</Alert>
         ) : (
           <></>
         )}
@@ -67,9 +48,9 @@ class Login extends Component {
 
         <div className="auth-form-container">
           <FormGenerator
-            ref={this.loginFormRef}
+            ref={loginFormRef}
             inputs={loginFormInputs}
-            onSubmit={this.handleSubmit}
+            onSubmit={handleSubmit}
             numberOfColumns={1}
             listenEnterKey
             buttonText="Login"
@@ -77,8 +58,5 @@ class Login extends Component {
           />
         </div>
       </div>
-    );
-  }
+    );  
 }
-
-export default Login;

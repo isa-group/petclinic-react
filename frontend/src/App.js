@@ -5,6 +5,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import AppNavbar from "./AppNavbar";
 import Home from "./home";
 import PrivateRoute from "./privateRoute";
+import PricingPlan from "./owner/plan";
 import Register from "./auth/register";
 import Login from "./auth/login";
 import Logout from "./auth/logout";
@@ -46,10 +47,8 @@ import ConsultationListClinicOwner from "./clinicOwner/consultations/Consultatio
 import ConsultationEditClinicOwner from "./clinicOwner/consultations/ConsultationEditClinicOwner";
 import VetListClinicOwner from "./clinicOwner/vets/VetListClinicOwner";
 import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
-import PlanListAdmin from "./admin/plans/PlanListAdmin";
-import PlanEditAdmin from "./admin/plans/PlanEditAdmin";
-import {useGenericFeature, feature} from "pricing4react";
-import ParserPlanEditAdmin from "admin/plans/ParserPlanEditAdmin";
+import HomeLogged from "./public/homeLogged";
+import { feature, useGenericFeature } from "pricing4react";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -81,16 +80,16 @@ function App() {
   const ownersDashboard = useGenericFeature({
     on: [
       {
-        expression: feature("havePetsDashboard"),
-        on: <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} />,
+        expression: feature("haveCalendar"),
+        on: <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} />
       },
     ]
   });
 
-  const onlineConsultations = useGenericFeature({
+  const ownerOnlineConsultations = useGenericFeature({
     on: [
       {
-        expression: feature("haveOnlineConsultation"),
+        expression: feature("consultations"),
         on: (
           <>
             <Route path="/consultations" exact={true} element={<PrivateRoute><OwnerConsultationList /></PrivateRoute>} />
@@ -125,19 +124,17 @@ function App() {
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListAdmin /></PrivateRoute>} />
           <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><ConsultationEditAdmin /></PrivateRoute>} />
           <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketListAdmin /></PrivateRoute>} />
-          <Route path="/plansAdmin" exact={true} element={<PrivateRoute><PlanListAdmin /></PrivateRoute>} />
-          <Route path="/plansAdmin/:id" exact={true} element={<PrivateRoute><PlanEditAdmin /></PrivateRoute>} />
-          <Route path="/parserPlansAdmin/1" exact={true} element={<PrivateRoute><ParserPlanEditAdmin /></PrivateRoute>} />
         </>)
     }
     if (role === "OWNER") {
       ownerRoutes = (
-        <> 
+        <>
           {ownersDashboard}
+          <Route path="/plan" exact={true} element={<PrivateRoute><PricingPlan /></PrivateRoute>} />
           <Route path="/myPets" exact={true} element={<PrivateRoute><OwnerPetList /></PrivateRoute>} />
           <Route path="/myPets/:id" exact={true} element={<PrivateRoute><OwnerPetEdit /></PrivateRoute>} />
           <Route path="/myPets/:id/visits/:id" exact={true} element={<PrivateRoute><OwnerVisitEdit /></PrivateRoute>} />
-          {onlineConsultations}
+          {ownerOnlineConsultations}
         </>)
     }
     if (role === "VET") {
@@ -165,7 +162,7 @@ function App() {
   })
   if (!jwt) {
     publicRoutes = (
-      <>
+      <>        
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
       </>
@@ -173,7 +170,7 @@ function App() {
   } else {
     userRoutes = (
       <>
-        {/* <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} /> */}
+        {/* <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} /> */}        
         <Route path="/logout" element={<Logout />} />
         <Route path="/login" element={<Login />} />
       </>
@@ -186,8 +183,9 @@ function App() {
         <AppNavbar />
         <Routes>
           <Route path="/" exact={true} element={<Home />} />
+          <Route path="/home" exact={true} element={<HomeLogged />} />
           <Route path="/plans" element={<PlanList />} />
-          {/* <Route path="/docs" element={<SwaggerDocs />} /> */}
+          <Route path="/docs" element={<SwaggerDocs />} />
           {publicRoutes}
           {userRoutes}
           {adminRoutes}

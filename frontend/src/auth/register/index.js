@@ -6,7 +6,6 @@ import { registerFormOwnerInputs } from "./form/registerFormOwnerInputs";
 import { registerFormVetInputs } from "./form/registerFormVetInputs";
 import { registerFormClinicOwnerInputs } from "./form/registerFormClinicOwnerInputs";
 import { useEffect, useRef, useState } from "react";
-import { fetchWithPricingInterceptor } from "pricing4react";
 
 export default function Register() {
   let [type, setType] = useState(null);
@@ -63,7 +62,7 @@ export default function Register() {
               else {
                 tokenService.setUser(data);
                 tokenService.updateLocalAccessToken(data.token);
-                window.location.href = "/";
+                window.location.href = "/dashboard";
               }
             })
             .catch((message) => {
@@ -79,7 +78,7 @@ export default function Register() {
   useEffect(() => {
     if (type === "Owner" || type === "Vet") {
       if (registerFormOwnerInputs[5].values.length === 1){
-        fetchWithPricingInterceptor("/api/v1/clinics")
+        fetch("/api/v1/clinics")
         .then(function (response) {
           if (response.status === 200) {
             return response.json();

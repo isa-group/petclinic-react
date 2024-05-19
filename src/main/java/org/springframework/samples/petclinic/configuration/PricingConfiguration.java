@@ -3,40 +3,39 @@ package org.springframework.samples.petclinic.configuration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.security.auth.message.AuthException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
 import org.springframework.samples.petclinic.user.UserService;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import io.github.isagroup.PricingContext;
+import jakarta.security.auth.message.AuthException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 
+@Slf4j
 @Component
-public class PricingConfiguration extends PricingContext {
-
-    private static final Logger logger = Logger.getLogger(PricingConfiguration.class.getName());
+public class PricingConfiguration extends PricingContext{
 
     @Autowired
-    private UserService userService;
+    UserService userService;
 
     @Value("${petclinic.app.jwtSecret}")
     private String jwtSecret;
 
     @Override
-    public String getJwtSecret(){
-        return jwtSecret;
+    public String getConfigFilePath() {
+        return "pricing/pricing.yaml";
     }
 
     @Override
-    public String getConfigFilePath(){
-        return "pricing/petclinic.yml";
+    public String getJwtSecret() {
+        return jwtSecret;
     }
 
     @Override
@@ -51,26 +50,11 @@ public class PricingConfiguration extends PricingContext {
     }
 
     @Override
-    public Object getUserAuthorities() {
-        Authentication userAuth = SecurityContextHolder.getContext().getAuthentication();
-
-        Object userAuthorities = new HashMap<>();
-
-        if (!(userAuth.getPrincipal() instanceof String)) {
-            UserDetailsImpl userDetails = (UserDetailsImpl) userAuth.getPrincipal();
-            userAuthorities = userDetails.getAuthorities().stream().map(auth -> auth.getAuthority())
-                    .collect(Collectors.toList());
-        }
-
-        return userAuthorities;
-    }
-
-    @Override
     public Map<String, Object> getUserContext() {
         try {
             return userService.findUserContext();
         } catch (AuthException e) {
-            logger.info("Anonimous user");
+            log.info("Anonimous user");
             return new HashMap<>();
         }
     }
@@ -81,7 +65,7 @@ public class PricingConfiguration extends PricingContext {
             String userPlan = userService.findUserPlan();
             return userPlan;
         } catch (AuthException e) {
-            logger.info("Anonimous user");
+            log.info("Anonimous user");
             return "BASIC";
         }
     }

@@ -5,8 +5,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../../static/css/owner/dashboard.css";
 import { useState, useEffect } from "react";
-import { Feature, On, feature } from "pricing4react";
-import { fetchWithPricingInterceptor } from "pricing4react";
+import { Feature, On, feature, fetchWithPricingInterceptor} from "pricing4react";
 
 require("moment/locale/es.js");
 
@@ -52,7 +51,7 @@ export default function OwnerDashboard() {
     }
 
     const owner = await (
-      await fetchWithPricingInterceptor(`/api/v1/plan`, {
+      await fetch(`/api/v1/plan`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
@@ -73,7 +72,7 @@ export default function OwnerDashboard() {
       <div className="owner-dashboard-page-container">
         <h1 className="text-center dashboard-title">Dashboard</h1>
         <Feature>
-          <On expression={feature("haveCalendar")}>
+          <On expression={feature('haveCalendar')}>
             <div style={{ height: `${600}px` }} className="calendar-container">
               <Calendar
                 localizer={localizer}
@@ -92,7 +91,7 @@ export default function OwnerDashboard() {
               />
             </div>
           </On>
-        </Feature>
+          </Feature>
       </div>
       <Modal
         isOpen={modalShow}

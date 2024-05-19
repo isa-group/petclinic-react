@@ -1,0 +1,19 @@
+runtime: java17
+instance_class: F2
+handlers:
+# Serve all API calls to Spring
+- url: /api/.*
+  script: auto
+# Serve calls to Swagger-UI to Spring too
+- url: /v3/api-docs.*
+  script: auto
+- url: /swagger-ui.*
+  script: auto
+# Serve all static files with url ending with a file extension
+- url: /(.*\..+)$
+  static_files: frontend/build/\1
+  upload: frontend/build/(.*\..+)$
+# Catch all handler to index.html
+- url: /.*
+  static_files: frontend/build/index.html
+  upload: frontend/build/index.html

@@ -2,13 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Form, Input, Label } from "reactstrap";
 import tokenService from "../../services/token.service";
-import getErrorModal from "../../util/getErrorModal";
-import useFetchData from "../../util/useFetchData";
-import useFetchState from "../../util/useFetchState";
-import getIdFromUrl from "../../util/getIdFromUrl";
 import "../../static/css/admin/adminPage.css";
 import "../../static/css/owner/consultations.css";
-import { fetchWithPricingInterceptor } from "pricing4react";
+import getErrorModal from "../../util/getErrorModal";
+import getIdFromUrl from "../../util/getIdFromUrl";
+import useFetchData from "../../util/useFetchData";
+import useFetchState from "../../util/useFetchState";
 
 const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
@@ -25,7 +24,7 @@ export default function ConsultationEditClinicOwner() {
   const [message, setMessage] = useState(null);
   const [visible, setVisible] = useState(false);
   const [consultation, setConsultation] = useFetchState(
-    emptyItem,
+    emptyItem, 
     `/api/v1/consultations/${id}`,
     jwt,
     setMessage,
@@ -63,7 +62,7 @@ export default function ConsultationEditClinicOwner() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithPricingInterceptor(
+    fetch(
       "/api/v1/consultations" + (consultation.id ? "/" + consultation.id : ""),
       {
         method: consultation.id ? "PUT" : "POST",

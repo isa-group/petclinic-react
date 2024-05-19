@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.configuration.services;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -20,10 +19,6 @@ public class UserDetailsImpl implements UserDetails {
 
 	private String username;
 
-	// private String email;
-
-//	private PricingPlan plan;
-
 	@JsonIgnore
 	private String password;
 
@@ -33,25 +28,15 @@ public class UserDetailsImpl implements UserDetails {
 			Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.username = username;
-//		this.plan = plan;
-		// this.email = email;
 		this.password = password;
 		this.authorities = authorities;
 	}
 
 	public static UserDetailsImpl build(User user) {
-//		List<GrantedAuthority> authorities = user.getRoles().stream()
-//				.map(role -> new SimpleGrantedAuthority(role.getName().name()))
-//				.collect(Collectors.toList());
-
-		List<GrantedAuthority> authorities = new ArrayList<>();
-
-		authorities.add(new SimpleGrantedAuthority(user.getAuthority().getAuthority()));
+		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getAuthority().getAuthority()));
 
 		return new UserDetailsImpl(user.getId(), user.getUsername(),
-				// user.getEmail(),
 				user.getPassword(),
-//				user.getPlan(),
 				authorities);
 	}
 
@@ -60,9 +45,6 @@ public class UserDetailsImpl implements UserDetails {
 		return authorities;
 	}
 
-//	public String getEmail() {
-//		return email;
-//	}
 
 	public Integer getId() {
 		return id;

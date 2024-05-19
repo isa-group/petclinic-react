@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button, ButtonGroup, Table } from "reactstrap";
 import tokenService from "../../services/token.service";
 import useFetchState from "../../util/useFetchState";
 import getErrorModal from "../../util/getErrorModal";
 import "../../static/css/admin/adminPage.css";
-import { fetchWithPricingInterceptor } from "pricing4react";
+import { useNavigate } from "react-router-dom";
 
 const user = tokenService.getUser();
 const jwt = tokenService.getLocalAccessToken();
@@ -31,7 +31,7 @@ export default function ClinicsList() {
             <td className="text-center">{clinic.name}</td>
             <td className="text-center">{clinic.address}</td>
             <td className="text-center">{clinic.telephone}</td>
-            <td className="text-center">{clinic.plan.name}</td>
+            <td className="text-center">{clinic.plan}</td>
             <td className="text-center">
               <ButtonGroup>
                 <Button
@@ -52,7 +52,7 @@ export default function ClinicsList() {
 
                     if(!confirmMessage) return;
 
-                    fetchWithPricingInterceptor(`/api/v1/clinics/${clinic.id}`, {
+                    fetch(`/api/v1/clinics/${clinic.id}`, {
                       method: "DELETE",
                       headers: {
                         "Content-Type": "application/json",

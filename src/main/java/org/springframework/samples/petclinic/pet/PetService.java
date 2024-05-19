@@ -23,27 +23,25 @@ import java.util.Map;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.configuration.PricingConfiguration;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.isagroup.annotations.PricingPlanAware;
-import io.github.isagroup.models.Plan;
-import io.github.isagroup.models.PricingManager;
-
 @Service
 public class PetService {
 
+	private final Integer BASIC_LIMIT = 2;
+	private final Integer GOLD_LIMIT = 4;
+	private final Integer PLATINUM_LIMIT = 7;
+
 	private PetRepository petRepository;
-	private PricingConfiguration pricingConfiguration;
 
 	@Autowired
-	public PetService(PetRepository petRepository, PricingConfiguration pricingConfiguration) {
+	public PetService(PetRepository petRepository) {
 		this.petRepository = petRepository;
-		this.pricingConfiguration = pricingConfiguration;
 	}
 
 	@Transactional(readOnly = true)
@@ -77,7 +75,6 @@ public class PetService {
 		return petRepository.findAllPetsByUserId(id);
 	}
 
-	@PricingPlanAware(featureName = "pets")
 	@Transactional(rollbackFor = DuplicatedPetNameException.class)
 	public Pet savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
 		Pet otherPet = getPetWithNameAndIdDifferent(pet);
@@ -116,18 +113,22 @@ public class PetService {
 
 	public boolean underLimit(Owner owner) {
 		Integer petCount = this.petRepository.countPetsByOwner(owner.getId());
-		PricingManager pricingManager = pricingConfiguration.getPricingManager();
-		Plan plan = pricingManager.getPlans().get(owner.getClinic().getPlan());
-
-		Integer limitValue = (Integer) plan.getUsageLimits().get("maxPets").getValue();
-		Integer limitDefaultValue = (Integer) plan.getUsageLimits().get("maxPets").getDefaultValue();
-
-		if (limitValue == null){
-			return petCount < limitDefaultValue;
+		PricingPlan plan = owner.getClinic().getPlan();
+		switch (plan) {
+		case PLATINUM:
+			if (petCount < PLATINUM_LIMIT)
+				return true;
+			break;
+		case GOLD:
+			if (petCount < GOLD_LIMIT)
+				return true;
+			break;
+		default:
+			if (petCount < BASIC_LIMIT)
+				return true;
+			break;
 		}
-
-		return petCount < limitValue;
-
+		return false;
 	}
 
 	public Map<String, Object> getPetsStats() {
