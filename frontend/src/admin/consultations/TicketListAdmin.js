@@ -1,11 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
-import tokenService from '../../services/token.service';
+import { useEffect, useRef, useState } from 'react';
 import ticketService from '../../services/ticket.service';
-import getErrorModal from '../../util/getErrorModal';
-import useFetchState from '../../util/useFetchState';
-import getIdFromUrl from '../../util/getIdFromUrl';
+import tokenService from '../../services/token.service';
 import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
-import { fetchWithInterceptor } from "../../services/api";
+import getErrorModal from '../../util/getErrorModal';
+import getIdFromUrl from '../../util/getIdFromUrl';
+import useFetchState from '../../util/useFetchState';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -34,7 +33,7 @@ export default function TicketListAdmin() {
     function handleSubmit(event) {
         event.preventDefault();
 
-        fetchWithInterceptor(`/api/v1/consultations/${id}/tickets`, {
+        fetch(`/api/v1/consultations/${id}/tickets`, {
             method: 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -62,7 +61,7 @@ export default function TicketListAdmin() {
         const aux = consultation;
         aux.status = "CLOSED"
 
-        fetchWithInterceptor(`/api/v1/consultations/${id}`, {
+        fetch(`/api/v1/consultations/${id}`, {
             method: 'PUT',
             headers: {
                 "Authorization": `Bearer ${jwt}`,

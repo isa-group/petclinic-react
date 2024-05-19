@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.github.isagroup.annotations.PricingPlanAware;
 
 @Service
 public class ConsultationService {
@@ -59,7 +59,6 @@ public class ConsultationService {
 		return this.consultationRepository.findAllByClinicId(clinicId);
 	}
 
-	@PricingPlanAware(featureName = "haveOnlineConsultation")
 	@Transactional
 	public Consultation saveConsultation(Consultation consultation) throws DataAccessException {
 		consultationRepository.save(consultation);
@@ -118,17 +117,20 @@ public class ConsultationService {
 			throw new AccessDeniedException("This consultation is closed!");
 	}
 
-	@PricingPlanAware(featureName = "haveOnlineConsultation")
 	@Transactional
 	public Ticket updateOwnerTicket(Ticket ticket, Integer targetId, Owner owner) {
-		return updateTicket(ticket, targetId);
-		
+		if (owner.getClinic().getPlan().equals(PricingPlan.PLATINUM)) {
+			return updateTicket(ticket, targetId);
+		} else
+			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getClinic().getPlan());
 	}
 
-	@PricingPlanAware(featureName = "haveOnlineConsultation")
 	@Transactional
 	public void deleteOwnerTicket(Ticket ticket, Owner owner) {
-		deleteTicket(ticket.getId());
+		if (owner.getClinic().getPlan().equals(PricingPlan.PLATINUM)) {
+			deleteTicket(ticket.getId());
+		} else
+			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getClinic().getPlan());
 	}
 
 	@Transactional

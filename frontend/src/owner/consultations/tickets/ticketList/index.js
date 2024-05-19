@@ -14,7 +14,6 @@ import {
 } from "reactstrap";
 import "../../../../static/css/owner/ticketPage.css";
 import { useEffect, useRef, useState } from "react";
-import { fetchWithInterceptor } from "../../../../services/api";
 
 export default function OwnerConsultationTickets() {
   let [consultation, setConsultation] = useState({
@@ -51,7 +50,7 @@ export default function OwnerConsultationTickets() {
     event.preventDefault();
 
     const response = await (
-      await fetchWithInterceptor(`/api/v1/consultations/${id}/tickets`, {
+      await fetch(`/api/v1/consultations/${id}/tickets`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -69,7 +68,7 @@ export default function OwnerConsultationTickets() {
   }
 
   async function remove(ticketId) {
-    await fetchWithInterceptor(`/api/v1/consultations/${id}/tickets/${ticketId}`, {
+    await fetch(`/api/v1/consultations/${id}/tickets/${ticketId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -91,7 +90,7 @@ export default function OwnerConsultationTickets() {
 
   async function setUp() {
     const consultation = await (
-      await fetchWithInterceptor(`/api/v1/consultations/${id}`, {
+      await fetch(`/api/v1/consultations/${id}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
@@ -101,7 +100,7 @@ export default function OwnerConsultationTickets() {
     else setConsultation(consultation);
     if (!message) {
       const tickets = await (
-        await fetchWithInterceptor(`/api/v1/consultations/${id}/tickets`, {
+        await fetch(`/api/v1/consultations/${id}/tickets`, {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
@@ -112,7 +111,7 @@ export default function OwnerConsultationTickets() {
     }
     if (!message) {
       const owner = await (
-        await fetchWithInterceptor(`/api/v1/plan`, {
+        await fetch(`/api/v1/plan`, {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
@@ -132,7 +131,7 @@ export default function OwnerConsultationTickets() {
     return tickets.map((t, index) => {
       const buttons =
         index === length - 1 &&
-        plan.haveOnlineConsultations &&
+        plan === "PLATINUM" &&
         t.user.authority.authority === "OWNER" ? (
           <ButtonGroup>
             <Button
@@ -183,7 +182,7 @@ export default function OwnerConsultationTickets() {
   }
 
   function getTicketInput(newTicket, status, plan) {
-    if (status !== "CLOSED" && plan.haveOnlineConsultations)
+    if (status !== "CLOSED" && plan === "PLATINUM")
       return (
         <div className="ticket-input-div">
           <Form onSubmit={handleSubmit}>

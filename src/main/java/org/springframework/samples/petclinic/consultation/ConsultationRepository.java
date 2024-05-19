@@ -25,7 +25,7 @@ public interface ConsultationRepository extends CrudRepository<Consultation, Int
 	@Query("SELECT COUNT(c) FROM Consultation c")
 	public Integer countAll();
 
-	@Query("SELECT COUNT(o) FROM Owner o WHERE o.clinic.plan.name = 'PLATINUM'")
+	@Query("SELECT COUNT(o) FROM Owner o WHERE o.clinic.plan = 'PLATINUM'")
 	public Integer countAllPlatinums();
 
 	@Query("SELECT COUNT(o) FROM Owner o")

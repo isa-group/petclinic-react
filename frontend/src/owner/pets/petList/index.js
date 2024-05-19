@@ -6,8 +6,8 @@ import tokenService from "../../../services/token.service";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import moment from "moment";
 import { useState, useEffect } from "react";
-import { Feature, On, feature } from "pricingplans-react";
-import { fetchWithInterceptor } from "../../../services/api";
+
+import { On, Feature, feature, fetchWithPricingInterceptor } from "pricing4react";
 
 export default function OwnerPetList() {
   let [pets, setPets] = useState([]);
@@ -18,7 +18,7 @@ export default function OwnerPetList() {
   const jwt = tokenService.getLocalAccessToken();
 
   function removePet(id) {
-    fetchWithInterceptor(`/api/v1/pets/${id}`, {
+    fetchWithPricingInterceptor(`/api/v1/pets/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -41,7 +41,7 @@ export default function OwnerPetList() {
 
   async function removeVisit(petId, visitId) {
     let status = "";
-    await fetchWithInterceptor(`/api/v1/pets/${petId}/visits/${visitId}`, {
+    await fetch(`/api/v1/pets/${petId}/visits/${visitId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -77,9 +77,9 @@ export default function OwnerPetList() {
 
   async function setUp() {
     let pets = await (
-      await fetchWithInterceptor(`/api/v1/pets?userId=${user.id}`, {
+      await fetchWithPricingInterceptor(`/api/v1/pets?userId=${user.id}`, {
         headers: {
-          Authorization: `Bearer ${jwt}`,
+          "Authorization": `Bearer ${jwt}`,
           "Content-Type": "application/json",
         },
       })
@@ -89,7 +89,7 @@ export default function OwnerPetList() {
       for (let pet of pets) {
         let index = pets.findIndex((obj) => obj.id === pet.id);
         const visits = await (
-          await fetchWithInterceptor(`/api/v1/pets/${pet.id}/visits`, {
+          await fetch(`/api/v1/pets/${pet.id}/visits`, {
             headers: {
               Authorization: `Bearer ${jwt}`,
               "Content-Type": "application/json",
@@ -113,8 +113,8 @@ export default function OwnerPetList() {
       <div className="pet-list-page-container">
         <div className="title-and-add">
           <h1 className="pet-list-title">Pets</h1>
-          <Feature>
-            <On expression={feature("pets")}>
+          <Feature expression={feature("pets")}>
+            <On>
               <Link
                 to="/myPets/new"
                 className="auth-button"

@@ -1,22 +1,23 @@
 package org.springframework.samples.petclinic.auth;
 
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.auth.payload.request.LoginRequest;
+import org.springframework.samples.petclinic.auth.payload.request.SignupRequest;
+import org.springframework.samples.petclinic.auth.payload.response.JwtResponse;
+import org.springframework.samples.petclinic.auth.payload.response.MessageResponse;
+import org.springframework.samples.petclinic.configuration.jwt.JwtUtils;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
-import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,45 +26,49 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.isagroup.PricingEvaluatorUtil;
-import io.github.isagroup.services.jwt.JwtUtils;
-import petclinic.payload.request.LoginRequest;
-import petclinic.payload.request.SignupRequest;
-import petclinic.payload.response.JwtResponse;
-import petclinic.payload.response.MessageResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.springframework.security.authentication.BadCredentialsException;
+
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "Authentication", description = "The Authentication API based on JWT")
 public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
 	private final UserService userService;
 	private final JwtUtils jwtUtils;
-	private final PricingEvaluatorUtil pricingEvaluatorUtil;
 	private final AuthService authService;
+	private final PricingEvaluatorUtil pricingEvaluatorUtil;
 
 	@Autowired
-	public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils, PricingEvaluatorUtil pricingEvaluatorUtil,
-			AuthService authService) {
+	public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils,
+			AuthService authService, PricingEvaluatorUtil pricingEvaluatorUtil) {
 		this.userService = userService;
-		this.jwtUtils = jwtUtils;
 		this.authenticationManager = authenticationManager;
 		this.authService = authService;
+		this.jwtUtils = jwtUtils;
 		this.pricingEvaluatorUtil = pricingEvaluatorUtil;
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-		Authentication authentication = authenticationManager.authenticate(
+	public ResponseEntity authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+		try{
+			Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = pricingEvaluatorUtil.generateUserToken();
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			String jwt = jwtUtils.generateJwtToken(authentication);
+
+			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+			List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
-		return ResponseEntity.ok().body(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
+			return ResponseEntity.ok().body(new JwtResponse(jwt, pricingEvaluatorUtil.generateUserToken(), userDetails.getId(), userDetails.getUsername(), roles));
+		}catch(BadCredentialsException exception){
+			return ResponseEntity.badRequest().body("Bad Credentials!");
+		}
 	}
 
 	@GetMapping("/validate")
@@ -72,19 +77,8 @@ public class AuthController {
 		return ResponseEntity.ok(isValid);
 	}
 
-	@PostMapping("/refreshToken")
-	public ResponseEntity<Map<String, Object>> refreshToken() {
-		
-		String jwt = pricingEvaluatorUtil.generateUserToken();
-
-		Map<String, Object> response = new HashMap<>();
-
-		response.put("newToken", jwt);
-
-		return ResponseEntity.ok(response);
-	}
-
-	@PostMapping("/signup")
+	
+	@PostMapping("/signup")	
 	public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 		if (userService.existsUser(signUpRequest.getUsername()).equals(true)) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));

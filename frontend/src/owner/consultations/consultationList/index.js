@@ -9,14 +9,13 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchWithInterceptor } from "../../../services/api";
 
 export default function OwnerConsultationList() {
   let [consultations, setConsultations] = useState([]);
   let [filtered, setFiltered] = useState(null);
   let [filter, setFilter] = useState("");
   let [search, setSearch] = useState("");
-  let [plan, setPlan] = useState(null);
+  let [plan, setPlan] = useState("");
   let [message, setMessage] = useState(null);
 
   const jwt = JSON.parse(window.localStorage.getItem("jwt"));
@@ -70,7 +69,7 @@ export default function OwnerConsultationList() {
               >
                 Details
               </Button>
-              {plan !== null && plan.haveOnlineConsultations ? (
+              {plan === "PLATINUM" ? (
                 <Button
                   size="sm"
                   color="primary"
@@ -116,7 +115,7 @@ export default function OwnerConsultationList() {
 
   async function setUp() {
     const consultations = await (
-      await fetchWithInterceptor("/api/v1/consultations", {
+      await fetch("/api/v1/consultations", {
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
@@ -128,16 +127,14 @@ export default function OwnerConsultationList() {
     setFiltered(consultations);
 
     const owner = await (
-      await fetchWithInterceptor(`/api/v1/plan`, {
+      await fetch(`/api/v1/plan`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
       })
     ).json();
     if (owner.message) setMessage(owner.message);
-    else {
-      setPlan(owner.clinic.plan);
-    }
+    else setPlan(owner.clinic.plan);
   }
 
   useEffect(() => {
@@ -152,7 +149,7 @@ export default function OwnerConsultationList() {
         <h1 className="text-center">Consultations</h1>
         <Row className="row-cols-auto g-3 align-items-center">
           <Col>
-            {plan !== null && plan.haveOnlineConsultations ? (
+            {plan === "PLATINUM" ? (
               <Button color="success" tag={Link} to="/consultations/new">
                 Add Consultation
               </Button>

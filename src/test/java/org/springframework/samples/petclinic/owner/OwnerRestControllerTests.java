@@ -23,7 +23,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.clinic.Clinic;
-import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
+import org.springframework.samples.petclinic.clinicowner.ClinicOwner;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.User;
@@ -39,7 +40,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 
-@WebMvcTest(value = { OwnerRestController.class, OwnerPlanController.class}, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class))
+@WebMvcTest(value = { OwnerRestController.class,
+		OwnerPlanController.class }, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class))
 class OwnerRestControllerTests {
 
 	private static final int TEST_OWNER_ID = 1;
@@ -48,6 +50,10 @@ class OwnerRestControllerTests {
 	@SuppressWarnings("unused")
 	@Autowired
 	private OwnerRestController ownerController;
+
+	@SuppressWarnings("unused")
+	@Autowired
+	private OwnerPlanController ownerPlanController;
 
 	@MockBean
 	private OwnerService ownerService;
@@ -71,7 +77,6 @@ class OwnerRestControllerTests {
 
 	@BeforeEach
 	void setup() {
-
 		george = new Owner();
 		george.setId(TEST_OWNER_ID);
 		george.setFirstName("George");
@@ -127,7 +132,7 @@ class OwnerRestControllerTests {
 		clinic.setName("Clinic");
 		clinic.setAddress("Address");
 		clinic.setTelephone("123456789");
-		clinic.setPlan("BASIC");
+		clinic.setPlan(PricingPlan.BASIC);
 		clinic.setClinicOwner(clinicOwner);
 
 		george.setClinic(clinic);
@@ -153,7 +158,7 @@ class OwnerRestControllerTests {
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
 				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
-				.andExpect(jsonPath("$.clinic.plan").value(george.getClinic().getPlan()));
+				.andExpect(jsonPath("$.clinic.plan").value(george.getClinic().getPlan().toString()));
 	}
 
 	@Test
@@ -227,7 +232,7 @@ class OwnerRestControllerTests {
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
 				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
-				.andExpect(jsonPath("$.clinic.plan").value(george.getClinic().getPlan()));
+				.andExpect(jsonPath("$.clinic.plan").value(george.getClinic().getPlan().toString()));
 	}
 
 	@Test

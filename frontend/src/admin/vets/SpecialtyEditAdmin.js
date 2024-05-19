@@ -2,11 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Form, Input, Label } from "reactstrap";
 import tokenService from "../../services/token.service";
-import getErrorModal from "../../util/getErrorModal";
-import useFetchState from "../../util/useFetchState";
-import getIdFromUrl from "../../util/getIdFromUrl";
 import "../../static/css/admin/adminPage.css";
-import { fetchWithInterceptor } from "../../services/api";
+import getErrorModal from "../../util/getErrorModal";
+import getIdFromUrl from "../../util/getIdFromUrl";
+import useFetchState from "../../util/useFetchState";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -37,7 +36,7 @@ export default function SpecialtyEditAdmin() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    fetchWithInterceptor(
+    fetch(
       "/api/v1/vets/specialties" + (specialty.id ? "/" + specialty.id : ""),
       {
         method: specialty.id ? "PUT" : "POST",

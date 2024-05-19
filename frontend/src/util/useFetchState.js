@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { fetchWithInterceptor } from "../services/api";
 
 export default function useFetchState(initial, url, jwt, setMessage, setVisible, id = null) {
     const [data, setData] = useState(initial);
@@ -7,17 +6,20 @@ export default function useFetchState(initial, url, jwt, setMessage, setVisible,
         if (url) {
             if (!id || id !== "new") {
                 let ignore = false;
-                fetchWithInterceptor(url, {
+                fetch(url, jwt?{
                     headers: {
                         "Authorization": `Bearer ${jwt}`,
                     },
-                })
+                }:{})
                     .then(response => response.json())
                     .then(json => {
                         if (!ignore) {
                             if (json.message) {
-                                setMessage(json.message);
-                                setVisible(true);
+                                if(setMessage!==null){
+                                    setMessage(json.message);
+                                    setVisible(true);
+                                }else
+                                    window.alert(json.message);
                             }
                             else {
                                 setData(json);
@@ -25,7 +27,7 @@ export default function useFetchState(initial, url, jwt, setMessage, setVisible,
                         }
                     }).catch((message) => {
                         console.log(message);
-                        setMessage('Failed to fetchWithInterceptor data');
+                        setMessage('Failed to fetch data');
                         setVisible(true);
                     });
                 return () => {

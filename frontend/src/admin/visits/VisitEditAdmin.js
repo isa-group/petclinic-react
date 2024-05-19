@@ -2,12 +2,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Form, Input, Label } from "reactstrap";
 import tokenService from "../../services/token.service";
-import getErrorModal from "../../util/getErrorModal";
-import useFetchData from "../../util/useFetchData";
-import getIdFromUrl from "../../util/getIdFromUrl";
-import useFetchState from "../../util/useFetchState";
 import "../../static/css/admin/adminPage.css";
-import { fetchWithInterceptor } from "../../services/api";
+import getErrorModal from "../../util/getErrorModal";
+import getIdFromUrl from "../../util/getIdFromUrl";
+import useFetchData from "../../util/useFetchData";
+import useFetchState from "../../util/useFetchState";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -49,7 +48,7 @@ export default function VisitEditAdmin() {
     event.preventDefault();
     setVisit({ ...visit, pet: pet });
 
-    fetchWithInterceptor(`/api/v1/pets/${petId}/visits` + (visit.id ? "/" + visit.id : ""), {
+    fetch(`/api/v1/pets/${petId}/visits` + (visit.id ? "/" + visit.id : ""), {
       method: visit.id ? "PUT" : "POST",
       headers: {
         Authorization: `Bearer ${jwt}`,

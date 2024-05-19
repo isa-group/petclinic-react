@@ -1,24 +1,18 @@
 package org.springframework.samples.petclinic.clinic;
 
-import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.clinic_owner.ClinicOwner;
-import org.springframework.samples.petclinic.clinic_owner.ClinicOwnerService;
-import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
-import org.springframework.samples.petclinic.user.User;
+import org.springframework.samples.petclinic.auth.payload.response.MessageResponse;
+import org.springframework.samples.petclinic.clinicowner.ClinicOwner;
+import org.springframework.samples.petclinic.clinicowner.ClinicOwnerService;
+import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
 import org.springframework.samples.petclinic.vet.Vet;
-import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,21 +21,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import petclinic.payload.response.MessageResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/clinics")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "Clinics", description = "The Clinics managemet API")
+@SecurityRequirement(name = "bearerAuth")
 public class ClinicRestController {
 	private final ClinicService clinicService;
 	private final ClinicOwnerService clinicOwnerService;
 	private final UserService userService;
-
-	final String ADMIN_AUTH = "ADMIN";
-	final String CLINIC_OWNER_AUTH = "CLINIC_OWNER";
 
 	@Autowired
 	public ClinicRestController(ClinicService clinicService, ClinicOwnerService clinicOwnerService,
@@ -93,21 +86,9 @@ public class ClinicRestController {
 	@PutMapping(value = "{clinicId}")
 	public ResponseEntity<Clinic> updateClinic(@PathVariable("clinicId") int clinicId,
 			@RequestBody @Valid Clinic clinic) {
-
-		User user = userService.findCurrentUser();
-
 		RestPreconditions.checkNotNull(clinicService.findClinicById(clinicId), "Clinic", "ID", clinicId);
 
-		if(user.hasAuthority(ADMIN_AUTH).equals(true)){
-			return new ResponseEntity<>(clinicService.update(clinic, clinicId), HttpStatus.OK);
-		}else if (user.hasAuthority(CLINIC_OWNER_AUTH).equals(true)){
-			if(clinicService.findClinicById(clinicId).getClinicOwner().getUser().getId().equals(user.getId())){
-				return new ResponseEntity<>(clinicService.update(clinic, clinicId), HttpStatus.OK);
-			}
-		}
-		
-		throw new AccessDeniedException();
-		
+		return new ResponseEntity<>(clinicService.update(clinic, clinicId), HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "{clinicId}")

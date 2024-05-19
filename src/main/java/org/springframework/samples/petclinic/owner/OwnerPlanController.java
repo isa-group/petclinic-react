@@ -20,20 +20,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/v1/plan")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "Plans", description = "API for the  management of  Princing Plans of the applications")
+@SecurityRequirement(name = "bearerAuth")
 public class OwnerPlanController {
 
+	private final OwnerService ownerService;
 	private final UserService userService;
 
 	@Autowired
-	public OwnerPlanController(UserService userService) {
+	public OwnerPlanController(OwnerService ownerService, UserService userService) {
+		this.ownerService = ownerService;
 		this.userService = userService;
 	}
 
@@ -43,4 +48,12 @@ public class OwnerPlanController {
 		User user = userService.findCurrentUser();
 		return new ResponseEntity<>(userService.findOwnerByUser(user.getId()),HttpStatus.OK);
     }
+
+	// @PutMapping
+	// @ResponseStatus(HttpStatus.OK)
+	// public ResponseEntity<Owner> updatePlan(@RequestBody @Valid PricingPlan plan ) {
+	// 	 User user = userService.findCurrentUser();
+	// 	 Owner owner = userService.findOwnerByUser(user.getId());
+	//      return new ResponseEntity<>(this.ownerService.updatePlan(plan,owner.getId()),HttpStatus.OK);
+	// }
 }

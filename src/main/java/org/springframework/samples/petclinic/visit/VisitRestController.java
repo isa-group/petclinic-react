@@ -18,12 +18,14 @@ package org.springframework.samples.petclinic.visit;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.auth.payload.response.MessageResponse;
+import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
@@ -35,7 +37,6 @@ import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -43,25 +44,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.net.HttpHeaders;
-
-import io.github.isagroup.services.jwt.JwtUtils;
-import petclinic.payload.response.MessageResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(name = "Visits", description = "API for the  management of Visits")
+@SecurityRequirement(name = "bearerAuth")
 public class VisitRestController {
 
 	private final PetService petService;
 	private final VisitService visitService;
 	private final UserService userService;
 	private final OwnerService ownerService;
-	private final JwtUtils jwtUtils;
 	private static final String VET_AUTH = "VET";
 	private static final String ADMIN_AUTH = "ADMIN";
 	private static final String OWNER_AUTH = "OWNER";
@@ -69,12 +67,11 @@ public class VisitRestController {
 
 	@Autowired
 	public VisitRestController(PetService petService, UserService userService, OwnerService ownerService,
-			VisitService visitService, JwtUtils jwtUtils) {
+			VisitService visitService) {
 		this.petService = petService;
 		this.userService = userService;
 		this.ownerService = ownerService;
 		this.visitService = visitService;
-		this.jwtUtils = jwtUtils;
 	}
 
 	@InitBinder("visit")
@@ -177,6 +174,11 @@ public class VisitRestController {
 		}
 	}
 
+	@GetMapping("/api/v1/visits/")
+	public ResponseEntity<List<Visit>> findAllByOwnerTrail(@RequestParam(required = false) Integer ownerId) {
+		return  findAllByOwner(ownerId); 
+	}
+
 	@GetMapping("/api/v1/visits")
 	public ResponseEntity<List<Visit>> findAllByOwner(@RequestParam(required = false) Integer ownerId) {
 		User user = userService.findCurrentUser();
@@ -201,13 +203,11 @@ public class VisitRestController {
 	}
 
 	@GetMapping(value = "/api/v1/visits/stats")
-	public ResponseEntity<Map<String, Object>> getStats(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationToken) {
+	public ResponseEntity<Map<String, Object>> getStats() {
 		User user = this.userService.findCurrentUser();
 		if (user.hasAuthority(OWNER_AUTH).equals(true)) {
 			Owner o = userService.findOwnerByUser(user.getId());
-			String jwt = authorizationToken.split(" ")[1];
-			Map<String, Map<String, Object>> featuresEvaluation = jwtUtils.getFeaturesFromJwtToken(jwt);
-			if ((Boolean) featuresEvaluation.get("havePetsDashboard").get("eval"))
+			if (o.getClinic().getPlan().equals(PricingPlan.PLATINUM))
 				return new ResponseEntity<>(this.visitService.getVisitsOwnerStats(o.getId()), HttpStatus.OK);
 		} else if (user.hasAuthority(ADMIN_AUTH).equals(true))
 			return new ResponseEntity<>(this.visitService.getVisitsAdminStats(), HttpStatus.OK);

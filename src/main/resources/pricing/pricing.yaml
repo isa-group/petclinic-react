@@ -1,0 +1,70 @@
+saasName: My First Pricing Driven SaaS
+day: 10
+month: 03
+year: 2024
+currency: USD
+features:
+  haveCalendar:
+    description: Description of Feature 1
+    valueType: BOOLEAN
+    defaultValue: false
+    expression: planContext['features']['haveCalendar']
+    type: DOMAIN        
+  pets:
+    description: Number of pets per Owner
+    valueType: BOOLEAN
+    defaultValue: true
+    expression: planContext['usageLimits']['maxPets'] > userContext['pets']
+    type: DOMAIN
+  consultations:
+    description: Talk to vet online!
+    valueType: BOOLEAN
+    defaultValue: false
+    expression: planContext['features']['consultations']
+    type: DOMAIN
+usageLimits:
+  maxPets:
+    description: Max pet per owner threshold
+    valueType: NUMERIC
+    defaultValue: 2
+    unit: pet
+    type: NON_RENEWABLE
+    linkedFeatures:
+    - pets
+plans:
+  BASIC:
+    description: Basic plan
+    monthlyPrice: 0.0
+    annualPrice: 0.0
+    unit: user/month
+    features:    
+      haveCalendar:
+        value: false      
+    usageLimits:
+      maxPets:
+        value: 2      
+  GOLD:
+    description: Advanced plan
+    monthlyPrice: 5.0
+    annualPrice: 5.0
+    unit: user/month
+    features:
+      haveCalendar:
+        value: true      
+    usageLimits:
+      maxPets:
+        value: 4
+  PLATINUM:
+    description: Advanced plan
+    monthlyPrice: 12.0
+    annualPrice: 12.0
+    unit: user/month
+    features:
+      haveCalendar:
+        value: true  
+      consultations:
+        value: true    
+    usageLimits:
+      maxPets:
+        value: 7
+addOns:

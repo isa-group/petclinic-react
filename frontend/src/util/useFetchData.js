@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { fetchWithInterceptor } from "../services/api";
 
 export default function useFetchData(url, jwt) {
     const [data, setData] = useState([]);
     useEffect(() => {
         if (url) {
             let ignore = false;
-            fetchWithInterceptor(url, {
+            fetch(url, {
                 headers: {
                     "Authorization": `Bearer ${jwt}`,
                 },

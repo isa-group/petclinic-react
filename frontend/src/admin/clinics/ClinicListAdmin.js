@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, ButtonGroup, Table } from "reactstrap";
 import tokenService from "../../services/token.service";
-import useFetchState from "../../util/useFetchState";
-import getErrorModal from "../../util/getErrorModal";
-import deleteFromList from "../../util/deleteFromList";
 import "../../static/css/admin/adminPage.css";
+import deleteFromList from "../../util/deleteFromList";
+import getErrorModal from "../../util/getErrorModal";
+import useFetchState from "../../util/useFetchState";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -28,7 +28,7 @@ export default function ClinicListAdmin() {
         <td>{clinic.address}</td>
         <td>{clinic.telephone}</td>
         <td>{clinic.clinicOwner.firstName} {clinic.clinicOwner.lastName}</td>
-        <td>{clinic.plan.name}</td>
+        <td>{clinic.plan}</td>
         <td>
           <ButtonGroup>
             <Button
@@ -68,12 +68,12 @@ export default function ClinicListAdmin() {
   return (
     <div>
       <div className="admin-page-container">
-        <h1 className="text-center">Clinics</h1>
+        <h1 className="text-center">Clinic Owners</h1>
         {alerts.map((a) => a.alert)}
         {modal}
         <div className="float-right">
           <Button color="success" tag={Link} to="/clinics/new">
-            Add Clinic
+            Add Clinic Owner
           </Button>
         </div>
         <div>

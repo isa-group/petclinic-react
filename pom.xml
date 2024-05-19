@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.samples</groupId>
-	<artifactId>spring-petclinic</artifactId>
-	<version>2.2.0.BUILD-SNAPSHOT</version>
+	<artifactId>spring-petclinic-psg2</artifactId>
+	<version>2.2.0.2324</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.4.RELEASE</version>
+		<version>3.1.1</version>
 	</parent>
-	<name>PetClinic - TFG - Rafael Sanabria Espárrago</name>
+	<name>PetClinic React</name>
 
 	<properties>
 
 		<!-- Generic properties -->
-		<java.version>11</java.version>
+		<java.version>17</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+    	<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<!-- Web dependencies -->
-		<webjars-bootstrap.version>3.3.6</webjars-bootstrap.version>
-		<webjars-jquery-ui.version>1.11.4</webjars-jquery-ui.version>
-		<webjars-jquery.version>2.2.4</webjars-jquery.version>
-		<wro4j.version>1.8.0</wro4j.version>
+		<lombok.version>1.18.30</lombok.version>
+		<mapstruct.version>1.5.5.Final</mapstruct.version>
 
 		<jacoco.version>0.8.8</jacoco.version>
 		<spring-format.version>0.0.19</spring-format.version>
@@ -33,15 +30,11 @@
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
 		<node.version>v18.12.1</node.version>
 		<npm.version>8.19.2</npm.version>
-		<frontend-src-dir>${project.basedir}/frontend</frontend-src-dir>
-
-		<sonar.organization>ISA Group</sonar.organization>
-		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<sonar.projectName>PetClinic</sonar.projectName>
-		<sonar.sources>src/main/java,frontend/src</sonar.sources>
+		<frontend-src-dir>${project.basedir}/frontend</frontend-src-dir>		
 	</properties>
 
 	<dependencies>
+
 		<!-- Spring and Spring Boot dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -57,70 +50,35 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-taglibs</artifactId>
 		</dependency>
-		<!-- Databases - Uses H2 by default -->
-		<!-- dependency>
-                <groupId>org.hsqldb</groupId>
-                <artifactId>hsqldb</artifactId>
-                <scope>runtime</scope>
-        </dependency-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<!-- Databases - Use H2 by default -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
+			<version>XXXX</version>
 			<scope>runtime</scope>
-		</dependency>
-		<!-- validation 
-        <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-        </dependency>-->
+		</dependency-->
 		<!-- caching -->
 		<dependency>
 			<groupId>javax.cache</groupId>
 			<artifactId>cache-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-		</dependency>
-		<!-- Java Servlets, JSP and JSTL -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-jasper</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- WebJars -->
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>webjars-locator-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>jquery</artifactId>
-			<version>${webjars-jquery.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>jquery-ui</artifactId>
-			<version>${webjars-jquery-ui.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>bootstrap</artifactId>
-			<version>${webjars-bootstrap.version}</version>
 		</dependency>
 
 		<!-- Testing -->
@@ -148,12 +106,11 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.30</version> <!--$NO-MVN-MAN-VER$-->
+			<version>${lombok.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<!-- JSON WEB TOKEN -->
 		<dependency>
@@ -168,34 +125,33 @@
 		</dependency>
 		<!-- Swagger -->
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.9.2</version>
+    		<groupId>org.springdoc</groupId>
+    		<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    		<version>2.1.0</version>
 		</dependency>
-
+		<!-- Other J2EE required libraries -->
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-
+        	<groupId>javax.xml.bind</groupId>
+        	<artifactId>jaxb-api</artifactId>
+        	<version>2.3.1</version>
+    	</dependency>
 		<dependency>
-			<groupId>org.sonarsource.scanner.maven</groupId>
-			<artifactId>sonar-maven-plugin</artifactId>
-			<version>3.9.1.2184</version>
-		</dependency>
+        	<groupId>com.sun.xml.bind</groupId>
+        	<artifactId>jaxb-impl</artifactId>
+        	<version>2.3.4</version>
+    	</dependency>
 		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>3.23.2</version>
+  			<groupId>org.apache.maven</groupId>
+  			<artifactId>maven-model</artifactId>
+  			<version>3.9.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>io.github.isa-group</groupId>
 			<artifactId>Pricing4Java</artifactId>
-			<version>3.1.0</version>
+			<version>4.0.0</version>
 		</dependency>
-	</dependencies>
+	
+ </dependencies>
 
 	<build>
 		<plugins>
@@ -204,8 +160,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<!-- Spring Boot Actuator displays build-related information if a
-						META-INF/build-info.properties 
+						<!-- Spring Boot Actuator displays build-related information if a META-INF/build-info.properties
                         file is present -->
 						<goals>
 							<goal>build-info</goal>
@@ -220,6 +175,58 @@
 							</additionalProperties>
 						</configuration>
 					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>${frontend-maven-plugin.version}</version>
+
+				<configuration>
+					<nodeVersion>${node.version}</nodeVersion>
+					<npmVersion>${npm.version}</npmVersion>
+					<workingDirectory>${frontend-src-dir}</workingDirectory>
+					<installDirectory>${project.build.directory}</installDirectory>
+				</configuration>
+
+				<executions>
+					<!--execution>
+						<id>install-frontend-tools</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+					</execution>
+
+					<execution>
+						<id>npm-install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>build-frontend</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
+					</execution-->
+					<!-- <execution>
+						<id>coverage-frontend</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
+					</execution>-->
 				</executions>
 			</plugin>
 			<plugin>
@@ -241,11 +248,59 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Spring Boot Actuator displays build-related information if a git.properties 
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<!--execution>
+						<id>position-react-build</id>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${frontend-src-dir}/build</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution-->
+					<execution>
+						<id>coverage-move</id>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<outputDirectory>${project.basedir}/coverage</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/site/jacoco</directory>
+										<includes>
+          									<include>jacoco.xml</include>
+          								</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>appengine-maven-plugin</artifactId>
+                <version>2.4.4</version>
+            </plugin>
+
+			<!-- Spring Boot Actuator displays build-related information if a git.properties
             file is present at the classpath -->
 			<plugin>
-				<groupId>pl.project13.maven</groupId>
-				<artifactId>git-commit-id-plugin</artifactId>
+				<groupId>io.github.git-commit-id</groupId>
+				<artifactId>git-commit-id-maven-plugin</artifactId>
+				<version>6.0.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -258,46 +313,36 @@
 					<dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
 					<generateGitPropertiesFile>true</generateGitPropertiesFile>
 					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
-					</generateGitPropertiesFilename>
+                    </generateGitPropertiesFilename>
 					<failOnNoGitDirectory>false</failOnNoGitDirectory>
 				</configuration>
 			</plugin>
 
+
 			<plugin>
-				<groupId>ro.isdc.wro4j</groupId>
-				<artifactId>wro4j-maven-plugin</artifactId>
-				<version>${wro4j.version}</version>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<wroManagerFactory>
-						ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
-					<cssDestinationFolder>${project.build.directory}/classes/static/resources/css</cssDestinationFolder>
-					<wroFile>${basedir}/src/main/wro/wro.xml</wroFile>
-					<extraConfigFile>${basedir}/src/main/wro/wro.properties</extraConfigFile>
-					<contextFolder>${basedir}/src/main/less</contextFolder>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.webjars</groupId>
-						<artifactId>bootstrap</artifactId>
-						<version>${webjars-bootstrap.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.mockito</groupId>
-						<artifactId>mockito-core</artifactId>
-						<version>${mockito.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-compiler-plugin</artifactId>
+            	<configuration>
+                	<annotationProcessorPaths>
+                    	<path>
+                        	<groupId>org.mapstruct</groupId>
+                        	<artifactId>mapstruct-processor</artifactId>
+                        	<version>${mapstruct.version}</version>
+                    	</path>
+                    	<path>
+                        	<groupId>org.projectlombok</groupId>
+                        	<artifactId>lombok</artifactId>
+                        	<version>${lombok.version}</version>
+                    	</path>
+                    	<path>
+                        	<groupId>org.projectlombok</groupId>
+                        	<artifactId>lombok-mapstruct-binding</artifactId>
+                        	<version>0.2.0</version>
+                    	</path>
+                	</annotationProcessorPaths>
+            	</configuration>
+        	</plugin>
 		</plugins>
-		<finalName>petclinic</finalName>
 	</build>
 
 	<!-- Apache 2 license -->
