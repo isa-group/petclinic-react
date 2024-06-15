@@ -49,6 +49,9 @@ import VetListClinicOwner from "./clinicOwner/vets/VetListClinicOwner";
 import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
 import HomeLogged from "./public/homeLogged";
 import { feature, useGenericFeature } from "pricing4react";
+import PlanListAdmin from "./admin/plans/PlanListAdmin";
+import PlanEditAdmin from "./admin/plans/PlanEditAdmin";
+import ParserPlanEditAdmin from "./admin/plans/ParserPlanEditAdmin";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -124,6 +127,9 @@ function App() {
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListAdmin /></PrivateRoute>} />
           <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><ConsultationEditAdmin /></PrivateRoute>} />
           <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketListAdmin /></PrivateRoute>} />
+          <Route path="/plansAdmin" exact={true} element={<PrivateRoute><PlanListAdmin /></PrivateRoute>} />
+          <Route path="/plansAdmin/:id" exact={true} element={<PrivateRoute><PlanEditAdmin /></PrivateRoute>} />
+          <Route path="/parserPlansAdmin/1" exact={true} element={<PrivateRoute><ParserPlanEditAdmin /></PrivateRoute>} />
         </>)
     }
     if (role === "OWNER") {

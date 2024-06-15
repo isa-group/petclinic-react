@@ -30,7 +30,7 @@ public class PricingConfiguration extends PricingContext{
 
     @Override
     public String getConfigFilePath() {
-        return "pricing/pricing.yaml";
+        return "pricing/petclinic.yml";
     }
 
     @Override

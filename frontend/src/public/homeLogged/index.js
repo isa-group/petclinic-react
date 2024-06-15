@@ -10,7 +10,7 @@ export default function HomeLogged(){
     })
     
     return(
-        <div class="home-logged-page">
+        <div className="home-logged-page">
             <h1>Welcome to petclinic {username}!</h1>
         </div>
     );
