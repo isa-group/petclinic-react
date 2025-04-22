@@ -6,6 +6,7 @@ import { registerFormOwnerInputs } from "./form/registerFormOwnerInputs";
 import { registerFormVetInputs } from "./form/registerFormVetInputs";
 import { registerFormClinicOwnerInputs } from "./form/registerFormClinicOwnerInputs";
 import { useEffect, useRef, useState } from "react";
+import { fetchWithPricingInterceptor } from "pricing4react"
 
 export default function Register() {
   let [type, setType] = useState(null);
