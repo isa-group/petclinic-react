@@ -26,7 +26,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.clinicowner.ClinicOwner;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.pet.Pet;
@@ -44,8 +43,6 @@ public class UserService {
 	
 	private UserRepository userRepository;
 
-//	private OwnerService ownerService;
-//
 	private VetService vetService;
 
 	private PetService petService;
@@ -53,7 +50,6 @@ public class UserService {
 	@Autowired
 	public UserService(UserRepository userRepository, VetService vetService,PetService petService) {
 		this.userRepository = userRepository;
-//		this.ownerService = ownerService;
 		this.vetService = vetService;
 		this.petService = petService;
 	}
