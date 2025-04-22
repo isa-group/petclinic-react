@@ -1,0 +1,176 @@
+
+@hostname = localhost
+@port  = 8080
+@host = {{hostname}}:{{port}}
+
+###
+// Log in to petclinic
+# @name login
+# @prompt username
+# @prompt password
+POST http://{{host}}/api/v1/auth/signin HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+###
+
+# @prompt userId
+// Owner1 -> userId(4)
+GET http://{{host}}/api/v1/pets?userId={{userId}} HTTP/1.1
+Authorization: Bearer {{login.response.body.$.token}}
+Pricing-Token: {{login.response.body.$.pricingToken}}
+Accept: application/json
+
+
+###
+// Create a new pet
+# @prompt petName
+
+POST http://{{host}}/api/v1/pets
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{login.response.body.$.token}}
+Pricing-Token: {{login.response.body.$.pricingToken}}
+
+{
+    "id": null,
+    "name": "{{petName}}",
+    "birthDate": "2025-03-27",
+    "type": {
+        "id": 5,
+        "name": "bird"
+    },
+    "owner": {}
+}
+
+###
+
+@petId = 11
+
+DELETE  http://{{host}}/api/v1/pets/{{petId}}
+Authorization: Bearer {{login.response.body.$.token}}
+Pricing-Token: {{login.response.body.$.pricingToken}}
+
+###
+
+GET http://{{host}}/api/v1/consultations HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{login.response.body.$.token}}
+Pricing-Token: {{login.response.body.$.pricingToken}}
+
+###
+
+// Owner 1 Consultations Ids:
+// 1, 2
+
+@id = 1
+
+GET http://{{host}}/api/v1/consultations/{{id}} HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{login.response.body.$.token}}
+Pricing-Token: {{login.response.body.$.pricingToken}}
+
+###
+
+POST http://{{hostname}}:{{port}}/api/v1/consultations HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.$.token}}
+Pricing-Token: {{login.response.body.$.pricingToken}}
+
+{
+   "id":null,
+   "title":"What vaccines should my pet get?",
+   "status":"PENDING",
+   "isClinicComment":false,
+   "pet":{
+      "id":1,
+      "name":"Leo",
+      "birthDate":"2010-09-07",
+      "type":{
+         "id":1,
+         "name":"cat"
+      },
+      "owner":{
+         "id":1,
+         "firstName":"George",
+         "lastName":"Franklin",
+         "address":"110 W. Liberty St.",
+         "city":"Sevilla",
+         "telephone":"608555103",
+         "user":{
+            "id":4,
+            "username":"owner1",
+            "password":"$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
+            "authority":{
+               "id":3,
+               "authority":"OWNER"
+            }
+         },
+         "clinic":{
+            "id":1,
+            "name":"Clinic 1",
+            "address":"Av. Palmera, 26",
+            "telephone":"955684230",
+            "plan":"PLATINUM",
+            "clinicOwner":{
+               "id":1,
+               "firstName":"John",
+               "lastName":"Doe",
+               "user":{
+                  "id":2,
+                  "username":"clinicOwner1",
+                  "password":"$2a$10$t.I/C4cjUdUWzqlFlSddLeh9SbZ6d8wR7mdbeIRghT355/KRKZPAi",
+                  "authority":{
+                     "id":2,
+                     "authority":"CLINIC_OWNER"
+                  }
+               }
+            }
+         }
+      }
+   },
+   "owner":{
+      "id":1,
+      "firstName":"George",
+      "lastName":"Franklin",
+      "address":"110 W. Liberty St.",
+      "city":"Sevilla",
+      "telephone":"608555103",
+      "user":{
+         "id":4,
+         "username":"owner1",
+         "password":"$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
+         "authority":{
+            "id":3,
+            "authority":"OWNER"
+         }
+      },
+      "clinic":{
+         "id":1,
+         "name":"Clinic 1",
+         "address":"Av. Palmera, 26",
+         "telephone":"955684230",
+         "plan":"PLATINUM",
+         "clinicOwner":{
+            "id":1,
+            "firstName":"John",
+            "lastName":"Doe",
+            "user":{
+               "id":2,
+               "username":"clinicOwner1",
+               "password":"$2a$10$t.I/C4cjUdUWzqlFlSddLeh9SbZ6d8wR7mdbeIRghT355/KRKZPAi",
+               "authority":{
+                  "id":2,
+                  "authority":"CLINIC_OWNER"
+               }
+            }
+         }
+      }
+   }
+}
