@@ -36,6 +36,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.github.isagroup.PricingEvaluatorUtil;
+
 /**
  * Test class for {@link OwnerRestController}
  *
@@ -62,6 +64,9 @@ class AuthControllerTests {
 
 	@MockBean
 	private AuthService authService;
+
+    @MockBean
+    private PricingEvaluatorUtil pricingEvaluatorUtil;
 
 	@Autowired
 	private ObjectMapper objectMapper;

@@ -61,7 +61,7 @@ public class PublicPricingController {
 
         newPlan.setName(plan.get("name").toString());
         newPlan.setDescription("");
-        newPlan.setMonthlyPrice(Double.valueOf(plan.get("monthlyPrice").toString()));
+        newPlan.setPrice(Double.valueOf(plan.get("price").toString()));
         newPlan.setUnit("user/month");
 
         Map<String, Feature> newPlanFeatures = new HashMap<>();
@@ -103,7 +103,7 @@ public class PublicPricingController {
         }
 
         existingPlan.setName(plan.get("name").toString());
-        existingPlan.setMonthlyPrice(Double.valueOf(plan.get("monthlyPrice").toString()));
+        existingPlan.setPrice(Double.valueOf(plan.get("price").toString()));
 
         for (Feature feature: existingPlan.getFeatures().values()){
             if (feature.getName().equals("pets")){
