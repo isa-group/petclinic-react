@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import io.github.isagroup.exceptions.PricingPlanEvaluationException;
+
 @RestControllerAdvice
 public class ExceptionHandlerController {
 
@@ -45,9 +47,9 @@ public class ExceptionHandlerController {
 		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(UpperPlanFeatureException.class)
+	@ExceptionHandler(PricingPlanEvaluationException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	public ResponseEntity<ErrorMessage> upperPlanFeatureException(UpperPlanFeatureException ex, WebRequest request) {
+	public ResponseEntity<ErrorMessage> upperPlanFeatureException(PricingPlanEvaluationException ex, WebRequest request) {
 		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST.value(), new Date(), ex.getMessage(),
 				request.getDescription(false));
 

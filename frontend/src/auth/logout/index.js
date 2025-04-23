@@ -9,6 +9,7 @@ const Logout = () => {
     const jwt = window.localStorage.getItem("jwt");
     if (jwt || typeof jwt === "undefined") {
       tokenService.removeUser();
+      window.localStorage.removeItem("pricingToken")
       window.location.href = "/";
     } else {
       alert("There is no user logged in");

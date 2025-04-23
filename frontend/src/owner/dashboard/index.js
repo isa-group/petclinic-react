@@ -70,7 +70,7 @@ export default function OwnerDashboard() {
   return (
     <>
       <div className="owner-dashboard-page-container">
-        <h1 className="text-center dashboard-title">Dashboard</h1>
+        <h1 className="text-center dashboard-title">Calendar</h1>
         <Feature>
           <On expression={feature('haveCalendar')}>
             <div style={{ height: `${600}px` }} className="calendar-container">

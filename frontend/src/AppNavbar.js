@@ -70,7 +70,7 @@ function AppNavbar() {
                     <Feature expression={feature("haveCalendar")}>
                         <On>
                             <NavItem>
-                                <NavLink style={{ color: "white" }} tag={Link} to="/dashboard">Dashboard</NavLink>
+                                <NavLink style={{ color: "white" }} tag={Link} to="/dashboard">Calendar</NavLink>
                             </NavItem>
                         </On>
                     </Feature>
