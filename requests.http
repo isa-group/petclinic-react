@@ -18,10 +18,8 @@ Content-Type: application/json
 }
 
 ###
-
-# @prompt userId
-// Owner1 -> userId(4)
-GET http://{{host}}/api/v1/pets?userId={{userId}} HTTP/1.1
+// Get pets by user id
+GET http://{{host}}/api/v1/pets?userId={{login.response.body.$.id}} HTTP/1.1
 Authorization: Bearer {{login.response.body.$.token}}
 Pricing-Token: {{login.response.body.$.pricingToken}}
 Accept: application/json
@@ -29,6 +27,7 @@ Accept: application/json
 
 ###
 // Create a new pet
+# @name createPet
 # @prompt petName
 
 POST http://{{host}}/api/v1/pets
@@ -49,35 +48,38 @@ Pricing-Token: {{login.response.body.$.pricingToken}}
 }
 
 ###
-
-@petId = 11
+# @name deletePet
+@petId = {{createPet.response.body.$.id}}
 
 DELETE  http://{{host}}/api/v1/pets/{{petId}}
 Authorization: Bearer {{login.response.body.$.token}}
 Pricing-Token: {{login.response.body.$.pricingToken}}
 
 ###
-
+# @name getConsultations
+// Get consultations of owner
 GET http://{{host}}/api/v1/consultations HTTP/1.1
 Accept: application/json
 Authorization: Bearer {{login.response.body.$.token}}
 Pricing-Token: {{login.response.body.$.pricingToken}}
 
 ###
-
+# @name getConsultationById
+// Get consultation by id
 // Owner 1 Consultations Ids:
 // 1, 2
 
-@id = 1
+@consultationId = {{getConsultations.response.body.$.[0].id}}
 
-GET http://{{host}}/api/v1/consultations/{{id}} HTTP/1.1
+GET http://{{host}}/api/v1/consultations/{{consulationId}} HTTP/1.1
 Accept: application/json
 Authorization: Bearer {{login.response.body.$.token}}
 Pricing-Token: {{login.response.body.$.pricingToken}}
 
+
 ###
 
-POST http://{{hostname}}:{{port}}/api/v1/consultations HTTP/1.1
+POST http://{{host}}/api/v1/consultations HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.token}}
@@ -85,92 +87,28 @@ Pricing-Token: {{login.response.body.$.pricingToken}}
 
 {
    "id":null,
-   "title":"What vaccines should my pet get?",
-   "status":"PENDING",
-   "isClinicComment":false,
-   "pet":{
-      "id":1,
-      "name":"Leo",
-      "birthDate":"2010-09-07",
-      "type":{
-         "id":1,
-         "name":"cat"
-      },
-      "owner":{
-         "id":1,
-         "firstName":"George",
-         "lastName":"Franklin",
-         "address":"110 W. Liberty St.",
-         "city":"Sevilla",
-         "telephone":"608555103",
-         "user":{
-            "id":4,
-            "username":"owner1",
-            "password":"$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-            "authority":{
-               "id":3,
-               "authority":"OWNER"
-            }
-         },
-         "clinic":{
-            "id":1,
-            "name":"Clinic 1",
-            "address":"Av. Palmera, 26",
-            "telephone":"955684230",
-            "plan":"PLATINUM",
-            "clinicOwner":{
-               "id":1,
-               "firstName":"John",
-               "lastName":"Doe",
-               "user":{
-                  "id":2,
-                  "username":"clinicOwner1",
-                  "password":"$2a$10$t.I/C4cjUdUWzqlFlSddLeh9SbZ6d8wR7mdbeIRghT355/KRKZPAi",
-                  "authority":{
-                     "id":2,
-                     "authority":"CLINIC_OWNER"
-                  }
-               }
-            }
-         }
-      }
-   },
-   "owner":{
-      "id":1,
-      "firstName":"George",
-      "lastName":"Franklin",
-      "address":"110 W. Liberty St.",
-      "city":"Sevilla",
-      "telephone":"608555103",
-      "user":{
-         "id":4,
-         "username":"owner1",
-         "password":"$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-         "authority":{
-            "id":3,
-            "authority":"OWNER"
-         }
-      },
-      "clinic":{
-         "id":1,
-         "name":"Clinic 1",
-         "address":"Av. Palmera, 26",
-         "telephone":"955684230",
-         "plan":"PLATINUM",
-         "clinicOwner":{
-            "id":1,
-            "firstName":"John",
-            "lastName":"Doe",
-            "user":{
-               "id":2,
-               "username":"clinicOwner1",
-               "password":"$2a$10$t.I/C4cjUdUWzqlFlSddLeh9SbZ6d8wR7mdbeIRghT355/KRKZPAi",
-               "authority":{
-                  "id":2,
-                  "authority":"CLINIC_OWNER"
-               }
-            }
-         }
-      }
-   }
+   "title": "What vaccines should my pet get?",
+   "status": "PENDING",
+   "isClinicComment": false,
+   "pet": {{getConsultationById.response.body.$.pet}},
+   "owner": {{getConsultationById.response.body.$.owner}}
+}
+
+###
+@consultationId = {{getConsultations.response.body.$.[0].id}}
+
+
+PUT http://{{host}}/api/v1/consultations/{{consultationId}} HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.$.token}}
+Pricing-Token: {{login.response.body.$.pricingToken}}
+
+{
+   "id":null,
+   "title": "What vaccines should my pet get?",
+   "status": "PENDING",
+   "isClinicComment": false,
+   "pet": {{getConsultationById.response.body.$.pet}},
+   "owner": {{getConsultationById.response.body.$.owner}}
 }

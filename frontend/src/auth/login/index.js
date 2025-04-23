@@ -28,7 +28,7 @@ export default function Login() {
         tokenService.setUser(data);
         tokenService.updateLocalAccessToken(data.token);
         localStorage.setItem("pricingToken", JSON.stringify(data.pricingToken));
-        window.location.href = "/home";
+        window.location.href = "/";
       })
       .catch((error) => {         
         setMessage(error);
