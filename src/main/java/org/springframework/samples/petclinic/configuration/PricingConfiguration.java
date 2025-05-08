@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.configuration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,16 +17,15 @@ import io.github.isagroup.PricingContext;
 import jakarta.security.auth.message.AuthException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 
 @Slf4j
 @Component
-public class PricingConfiguration extends PricingContext{
+public class PricingConfiguration extends PricingContext {
 
     @Autowired
     UserService userService;
 
-    @Value("${petclinic.app.jwtSecret}")
+    @Value("${p4j.jwtSecret}")
     private String jwtSecret;
 
     @Override
@@ -39,13 +39,13 @@ public class PricingConfiguration extends PricingContext{
     }
 
     @Override
-    public Boolean userAffectedByPricing(){
+    public Boolean userAffectedByPricing() {
         Authentication userAuth = SecurityContextHolder.getContext().getAuthentication();
 
         UserDetailsImpl userDetails = (UserDetailsImpl) userAuth.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-            .collect(Collectors.toList());
-        
+                .collect(Collectors.toList());
+
         return roles.contains("OWNER");
     }
 
@@ -69,5 +69,10 @@ public class PricingConfiguration extends PricingContext{
             return "BASIC";
         }
     }
-    
+
+    @Override
+    public List<String> getUserAddOns() {
+        return new ArrayList<>();
+    }
+
 }
